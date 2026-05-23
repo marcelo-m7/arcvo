@@ -178,6 +178,7 @@ dist/
 # Local app caches
 .pytest_cache/
 .logs/
+.data/
 
 # Keep frontend source aliases named lib tracked despite Python packaging ignore rules.
 !frontend/src/lib/

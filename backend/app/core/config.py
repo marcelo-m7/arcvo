@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     odoo_integration_mode: str = "xmlrpc"
     odoo_yolo: str = "read"
     odoo_allow_self_signed_ssl: bool = False
+    supabase_project_id: str = "wvkjainfwsyiyfcmbtid"
+    supabase_url: str = "https://wvkjainfwsyiyfcmbtid.supabase.co"
+    supabase_publishable_key: str = ""
 
     @property
     def is_development(self) -> bool:

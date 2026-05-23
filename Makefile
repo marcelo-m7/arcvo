@@ -32,6 +32,12 @@ test:
 odoo-health:
 	cd backend && uv run python -m scripts.odoo_health
 
+import-supabase-youtube:
+	cd backend && uv run python -m scripts.import_supabase_youtube --fetch-supabase --export ../.data/supabase_youtube.json --execute
+
+dry-run-supabase-youtube:
+	cd backend && uv run python -m scripts.import_supabase_youtube --fetch-supabase --export ../.data/supabase_youtube.json
+
 docker-up:
 	docker compose up -d
 

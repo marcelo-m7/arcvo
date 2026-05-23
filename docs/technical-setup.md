@@ -75,6 +75,13 @@ The archive admin maps YouTube content onto Odoo eLearning:
 
 Courses are created automatically when a submitted category name does not already exist.
 
+Supabase import:
+
+- `make dry-run-supabase-youtube` fetches public Supabase rows and previews the Odoo import.
+- `make import-supabase-youtube` imports the public Supabase YouTube archive into Odoo.
+- Existing Supabase playlists are ignored; categories become Odoo courses.
+- AI enrichment fields are consumed when present in the exported rows. The public Supabase key currently cannot read `ai_enrichments` because of RLS, so the direct REST import uses the public video/category fields unless a privileged export is supplied.
+
 ## Frontend
 
 The React app lives in `frontend`.
