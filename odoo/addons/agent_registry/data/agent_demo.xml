@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Demo Agents -->
+        <record id="agent_ceo" model="agent.agent">
+            <field name="name">CEO Agent</field>
+            <field name="agent_type">orchestrator</field>
+            <field name="status">available</field>
+            <field name="description">Chief Executive Officer - Strategic decisions and org leadership</field>
+            <field name="max_concurrent_tasks">5</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_project_management'), ref('capability_product_management')])]"/>
+        </record>
+
+        <record id="agent_pm" model="agent.agent">
+            <field name="name">Project Manager Agent</field>
+            <field name="agent_type">orchestrator</field>
+            <field name="status">available</field>
+            <field name="description">Project coordination, task creation, team management</field>
+            <field name="max_concurrent_tasks">10</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_project_management')])]"/>
+        </record>
+
+        <record id="agent_backend" model="agent.agent">
+            <field name="name">Backend Developer Agent</field>
+            <field name="agent_type">executor</field>
+            <field name="status">available</field>
+            <field name="description">Python, FastAPI, Odoo XML-RPC, backend architecture</field>
+            <field name="max_concurrent_tasks">3</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_backend_dev'), ref('capability_odoo_dev')])]"/>
+        </record>
+
+        <record id="agent_frontend" model="agent.agent">
+            <field name="name">Frontend Developer Agent</field>
+            <field name="agent_type">executor</field>
+            <field name="status">available</field>
+            <field name="description">React, TypeScript, TailwindCSS, UI/UX</field>
+            <field name="max_concurrent_tasks">3</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_frontend_dev')])]"/>
+        </record>
+
+        <record id="agent_devops" model="agent.agent">
+            <field name="name">DevOps Agent</field>
+            <field name="agent_type">executor</field>
+            <field name="status">available</field>
+            <field name="description">Docker, Kubernetes, CI/CD, deployment automation, infrastructure</field>
+            <field name="max_concurrent_tasks">5</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_devops'), ref('capability_database_admin')])]"/>
+        </record>
+
+        <record id="agent_qa" model="agent.agent">
+            <field name="name">QA Agent</field>
+            <field name="agent_type">reviewer</field>
+            <field name="status">available</field>
+            <field name="description">Quality assurance, testing, code review, validation</field>
+            <field name="max_concurrent_tasks">4</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_qa_testing'), ref('capability_code_review')])]"/>
+        </record>
+
+        <record id="agent_docs" model="agent.agent">
+            <field name="name">Documentation Agent</field>
+            <field name="agent_type">support</field>
+            <field name="status">available</field>
+            <field name="description">Documentation, knowledge base, wikis, technical writing</field>
+            <field name="max_concurrent_tasks">3</field>
+            <field name="capabilities_ids" eval="[(6, 0, [ref('capability_documentation'), ref('capability_technical_writing')])]"/>
+        </record>
+    </data>
+</odoo>

@@ -5,6 +5,7 @@ description = "FastAPI backend for Arcvo digital archive and Odoo integration."
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.125.0",
+    "hermes-ai>=0.3.20",
     "httpx>=0.28.0",
     "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.12.0",

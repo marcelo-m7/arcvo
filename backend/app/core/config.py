@@ -41,9 +41,17 @@ class Settings(BaseSettings):
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
+    gemini_api_key: str = ""
+    openrouter_api_key: str = ""
+    ollama_base_url: str = "https://ollama.monynha.me"
+
     @property
     def has_odoo_credentials(self) -> bool:
         return bool(self.odoo_url and self.odoo_db and self.odoo_user and self.odoo_api_key)
+
+    @property
+    def has_llm_configured(self) -> bool:
+        return bool(self.gemini_api_key or self.openrouter_api_key)
 
 
 @lru_cache

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_agent_registry_agent,access_agent_registry_agent,model_agent_agent,base.group_user,1,1,1,1
+access_agent_registry_capability,access_agent_registry_capability,model_agent_capability,base.group_user,1,0,0,0
+access_agent_registry_assignment,access_agent_registry_assignment,model_agent_assignment,base.group_user,1,1,1,1
+access_agent_registry_audit_log,access_agent_registry_audit_log,model_agent_audit_log,base.group_user,1,0,0,0

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Agent Assignment List View -->
+        <record id="agent_assignment_view_tree" model="ir.ui.view">
+            <field name="name">agent.assignment.tree</field>
+            <field name="model">agent.assignment</field>
+            <field name="arch" type="xml">
+                <list string="Task Assignments" decoration-danger="status == 'failed'" decoration-warning="status == 'rejected'" decoration-success="status == 'completed'">
+                    <field name="agent_id"/>
+                    <field name="task_id"/>
+                    <field name="status"/>
+                    <field name="progress_percentage" widget="progressbar"/>
+                    <field name="assigned_at"/>
+                    <field name="started_at"/>
+                    <field name="completed_at"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Agent Assignment Form View -->
+        <record id="agent_assignment_view_form" model="ir.ui.view">
+            <field name="name">agent.assignment.form</field>
+            <field name="model">agent.assignment</field>
+            <field name="arch" type="xml">
+                <form string="Task Assignment">
+                    <sheet>
+                        <group>
+                            <field name="agent_id" readonly="1"/>
+                            <field name="task_id" readonly="1"/>
+                            <field name="status" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="assigned_at" readonly="1"/>
+                            <field name="started_at" readonly="1"/>
+                            <field name="completed_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="progress_percentage" widget="progressbar"/>
+                            <field name="estimated_hours"/>
+                            <field name="actual_hours" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="notes" nolabel="1" placeholder="Notes..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Agent Assignment Search View -->
+        <record id="agent_assignment_view_search" model="ir.ui.view">
+            <field name="name">agent.assignment.search</field>
+            <field name="model">agent.assignment</field>
+            <field name="arch" type="xml">
+                <search string="Search Assignments">
+                    <field name="agent_id"/>
+                    <field name="task_id"/>
+                    <field name="status"/>
+                    <filter name="filter_assigned" string="Assigned" domain="[('status', '=', 'assigned')]"/>
+                    <filter name="filter_in_progress" string="In Progress" domain="[('status', '=', 'in_progress')]"/>
+                    <filter name="filter_completed" string="Completed" domain="[('status', '=', 'completed')]"/>
+                    <filter name="filter_failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Agent Assignment Action -->
+        <record id="agent_assignment_action" model="ir.actions.act_window">
+            <field name="name">Task Assignments</field>
+            <field name="res_model">agent.assignment</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

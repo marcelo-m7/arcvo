@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Agent Capability List View -->
+        <record id="agent_capability_view_tree" model="ir.ui.view">
+            <field name="name">agent.capability.tree</field>
+            <field name="model">agent.capability</field>
+            <field name="arch" type="xml">
+                <list string="Agent Capabilities">
+                    <field name="name"/>
+                    <field name="category"/>
+                    <field name="agents_count"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Agent Capability Form View -->
+        <record id="agent_capability_view_form" model="ir.ui.view">
+            <field name="name">agent.capability.form</field>
+            <field name="model">agent.capability</field>
+            <field name="arch" type="xml">
+                <form string="Agent Capability">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="category"/>
+                            <field name="agents_count"/>
+                        </group>
+                        <group>
+                            <field name="description" nolabel="1" placeholder="Description..."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Agent Capability Search View -->
+        <record id="agent_capability_view_search" model="ir.ui.view">
+            <field name="name">agent.capability.search</field>
+            <field name="model">agent.capability</field>
+            <field name="arch" type="xml">
+                <search string="Search Capabilities">
+                    <field name="name"/>
+                    <field name="category"/>
+                    <filter name="filter_development" string="Development" domain="[('category', '=', 'development')]"/>
+                    <filter name="filter_infrastructure" string="Infrastructure" domain="[('category', '=', 'infrastructure')]"/>
+                    <filter name="filter_management" string="Management" domain="[('category', '=', 'management')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Agent Capability Action -->
+        <record id="agent_capability_action" model="ir.actions.act_window">
+            <field name="name">Capabilities</field>
+            <field name="res_model">agent.capability</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>

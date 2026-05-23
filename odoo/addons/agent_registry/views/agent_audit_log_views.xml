@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Audit Log List View -->
+        <record id="agent_audit_log_view_tree" model="ir.ui.view">
+            <field name="name">agent.audit_log.tree</field>
+            <field name="model">agent.audit_log</field>
+            <field name="arch" type="xml">
+                <list string="Audit Logs" decoration-danger="status_code &gt;= 400">
+                    <field name="agent_id"/>
+                    <field name="action_type"/>
+                    <field name="task_id"/>
+                    <field name="timestamp"/>
+                    <field name="status_code"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Audit Log Form View -->
+        <record id="agent_audit_log_view_form" model="ir.ui.view">
+            <field name="name">agent.audit_log.form</field>
+            <field name="model">agent.audit_log</field>
+            <field name="arch" type="xml">
+                <form string="Audit Log" readonly="1">
+                    <sheet>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="task_id"/>
+                            <field name="action_type"/>
+                        </group>
+                        <group>
+                            <field name="timestamp"/>
+                            <field name="status_code"/>
+                        </group>
+                        <group>
+                            <field name="action_details" nolabel="1" widget="json_readonly"/>
+                        </group>
+                        <group>
+                            <field name="error_msg" nolabel="1" placeholder="No errors"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Audit Log Search View -->
+        <record id="agent_audit_log_view_search" model="ir.ui.view">
+            <field name="name">agent.audit_log.search</field>
+            <field name="model">agent.audit_log</field>
+            <field name="arch" type="xml">
+                <search string="Search Audit Logs">
+                    <field name="agent_id"/>
+                    <field name="task_id"/>
+                    <field name="action_type"/>
+                    <field name="timestamp"/>
+                    <filter name="filter_errors" string="Errors" domain="[('status_code', '&gt;=', 400)]"/>
+                    <filter name="filter_today" string="Today" domain="[('timestamp', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <filter name="filter_claimed" string="Claimed" domain="[('action_type', '=', 'claimed')]"/>
+                    <filter name="filter_completed" string="Completed" domain="[('action_type', '=', 'completed')]"/>
+                    <filter name="filter_failed" string="Failed" domain="[('action_type', '=', 'failed')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Audit Log Action -->
+        <record id="agent_audit_log_action" model="ir.actions.act_window">
+            <field name="name">Audit Logs</field>
+            <field name="res_model">agent.audit_log</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+    </data>
+</odoo>
