@@ -17,7 +17,7 @@ services:
     volumes:
       - 'odoo-web-data:/var/lib/odoo'
       - 'odoo-extra-addons:/mnt/extra-addons'
-      - './extra-addons:/mnt/source-addons:ro'
+      - './odoo/addons:/mnt/source-addons:ro'
     depends_on:
       postgresql:
         condition: service_healthy
