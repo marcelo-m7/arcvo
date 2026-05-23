@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     app_name: str = "Arcvo API"
     app_env: str = "development"
     app_secret_key: str = Field(default="change-me-in-production", min_length=16)
+    app_admin_password: str = Field(default="change-me-admin", min_length=8)
+    app_jwt_expires_minutes: int = 720
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     odoo_url: str = "https://marcelo-m7.com"

@@ -15,6 +15,12 @@ Required Odoo variables:
 
 `ODOO_ALLOW_SELF_SIGNED_SSL=true` is a temporary workaround for the current Traefik default certificate on the remote Odoo endpoint. Disable it after HTTPS is fixed.
 
+Required admin variables:
+
+- `APP_SECRET_KEY`
+- `APP_ADMIN_PASSWORD`
+- `APP_JWT_EXPIRES_MINUTES`
+
 ## Development
 
 ```bash
@@ -46,9 +52,28 @@ Primary endpoints:
 
 - `GET /health`
 - `GET /api/v1/odoo/health`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/archive/dashboard`
+- `GET /api/v1/archive/courses`
+- `POST /api/v1/archive/courses`
+- `POST /api/v1/archive/youtube/preview`
+- `GET /api/v1/archive/youtube/videos`
+- `POST /api/v1/archive/youtube/videos`
+- `PATCH /api/v1/archive/youtube/videos/{id}`
 - `GET /api/v1/odoo/models/{model}/records`
 - `POST /api/v1/odoo/models/{model}/records`
 - `PATCH /api/v1/odoo/models/{model}/records/{id}`
+
+## YouTube Archive
+
+The archive admin maps YouTube content onto Odoo eLearning:
+
+- Course/category: `slide.channel`.
+- Video content: `slide.slide`.
+- YouTube metadata: fetched with public oEmbed, no YouTube API key required.
+- Publishing: controlled by the admin form and written to `is_published` and `website_published`.
+
+Courses are created automatically when a submitted category name does not already exist.
 
 ## Frontend
 

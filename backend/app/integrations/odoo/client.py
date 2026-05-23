@@ -64,6 +64,17 @@ class OdooClient:
             kwargs["fields"] = fields
         return self.execute_kw(model, "search_read", [domain or []], kwargs)
 
+    def search(
+        self,
+        model: str,
+        domain: list[Any] | None = None,
+        limit: int | None = None,
+    ) -> list[int]:
+        kwargs: dict[str, Any] = {}
+        if limit is not None:
+            kwargs["limit"] = limit
+        return self.execute_kw(model, "search", [domain or []], kwargs)
+
     def search_count(self, model: str, domain: list[Any] | None = None) -> int:
         return int(self.execute_kw(model, "search_count", [domain or []], {}))
 

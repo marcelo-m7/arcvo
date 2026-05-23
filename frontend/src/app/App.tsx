@@ -1,7 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Shell } from "@/components/Shell";
+import { ArchivePage } from "@/features/archive/ArchivePage";
+import { LoginPage } from "@/features/auth/LoginPage";
 import { OdooHealthPage } from "@/features/odoo/OdooHealthPage";
 
 const queryClient = new QueryClient({
@@ -18,9 +21,13 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          <Route element={<Shell />}>
-            <Route index element={<Navigate to="/odoo" replace />} />
-            <Route path="/odoo" element={<OdooHealthPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Shell />}>
+              <Route index element={<Navigate to="/acervo" replace />} />
+              <Route path="/acervo" element={<ArchivePage />} />
+              <Route path="/odoo" element={<OdooHealthPage />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
