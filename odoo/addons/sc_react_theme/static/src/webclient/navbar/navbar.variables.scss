@@ -1,0 +1,17 @@
+// Copyright 2026 Shachain
+// License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+//
+// 覆盖: web/static/src/webclient/navbar/navbar.variables.scss
+// 改动: 白色背景 + 深色文字（浅色主题默认）
+
+$o-navbar-background: #ffffff;
+$o-navbar-border-bottom: 1px solid $o-gray-300;  // zinc[2]
+
+$o-navbar-entry-color: $o-gray-800;         // zinc[7]
+$o-navbar-entry-color--hover: $o-gray-900;  // zinc[8]
+$o-navbar-entry-bg--hover: $o-gray-200;     // zinc[1]
+
+$o-navbar-entry-color--active: $o-gray-900;
+$o-navbar-entry-bg--active: $o-gray-200;
+
+$o-navbar-brand-color: $o-gray-900;         // zinc[8]

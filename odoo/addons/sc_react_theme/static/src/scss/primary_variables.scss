@@ -1,0 +1,177 @@
+// Copyright 2026 Shachain
+// License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0)
+
+// =============================================================================
+// sc_theme_19 — Design Tokens from shadcn-theme.ts (SSOT)
+// 参考: packages/odoo-react/src/theme/shadcn-theme.ts
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 1. Gray Scale — shadcn/zinc 色阶
+//    shadcn-theme.ts: colors.zinc[0..8]
+// -----------------------------------------------------------------------------
+$o-gray-100: #fafafa;  // zinc[0]
+$o-gray-200: #f4f4f5;  // zinc[1]
+$o-gray-300: #e4e4e7;  // zinc[2]
+$o-gray-400: #d4d4d8;  // zinc[3]
+$o-gray-500: #a1a1aa;  // zinc[4]
+$o-gray-600: #52525b;  // zinc[5]
+$o-gray-700: #3f3f46;  // zinc[6]
+$o-gray-800: #27272a;  // zinc[7]
+$o-gray-900: #18181b;  // zinc[8]
+
+// -----------------------------------------------------------------------------
+// 2. Brand Colors — zinc primary
+//    shadcn-theme.ts: primaryColor='zinc', ThemeProvider defaultTheme='zinc'
+// -----------------------------------------------------------------------------
+$o-community-color: #18181b;  // zinc[8] — 替换 Odoo 紫色 #71639e
+$o-brand-odoo: #18181b;
+$o-brand-primary: #18181b;
+$o-brand-secondary: #f4f4f5;  // zinc[1]
+$o-brand-lightsecondary: #fafafa;  // zinc[0]
+
+// -----------------------------------------------------------------------------
+// 3. Semantic Colors — shadcn palette
+//    shadcn-theme.ts: colors.green[5], colors.red, colors.amber[5], colors.blue[5]
+// -----------------------------------------------------------------------------
+$o-success: #22c55e;  // green[5]
+$o-info: #3b82f6;     // blue[5]
+$o-warning: #f59e0b;  // amber[5]
+$o-danger: #ef4444;   // red[10]
+
+// 语义文本色（深色变体，用于 text-success/text-danger 等 class）
+$o-theme-text-colors: (
+    "success": #16a34a,  // green[6]
+    "info": #2563eb,     // blue[6]
+    "warning": #d97706,  // amber[6]
+    "danger": #dc2626,   // red[5]
+);
+
+// -----------------------------------------------------------------------------
+// 4. Text Colors
+//    shadcn-theme.ts: zinc 色阶映射
+// -----------------------------------------------------------------------------
+$o-main-text-color: #27272a;    // zinc[7] — 正文
+$o-main-headings-color: #18181b; // zinc[8] — 标题
+$o-main-link-color: #1e40af;    // blue[7] — 链接
+$o-main-favorite-color: #facc15; // yellow[4] — 收藏星
+$o-main-code-color: #e11d48;    // rose[5] — 行内代码
+
+// -----------------------------------------------------------------------------
+// 5. Font Families
+//    shadcn-theme.ts: fontFamily, fontFamilyMonospace, headings.fontFamily
+// -----------------------------------------------------------------------------
+$o-system-fonts: (Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                  "Helvetica Neue", Ubuntu, "Noto Sans", Arial, sans-serif,
+                  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+                  "Noto Color Emoji");
+
+$o-font-family-monospace: ("Space Grotesk", ui-monospace, SFMono-Regular,
+                           "SF Mono", Consolas, "Liberation Mono", Menlo, monospace);
+
+$o-headings-font-family: ("Space Grotesk", Inter, -apple-system,
+                          BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+
+// -----------------------------------------------------------------------------
+// 6. Border Radius
+//    shadcn-theme.ts: radius.xs=6px, radius.sm=8px
+//    注意: primary_variables 在 o-to-rem() 定义之前加载，使用固定 px 值
+// -----------------------------------------------------------------------------
+$o-border-radius: 6px;     // radius.xs — 默认圆角
+$o-border-radius-lg: 8px;  // radius.sm
+$o-border-radius-sm: 4px;  // 推导值
+
+// -----------------------------------------------------------------------------
+// 7. Spacing & Form
+//    sl_theme 验证值，与 shadcn spacing 对齐
+// -----------------------------------------------------------------------------
+$o-input-padding-y: 4px;   // 默认 2px → 4px（更大点击区域）
+$o-input-padding-x: 8px;   // 默认 4px → 8px
+$o-statusbar-height: 36px;  // 默认 33px → 36px
+$o-form-lightsecondary: #e4e4e7; // zinc[2] — 替换 #ccc
+
+// -----------------------------------------------------------------------------
+// 8. Button Overrides
+//    shadcn-theme.ts: Button.extend() + zinc primary
+// -----------------------------------------------------------------------------
+$o-btns-bs-override: (
+    "primary": (
+        background: #18181b,   // zinc[8]
+        border: #18181b,
+        color: #ffffff,
+
+        hover-background: #09090b,  // zinc[9]
+        hover-border: #09090b,
+        hover-color: #ffffff,
+
+        active-background: #27272a, // zinc[7]
+        active-border: #18181b,
+        active-color: #ffffff,
+    ),
+    "secondary": (
+        background: #fafafa,   // zinc[0]
+        border: #e4e4e7,       // zinc[2]
+        color: #27272a,        // zinc[7]
+
+        hover-background: #f4f4f5, // zinc[1]
+        hover-border: #e4e4e7,
+        hover-color: #18181b,
+
+        active-background: #e4e4e7, // zinc[2]
+        active-border: #d4d4d8,
+        active-color: #18181b,
+    ),
+    "light": (
+        background: #ffffff,
+        border: #e4e4e7,       // zinc[2]
+        color: #27272a,
+
+        hover-background: #f4f4f5, // zinc[1]
+        hover-border: #e4e4e7,
+        hover-color: #18181b,
+
+        active-background: #e4e4e7,
+        active-border: #d4d4d8,
+        active-color: #18181b,
+    ),
+);
+
+$o-btns-bs-outline-override: (
+    "secondary": (
+        background: transparent,
+        border: #e4e4e7,       // zinc[2]
+        color: #27272a,
+
+        hover-background: #f4f4f5,
+        hover-border: #e4e4e7,
+        hover-color: #18181b,
+
+        active-background: #e4e4e7,
+        active-border: #d4d4d8,
+        active-color: #18181b,
+    ),
+);
+
+// -----------------------------------------------------------------------------
+// 9. Tooltip — 反色设计（深底白字）
+//    shadcn-theme.ts: Tooltip.extend() → primary-color-filled bg
+//    Odoo 19 用 Bootstrap 变量名（见 bootstrap_overridden.scss）
+// -----------------------------------------------------------------------------
+$tooltip-bg: #18181b;              // zinc[8]
+$tooltip-color: #fafafa;           // zinc[0]
+$tooltip-arrow-color: #18181b;     // deprecated in BS 5.2 but Odoo still uses
+
+// -----------------------------------------------------------------------------
+// 10. Bootstrap Gray Variable Sync
+//     pre_variables.scss 硬编码 $gray-* (不引用 $o-gray-*)，且使用 !default。
+//     在此提前定义以确保 Bootstrap $gray-* 与 zinc 色阶一致。
+// -----------------------------------------------------------------------------
+$gray-100: #fafafa;  // zinc[0]
+$gray-200: #f4f4f5;  // zinc[1]
+$gray-300: #e4e4e7;  // zinc[2]
+$gray-400: #d4d4d8;  // zinc[3]
+$gray-500: #a1a1aa;  // zinc[4]
+$gray-600: #52525b;  // zinc[5]
+$gray-700: #3f3f46;  // zinc[6]
+$gray-800: #27272a;  // zinc[7]
+$gray-900: #18181b;  // zinc[8]
