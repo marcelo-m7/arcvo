@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServiceMap Provider Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400,FILL@0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .neo-brutal-shadow {
+            box-shadow: 4px 4px 0px 0px #000;
+        }
+        .neo-brutal-shadow-sm {
+            box-shadow: 2px 2px 0px 0px #000;
+        }
+        .neo-brutal-border {
+            border: 2px solid #000;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden border-x-2 border-black">
+<!-- Header -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 pt-6 justify-between border-b-4 border-black">
+<div class="flex size-10 items-center justify-center bg-primary neo-brutal-border neo-brutal-shadow-sm">
+<span class="material-symbols-outlined text-black font-bold">person_search</span>
+</div>
+<h1 class="text-slate-900 dark:text-slate-100 text-2xl font-black leading-tight tracking-tighter uppercase">DASHBOARD</h1>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 items-center justify-center bg-slate-200 dark:bg-slate-800 neo-brutal-border neo-brutal-shadow-sm">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">notifications</span>
+</button>
+</div>
+</header>
+<!-- Stats Grid -->
+<section class="grid grid-cols-2 gap-4 p-4">
+<div class="flex flex-col gap-1 p-4 bg-primary neo-brutal-border neo-brutal-shadow">
+<p class="text-black text-xs font-extrabold uppercase tracking-wider">NEW REQUESTS</p>
+<p class="text-black text-4xl font-black">3</p>
+</div>
+<div class="flex flex-col gap-1 p-4 bg-slate-100 dark:bg-slate-800 neo-brutal-border neo-brutal-shadow">
+<p class="text-primary text-xs font-extrabold uppercase tracking-wider">TODAY'S EARNINGS</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-black mt-2">$120.00</p>
+</div>
+<div class="flex flex-col gap-1 p-4 bg-slate-100 dark:bg-slate-800 neo-brutal-border neo-brutal-shadow">
+<p class="text-primary text-xs font-extrabold uppercase tracking-wider">UPCOMING JOBS</p>
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-black mt-2">2</p>
+</div>
+<div class="flex flex-col gap-1 p-4 bg-slate-100 dark:bg-slate-800 neo-brutal-border neo-brutal-shadow">
+<p class="text-primary text-xs font-extrabold uppercase tracking-wider">RATING</p>
+<div class="flex items-center gap-1 mt-2">
+<p class="text-slate-900 dark:text-slate-100 text-2xl font-black">4.9</p>
+<span class="material-symbols-outlined text-primary fill-1 text-xl">star</span>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="px-4 py-2">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-black uppercase tracking-tighter mb-3 border-l-4 border-primary pl-2">QUICK ACTIONS</h3>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center justify-center gap-2 p-3 bg-white dark:bg-slate-900 neo-brutal-border neo-brutal-shadow-sm group active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+<div class="size-10 bg-primary/20 flex items-center justify-center neo-brutal-border group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">list_alt</span>
+</div>
+<p class="text-[10px] font-black uppercase text-center leading-none">View Orders</p>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 p-3 bg-white dark:bg-slate-900 neo-brutal-border neo-brutal-shadow-sm group active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+<div class="size-10 bg-primary/20 flex items-center justify-center neo-brutal-border group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">construction</span>
+</div>
+<p class="text-[10px] font-black uppercase text-center leading-none">Edit Services</p>
+</button>
+<button class="flex flex-col items-center justify-center gap-2 p-3 bg-white dark:bg-slate-900 neo-brutal-border neo-brutal-shadow-sm group active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+<div class="size-10 bg-primary/20 flex items-center justify-center neo-brutal-border group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-black">payments</span>
+</div>
+<p class="text-[10px] font-black uppercase text-center leading-none">Check Earnings</p>
+</button>
+</div>
+</section>
+<!-- Today's Schedule -->
+<section class="p-4 mb-20">
+<h3 class="text-slate-900 dark:text-slate-100 text-lg font-black uppercase tracking-tighter mb-3 border-l-4 border-primary pl-2">TODAY'S SCHEDULE</h3>
+<div class="relative bg-white dark:bg-slate-900 neo-brutal-border neo-brutal-shadow p-4 flex flex-col gap-3">
+<div class="absolute top-0 right-0 bg-primary px-3 py-1 neo-brutal-border -mr-1 -mt-1">
+<p class="text-black text-[10px] font-black uppercase">Next Job</p>
+</div>
+<div class="flex justify-between items-start pt-2">
+<div>
+<h4 class="text-slate-900 dark:text-slate-100 text-xl font-black leading-none">James Wilson</h4>
+<p class="text-primary font-bold text-sm mt-1 uppercase tracking-tight">Leak Detection</p>
+</div>
+<div class="text-right">
+<p class="text-slate-900 dark:text-slate-100 text-lg font-black">2:30 PM</p>
+<p class="text-slate-500 text-[10px] font-bold uppercase">4.2 miles away</p>
+</div>
+</div>
+<div class="h-[2px] bg-black/10 dark:bg-white/10 w-full"></div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary text-black font-black py-2 neo-brutal-border neo-brutal-shadow-sm text-sm uppercase">Get Directions</button>
+<button class="size-10 flex items-center justify-center bg-slate-100 dark:bg-slate-800 neo-brutal-border neo-brutal-shadow-sm">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-100">chat_bubble</span>
+</button>
+</div>
+</div>
+<!-- Empty space for scrolling -->
+<div class="h-8"></div>
+</section>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white dark:bg-slate-900 border-t-4 border-black px-2 pb-6 pt-2 z-50">
+<div class="flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="bg-primary p-1 neo-brutal-border neo-brutal-shadow-sm">
+<span class="material-symbols-outlined text-black font-bold">dashboard</span>
+</div>
+<span class="text-[10px] font-black uppercase text-slate-900 dark:text-slate-100">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">receipt_long</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-slate-400">Orders</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">calendar_month</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-slate-400">Calendar</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">account_balance_wallet</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-slate-400">Earnings</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="p-1">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">person</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-slate-400">Profile</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

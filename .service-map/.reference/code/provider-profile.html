@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "12px",
+                        "xl": "16px",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(151, 103, 228, 1);
+        }
+        .neo-shadow-sm {
+            box-shadow: 2px 2px 0px 0px rgba(151, 103, 228, 1);
+        }
+        .pride-gradient {
+            background: linear-gradient(90deg, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-body text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 flex items-center justify-between border-b-2 border-primary">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-primary bg-background-light dark:bg-background-dark neo-shadow-sm active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-display font-bold text-xl uppercase tracking-wider">Provider Profile</h1>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg border-2 border-primary bg-background-light dark:bg-background-dark neo-shadow-sm">
+<span class="material-symbols-outlined text-primary">share</span>
+</button>
+</nav>
+<main class="max-w-2xl mx-auto p-4 space-y-6">
+<!-- Profile Header Card -->
+<section class="bg-background-light dark:bg-background-dark border-2 border-primary p-6 rounded-xl neo-shadow">
+<div class="flex flex-col items-center sm:flex-row sm:items-start gap-6">
+<div class="relative">
+<div class="w-24 h-24 rounded-full border-4 border-primary overflow-hidden" data-alt="Professional headshot of a service provider" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtXU-HlPesQX6O13qUB6vLpCOpk9M1U8ntoKyC4sM77JirN_vxz-l8rGMQeifsDt_5lHVSS59QKpZyOXbewJmAvIpyP0lRszvqaZIcydOlViNV7KPK2SAN0o1iSR0_SFitpH30s3pGCQxa_PAjcrg1dmaSdsd1uMm4eMBofKP5gE77pjPeY_eETKilC4hcfRaPzM4QxZ68D9hz4QtpfYXJGYELox1KMP2zHTbfbwAENBlD5iPKNFMEKUSmj2aWdGyLqf75TNdnxig'); background-size: cover; background-position: center;"></div>
+<div class="absolute -bottom-1 -right-1 bg-primary text-white p-1 rounded-full border-2 border-background-dark">
+<span class="material-symbols-outlined text-xs block">verified</span>
+</div>
+</div>
+<div class="flex-1 text-center sm:text-left">
+<div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+<h2 class="font-display font-bold text-3xl">Marcus Thorne</h2>
+<span class="bg-primary/20 text-primary text-xs font-bold px-2 py-0.5 border border-primary rounded uppercase">Pro</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 font-medium mb-4">Master Electrician &amp; Smart Home Specialist</p>
+<div class="flex justify-center sm:justify-start gap-4">
+<div class="flex flex-col items-center sm:items-start">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 fill-1">star</span>
+<span class="font-display font-bold text-lg">4.9</span>
+</div>
+<span class="text-[10px] uppercase font-bold text-slate-400 tracking-tighter">Rating</span>
+</div>
+<div class="w-px h-10 bg-primary/30"></div>
+<div class="flex flex-col items-center sm:items-start">
+<span class="font-display font-bold text-lg">248</span>
+<span class="text-[10px] uppercase font-bold text-slate-400 tracking-tighter">Reviews</span>
+</div>
+<div class="w-px h-10 bg-primary/30"></div>
+<div class="flex flex-col items-center sm:items-start">
+<span class="font-display font-bold text-lg">8yr</span>
+<span class="text-[10px] uppercase font-bold text-slate-400 tracking-tighter">Exp.</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- About Section -->
+<section class="bg-background-light dark:bg-background-dark border-2 border-primary p-6 rounded-xl neo-shadow">
+<h3 class="font-display font-bold text-xl mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person</span>
+                ABOUT
+            </h3>
+<p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                Expert in complex electrical systems and residential smart home automation. I specialize in making your home efficient, safe, and modern. Licensed, insured, and committed to high-quality craftsmanship since 2016.
+            </p>
+</section>
+<!-- Services Section -->
+<section class="bg-background-light dark:bg-background-dark border-2 border-primary p-6 rounded-xl neo-shadow">
+<h3 class="font-display font-bold text-xl mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bolt</span>
+                SERVICES
+            </h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 border-2 border-primary/20 rounded-lg hover:border-primary transition-colors cursor-pointer group bg-background-light dark:bg-slate-800/50">
+<div class="flex flex-col">
+<span class="font-bold">Smart Thermostat Install</span>
+<span class="text-xs text-slate-400 font-medium">Approx. 1-2 hours</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-display font-bold text-primary">$85</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 border-2 border-primary/20 rounded-lg hover:border-primary transition-colors cursor-pointer group bg-background-light dark:bg-slate-800/50">
+<div class="flex flex-col">
+<span class="font-bold">Full Home Electrical Audit</span>
+<span class="text-xs text-slate-400 font-medium">Safety &amp; Efficiency Check</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-display font-bold text-primary">$150</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 border-2 border-primary/20 rounded-lg hover:border-primary transition-colors cursor-pointer group bg-background-light dark:bg-slate-800/50">
+<div class="flex flex-col">
+<span class="font-bold">EV Charger Installation</span>
+<span class="text-xs text-slate-400 font-medium">Level 2 Chargers</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-display font-bold text-primary">$450+</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Portfolio Gallery -->
+<section class="bg-background-light dark:bg-background-dark border-2 border-primary p-6 rounded-xl neo-shadow">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-display font-bold text-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">photo_library</span>
+                    PORTFOLIO
+                </h3>
+<button class="text-xs font-bold text-primary uppercase border-b-2 border-primary">View All</button>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-square bg-slate-200 dark:bg-slate-800 rounded-lg border-2 border-primary/40 overflow-hidden" data-alt="Modern smart home lighting setup" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC56EXNwUYx9Z0KDhMqmyKD5FblVvntKCuto_XujL9T6uNOAhkKWbhEDc5FanzVPSnuIbZeox8ecFS-ZPORi36BuW7WFn_Q_EPsyjnKtQEpDqe9lFY1wFKJeS6vzOnfuSop5BBxHWeUAYRZCOIcSCc9b2U5-Td_uch6miNztpRGDeIWg0ZRXXe0LFcDKoDyA5VxEoJTxJ5iZRAnrq9G_M4yJgI9gpjIVbqas0VM3HF54B04ZMOHMnfp7CuYPjUQtDAroVqox1OUvs0'); background-size: cover;"></div>
+<div class="aspect-square bg-slate-200 dark:bg-slate-800 rounded-lg border-2 border-primary/40 overflow-hidden" data-alt="Electrician working on electrical panel" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVDcvgoBNBD3gymvE2Ku_ycgjNmi6I3QZZNkU4Pj6PGYuCYNIOn-DHYL4yyZoWH4N44RvDjutOJAc6JG_GoPSlzVrbS_wMgXrFyj_RlZMS8srbf8-L-F7fql6H_8MsLkKH4jsxCNicG0lZ3ZXbQPtmg0EGnsyPdyuWpm-PbzJgF0g8W7Egtm7FU-yNiPwieQj1FzjFgjAKCTmHqpi9diPOOAgDbH7c9jR1OprqPcIGnDq7c37zqbWpU_26ZT24Q4zqKUj70f_ZQ24'); background-size: cover;"></div>
+<div class="aspect-square bg-slate-200 dark:bg-slate-800 rounded-lg border-2 border-primary/40 overflow-hidden" data-alt="Close up of smart home thermostat installation" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCPg2LxVJ7FJ6ZMnbhlr72JIRGxBmveJVmSfhbcF59tOP5R6ElXwpMW4cxcx-eJe3LsJZX3UQcW-RZkTXB3LWlrw2F11HOl0Nc9MwVPa0_Ix7Egux0tHl7nG1eH9kAP6FngCW-39H7ERTZ_XoMXWIKCHmMPXnwqnnlk-z05z0BPREv0_2d9fkUYLtRB1wFNfFo0kszv0mlslL_E_EIdm10bXpHPgM3kO5kxm4LDbrJqCiy0dn9jY_eUEZeGWLYxP-px__H6KTpX1hE'); background-size: cover;"></div>
+<div class="aspect-square bg-slate-200 dark:bg-slate-800 rounded-lg border-2 border-primary/40 overflow-hidden flex items-center justify-center bg-primary/10">
+<div class="text-center">
+<span class="font-display font-bold text-xl text-primary">+12</span>
+<p class="text-[10px] font-bold text-primary uppercase">Photos</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Sticky CTA -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg border-t-2 border-primary z-50">
+<div class="max-w-2xl mx-auto">
+<button class="w-full relative group neo-shadow-sm active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
+<div class="absolute inset-0 pride-gradient rounded-lg opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative flex items-center justify-center gap-2 h-14 bg-transparent border-2 border-slate-900 text-white font-display font-black text-xl tracking-widest uppercase">
+<span>Request Service</span>
+<span class="material-symbols-outlined font-bold">bolt</span>
+</div>
+</button>
+</div>
+</div>
+</body></html>

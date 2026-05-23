@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Top Navigation -->
+<div class="flex items-center p-4 pb-2 justify-end">
+<div class="flex w-12 items-center justify-end">
+<button class="text-primary text-base font-bold leading-normal tracking-[0.015em] shrink-0 uppercase">SKIP</button>
+</div>
+</div>
+<!-- Service Grid Illustration -->
+<div class="grid grid-cols-2 gap-3 p-4">
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-4 aspect-square relative overflow-hidden group" data-alt="Professional plumber working on kitchen pipes" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC8pujyBt3eiM5bNIumfeAsNMs3WaR31v97GD4ZfiLnEiCXub0YOcXhVYlIXKF0RIpAzCokl0PWQC_2gEvJ2Vrh3GIQ9Y7Rx1VAQP5xy6cqMtDwh_HfnQgxfsbBGHFP7yAgoicK6mammCqfz47Mm4-xr7XsUzrVaYYB6n9XLeqiu7ZP38bUFoXwHoQtMnYamNFgIc093U4qNGJ0hc0tXzSEJ6ZsFMRtTQa2dIXXChzzKcqHpDVymU8Yb_75NCTOKbxGBdffi8ohmqc");'>
+<p class="text-slate-100 text-base font-bold leading-tight w-full line-clamp-1">Plumbing</p>
+</div>
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-4 aspect-square relative overflow-hidden group" data-alt="Gardener trimming backyard green bushes" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC6mraMw4H4KwmKEMaBWIdxlfrCd-JUH3BO8x3noMsu-BmFC-g4aZr2TULirnWvRorvWcg7cNpNQ65gC_7e9it3g2ak6XqSERIhqjVreaVe-0gwyYAQ-_uJ2dpJ5jftBVgeG31oNm40OpzthPpN201iGM7LAGdORYK64mP2C8PSOYZ3Bu-wG5LP_1jd7U81yJIvBPvhhb_aepm51qrlJBCsowUvbyPO-jmFxb8hbMKcsXzNpDB4DH14tvIHCCGGGLYYEgH-XlVyQw4");'>
+<p class="text-slate-100 text-base font-bold leading-tight w-full line-clamp-1">Gardening</p>
+</div>
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-4 aspect-square relative overflow-hidden group" data-alt="Cleaner dusting a modern living room" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDUy6pjA4cEN3nTd5BpM7OpqZXjUYI_4DobV4BjeWC7Jg1Ucv_D1t1TKP0i6J7cmAlJncLvfk1FfEjsBfPohtilf6gqSAyYiOgUnI7TvuzOhkKYRld7LxVGkilIZILVoXEqSsSWRJe--NUzW_TMqiAQyL45I6o0D9CUTxXg_PZD189-FgPB_RXAJUn8P5uXgUhI7tsH1Y9zzBigUSBb9AefEzU3es7PRwDtyOu8N4j-UCVM1X_oy95iaLWBa_b7JbUsepyzzp28J_Y");'>
+<p class="text-slate-100 text-base font-bold leading-tight w-full line-clamp-1">Cleaning</p>
+</div>
+<div class="bg-cover bg-center flex flex-col gap-3 rounded-lg justify-end p-4 aspect-square relative overflow-hidden group" data-alt="Electrician fixing a circuit breaker panel" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7cFEAYn7p5RYFEkCRqN7J355-QJACvKWU9lI1ydxYv6gmv6BAFOk_1y0c8pHbMz8r1cMIakmY3MkTpJK69U-oohWx0t2E0cTyZUFQeYs7oukkaIXN3VOTXdki0iJnCJbW02315sJ0Wlk8-noP4Qs_thOQaG1wyuQ0jPacLIhZU4LaNE9sMf_u3XcbNs6JuGP6N9KiWu4ebRnQ7NqJi5ZRkzuOYz87we_HrasxRvQsdSFsrWYUGic_myftvu47mnYDkYHNifu3enc");'>
+<p class="text-slate-100 text-base font-bold leading-tight w-full line-clamp-1">Electrical</p>
+</div>
+</div>
+<!-- Content Area -->
+<div class="flex flex-col items-center px-6 pt-6 pb-4">
+<h1 class="text-slate-900 dark:text-slate-100 tracking-tight text-[32px] font-bold leading-tight text-center pb-3">
+                SUPPORT LOCAL PROS
+            </h1>
+<p class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal text-center max-w-sm">
+                Connect with microentrepreneurs and small service businesses in your community.
+            </p>
+</div>
+<!-- Progress Indicators -->
+<div class="flex w-full flex-row items-center justify-center gap-3 py-6">
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-8 rounded-full bg-primary"></div>
+</div>
+<!-- Bottom Navigation -->
+<div class="mt-auto p-4 flex flex-col gap-3 pb-8">
+<button class="w-full bg-primary py-4 rounded-xl text-white text-lg font-bold tracking-wide shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+                GET STARTED
+            </button>
+<button class="w-full py-3 rounded-xl text-slate-500 dark:text-slate-400 text-base font-semibold uppercase tracking-widest active:bg-primary/5 transition-colors">
+                BACK
+            </button>
+</div>
+</div>
+</body></html>

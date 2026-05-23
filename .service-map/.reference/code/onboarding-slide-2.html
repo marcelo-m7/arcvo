@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding - Step 2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center p-6 pb-2 justify-end">
+<button class="text-primary text-base font-bold leading-normal tracking-[0.015em] hover:opacity-80 transition-opacity uppercase">
+                Skip
+            </button>
+</div>
+<!-- Illustration/Hero Area -->
+<div class="@container flex-1 flex flex-col justify-center">
+<div class="px-6 py-4">
+<div class="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden rounded-xl min-h-[320px] shadow-2xl shadow-primary/10" data-alt="Modern mobile app interface showing scheduling and service booking options" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB3TLPqlRr9_M9Gmx9xAxn6DUvG_qj3YXKZN1zdCvw-tygakn3b_xY6axxKie0eoooDK4gW2Pyt8Pi9cH5RVV12HeYIovKrIATWm78bUFjImX6PLCE81fqRuND7YlZD5VJscBkFmqelgXS-o_-cHgMkUd-C23wIkkjO0HqRh7mH-ozbszMtOk2ieItJTfkIIGDwLryLhSBpZ9AKE9CNOFvd8Ug_I4ABB-YLq67ySPtxbNzAkTQIVJM8-8gNqZgAMLaKl_zUw-ynDfQ");'>
+</div>
+</div>
+<!-- Content -->
+<div class="px-6 flex flex-col items-center">
+<!-- Progress Indicator -->
+<div class="flex w-full flex-row items-center justify-center gap-3 py-6">
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-8 rounded-full bg-primary"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+</div>
+<h1 class="text-slate-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight text-center pb-3 uppercase">
+                    BOOK QUICKLY
+                </h1>
+<p class="text-slate-600 dark:text-slate-300 text-base font-normal leading-relaxed pb-8 px-4 text-center">
+                    Request services, compare providers and schedule easily with just a few taps.
+                </p>
+</div>
+</div>
+<!-- Footer Navigation -->
+<div class="p-6 pb-10 flex flex-row items-center gap-4">
+<button class="flex-1 h-14 rounded-xl border-2 border-primary/20 bg-transparent text-primary font-bold text-base hover:bg-primary/5 transition-colors uppercase flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+                Back
+            </button>
+<button class="flex-[2] h-14 rounded-xl bg-primary text-white font-bold text-base hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 uppercase flex items-center justify-center gap-2">
+                Next Step
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+</button>
+</div>
+</div>
+</body></html>

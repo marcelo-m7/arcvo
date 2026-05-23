@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0rem",
+                        "lg": "0rem",
+                        "xl": "0rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .neo-brutalist-border {
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px 0px #000;
+        }
+        .dark .neo-brutalist-border {
+            border: 3px solid #9767e4;
+            box-shadow: 4px 4px 0px 0px #9767e4;
+        }
+        .neo-brutalist-button {
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px 0px #000;
+            transition: all 0.1s ease;
+        }
+        .dark .neo-brutalist-button {
+            border: 2px solid #9767e4;
+            box-shadow: 3px 3px 0px 0px #9767e4;
+        }
+        .neo-brutalist-button:active {
+            transform: translate(1px, 1px);
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<header class="flex items-center justify-between p-4 bg-background-light dark:bg-background-dark border-b-4 border-black dark:border-primary">
+<button class="w-10 h-10 flex items-center justify-center neo-brutalist-button bg-white dark:bg-slate-800">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-xl font-800 uppercase tracking-tighter italic">Order Tracking</h1>
+<button class="w-10 h-10 flex items-center justify-center neo-brutalist-button bg-white dark:bg-slate-800 text-primary">
+<span class="material-symbols-outlined">info</span>
+</button>
+</header>
+<main class="flex-1 overflow-y-auto p-4 space-y-6">
+<section class="neo-brutalist-border bg-white dark:bg-slate-900 p-4">
+<div class="flex justify-between items-start mb-4">
+<div>
+<span class="inline-block px-3 py-1 bg-primary text-white font-bold text-xs uppercase mb-2">In Progress</span>
+<h2 class="text-2xl font-800 leading-tight">Provider is on the way</h2>
+<p class="text-slate-600 dark:text-slate-400 font-medium">ETA: 12 minutes</p>
+</div>
+<div class="w-16 h-16 neo-brutalist-border bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up of a generic map illustration" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7jCcSSdIQsZOts9Qhbztc7XxmJfr97tsus5AF8DhdVOfDe8uvxj4tGRLztPEysm7wbKC0iIMTBh4DwwE8Jya5zX2NR-x7fnZWB9yUiW7fCHqsxr5Gvp_kCr4MxFx25DpOOlWkshuA5XKzU3ZhXf5gpDCKzwirr14zZxCede5Hdf6AFYymXg3eXD43WQ9F-IyODqB3QmR5UcIkSp1IFFb4HHR73a1GvgsCl5vNE1QObu9RWKfSQ_Aq9P_kGH5RDPhJchyc82PnTP8"/>
+</div>
+</div>
+<div class="h-48 w-full neo-brutalist-border overflow-hidden relative" data-location="New York City" style="">
+<img class="w-full h-full object-cover" data-alt="A map showing the professional's location moving towards destination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsMbSy5ZliabzzlhH8UnuvSTPh5kd6pQQfdp_Td79hsU3CQBov5jlk47nPBOM65mq8NyxxQo2uvjX_X8y4Ui7ZGqbvmUDEE3A_qGeYODBAU5mGB2A6jASMHi1Q9ojE8DLvW4uB0F4p_m-DpVndB2h6B8VBgAX1XgG1Y-bd9aPPImSI1-GzADO0PbmJMm4Jj6KeTKtVP-HTfK48udahRT1NUhmTE7l2q9KeSnTjazQcTFfYOdrZkJ0-xKbH94RFyEQm_BnSyh6gV24"/>
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+<div class="absolute bottom-4 right-4">
+<button class="neo-brutalist-button bg-white dark:bg-slate-800 px-4 py-2 font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">fullscreen</span>
+                        VIEW MAP
+                    </button>
+</div>
+</div>
+</section>
+<section class="neo-brutalist-border bg-white dark:bg-slate-900 p-4">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-16 h-16 neo-brutalist-border overflow-hidden bg-slate-300">
+<img class="w-full h-full object-cover" data-alt="Portrait of Marco Ross, a professional plumber" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzp35mRvmRhv-vKt9oW99wUM35m300fqZmi0CnLHRstEDwrAOAwHOTh1dc1F9pkfHiD1OnX17GEhqFzDUFJlP77Vcxhg0YdLKWBIZQZ8WvsprSKhWNmqrS-GIrC0ytn_fEHIaH1rlqudNZ1y1m00DOICrUpvg6fPm8ua-9wq_NPnCjGHO4_sGm0neAsNJ-ITEw_mmK5wLhm3OT5hp9cg1GuvLdJTuoYLaCp_1o8zQF3mEwP-PEgO8VJCXrraWRsXCKVtdIWwRpOBk"/>
+</div>
+<div class="flex-1">
+<h3 class="text-xl font-800">Marco Ross</h3>
+<p class="text-primary font-bold text-sm uppercase">Master Plumber</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm fill-1">star</span>
+<span class="font-bold text-sm">4.9</span>
+<span class="text-slate-500 text-xs font-medium">(120 reviews)</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="p-3 bg-slate-100 dark:bg-slate-800 border-2 border-black dark:border-primary/50">
+<p class="text-[10px] uppercase font-bold text-slate-500">Scheduled Time</p>
+<p class="font-800 text-sm">Today, 2:30 PM</p>
+</div>
+<div class="p-3 bg-slate-100 dark:bg-slate-800 border-2 border-black dark:border-primary/50">
+<p class="text-[10px] uppercase font-bold text-slate-500">Estimated Price</p>
+<p class="font-800 text-sm">$85 - $120</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 neo-brutalist-button bg-primary text-white py-3 font-800 flex items-center justify-center gap-2 uppercase tracking-tight">
+<span class="material-symbols-outlined">chat_bubble</span>
+                    Chat
+                </button>
+<button class="w-14 neo-brutalist-button bg-white dark:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined">call</span>
+</button>
+</div>
+</section>
+<section class="space-y-3">
+<h4 class="text-sm font-800 uppercase tracking-widest text-slate-500">Service Details</h4>
+<div class="neo-brutalist-border bg-white dark:bg-slate-900 p-4 space-y-4">
+<div class="flex justify-between items-center border-b-2 border-slate-100 dark:border-slate-800 pb-3">
+<span class="font-bold">Leak Detection</span>
+<span class="font-medium text-slate-500">ID: #SR-8921</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<p class="text-sm font-medium">888 Brutalist Ave, Creative District, NY 10012</p>
+</div>
+</div>
+</section>
+</main>
+<nav class="bg-white dark:bg-slate-900 border-t-4 border-black dark:border-primary px-2 py-3">
+<div class="flex justify-around items-center">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">home</span>
+<span class="text-[10px] font-800 uppercase tracking-tighter text-slate-400 group-hover:text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1" href="#">
+<div class="bg-primary p-1 neo-brutalist-button -mt-8 mb-1">
+<span class="material-symbols-outlined text-white">receipt_long</span>
+</div>
+<span class="text-[10px] font-800 uppercase tracking-tighter text-primary">Orders</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">explore</span>
+<span class="text-[10px] font-800 uppercase tracking-tighter text-slate-400 group-hover:text-primary">Map</span>
+</a>
+<a class="flex flex-col items-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">person</span>
+<span class="text-[10px] font-800 uppercase tracking-tighter text-slate-400 group-hover:text-primary">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>

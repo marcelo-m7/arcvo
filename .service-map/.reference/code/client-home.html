@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .neo-shadow {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .neo-shadow-sm {
+            box-shadow: 2px 2px 0px 0px #000000;
+        }
+        .pride-gradient {
+            background: linear-gradient(90deg, #ff0000 0%, #ff8700 16%, #ffd300 33%, #deff0a 50%, #0aff99 67%, #0aefff 83%, #147df5 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-32">
+<!-- Top Header & Search -->
+<header class="p-4 pt-6 sticky top-0 bg-background-light dark:bg-background-dark z-20">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 bg-primary border-2 border-black rounded-lg neo-shadow-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-black font-bold">home_repair_service</span>
+</div>
+<h1 class="text-2xl font-extrabold tracking-tighter uppercase italic">ServiceMap</h1>
+</div>
+<button class="w-10 h-10 border-2 border-black rounded-full bg-white dark:bg-slate-800 flex items-center justify-center neo-shadow-sm">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400">search</span>
+</div>
+<input class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-800 border-2 border-black rounded-xl neo-shadow focus:ring-0 focus:border-primary transition-all font-bold placeholder:text-slate-500 text-lg" placeholder="What service do you need?" type="text"/>
+</div>
+</header>
+<!-- Categories Grid -->
+<section class="px-4 mt-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-extrabold uppercase tracking-tight">Categories</h2>
+<a class="text-sm font-bold text-primary underline" href="#">See All</a>
+</div>
+<div class="grid grid-cols-4 gap-3">
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-primary/20 border-2 border-black rounded-2xl flex items-center justify-center neo-shadow-sm group active:translate-y-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-primary text-3xl">cleaning_services</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-center">Cleaning</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-orange-400/20 border-2 border-black rounded-2xl flex items-center justify-center neo-shadow-sm group active:translate-y-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-orange-500 text-3xl">bolt</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-center">Electrician</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-blue-400/20 border-2 border-black rounded-2xl flex items-center justify-center neo-shadow-sm group active:translate-y-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-blue-500 text-3xl">plumbing</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-center">Plumbing</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-pink-400/20 border-2 border-black rounded-2xl flex items-center justify-center neo-shadow-sm group active:translate-y-1 active:shadow-none transition-all">
+<span class="material-symbols-outlined text-pink-500 text-3xl">content_cut</span>
+</div>
+<span class="text-[10px] font-bold uppercase text-center">Beauty</span>
+</div>
+</div>
+</section>
+<!-- Nearby Services Section -->
+<section class="mt-10">
+<div class="px-4 flex items-center justify-between mb-4">
+<h2 class="text-xl font-extrabold uppercase tracking-tight">Nearby Services</h2>
+</div>
+<div class="flex overflow-x-auto gap-4 px-4 pb-6 no-scrollbar">
+<!-- Service Card 1 -->
+<div class="min-w-[280px] bg-white dark:bg-slate-800 border-2 border-black rounded-2xl neo-shadow overflow-hidden flex flex-col">
+<div class="relative h-40">
+<img class="w-full h-full object-cover" data-alt="Professional cleaning person in blue uniform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjyTh97xYbiqzRR2AlEBmUpJm16j6ENSW8Va_4nDmSvx_nfVm4WxHK8nsK5q45f58QcsJ_LkAsrJA-VidSXB16nuSwZHwBAZGPn0po9viMyiYKHwevhbmspAcTb9i1uz6KN3FZL0dHbLIHuc-bkPY_2fKCdD8o736C40MPvno_qqTNqpcYbtLLtprfcReXEtuj-4FUSBKhacHRWGSq_m8n9KqE-rJXI_EvHWsbbsisDhlccv11xG6guhJhEmkr83X2dJxVDcy_cE4"/>
+<div class="absolute top-3 right-3 bg-white dark:bg-slate-900 border-2 border-black px-2 py-1 rounded-lg flex items-center gap-1 neo-shadow-sm">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-lg leading-tight">Pro Clean Experts</h3>
+<span class="text-xs font-bold px-2 py-1 bg-primary/20 text-primary border border-primary rounded-md uppercase">Cleaning</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-sm mb-3">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>0.8 miles away</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-black text-xl">$25<small class="text-xs font-normal">/hr</small></span>
+<button class="bg-primary text-white font-bold px-4 py-2 border-2 border-black rounded-lg neo-shadow-sm active:translate-y-0.5 active:shadow-none transition-all">
+                            Book Now
+                        </button>
+</div>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="min-w-[280px] bg-white dark:bg-slate-800 border-2 border-black rounded-2xl neo-shadow overflow-hidden flex flex-col">
+<div class="relative h-40">
+<img class="w-full h-full object-cover" data-alt="Electrician working on a circuit board" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnlrrsLccu65Tq5aSO_NtBUHSQO1cM43hgwh5eMC3EGfk9bT4V8439x01D1iPKGP2QnI-3BiTkFnfA5Avbo81lot_zYvN-A6ORJHz0kFyiAtq-a_GuwM5GL_pz78Vu58vg94I0pRocmwkTcg65Lo8j_beWs5k7-lWyH7VonEDcFo3NkT45JQIYzmqm1sBjvgzmdtg3GU510zQLAg9dU9RggejXlBrKkLLRQf8KJ4Rfw0ekeCriyDdILTuM6L730Ci7FsU7wnicD64"/>
+<div class="absolute top-3 right-3 bg-white dark:bg-slate-900 border-2 border-black px-2 py-1 rounded-lg flex items-center gap-1 neo-shadow-sm">
+<span class="material-symbols-outlined text-yellow-400 text-sm fill-current">star</span>
+<span class="text-xs font-bold">4.7</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-lg leading-tight">Sparky Solutions</h3>
+<span class="text-xs font-bold px-2 py-1 bg-orange-400/20 text-orange-600 border border-orange-400 rounded-md uppercase">Electrician</span>
+</div>
+<div class="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-sm mb-3">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>1.2 miles away</span>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-black text-xl">$45<small class="text-xs font-normal">/hr</small></span>
+<button class="bg-primary text-white font-bold px-4 py-2 border-2 border-black rounded-lg neo-shadow-sm active:translate-y-0.5 active:shadow-none transition-all">
+                            Book Now
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Top Rated Freelancers -->
+<section class="px-4 mt-6">
+<h2 class="text-xl font-extrabold uppercase tracking-tight mb-4">Top Rated Pros</h2>
+<div class="space-y-4">
+<div class="flex items-center gap-4 p-3 bg-white dark:bg-slate-800 border-2 border-black rounded-xl neo-shadow-sm">
+<div class="w-16 h-16 rounded-lg border-2 border-black overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional plumber smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFHn5Nay7_WqG7S14fuQGHeB1FxN5mUaJlHBqNK3F4-yR2c9wOXlGsNgSBJOeTizSdxywO9L3riK0nXetRv0o8BF8DroAzZRA8DyckppZvpGqyGKwtfFUlj8NI9bgYonCKkKy5IKfuaCz0NTvBc78n79o5LtRI8xYuAeKWBpyenTFkEoYzF-qNrAeHehlQ9be_KQnsvYBLyU91UJiXlhGI4svARtJXrStvpgwqNTwSvGw8VpHhbvBjmxsPYf-bLzp2CcfafLpaaAQ"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="font-bold">Marco Ross</h4>
+<div class="flex items-center gap-0.5">
+<span class="material-symbols-outlined text-yellow-400 text-xs fill-current">star</span>
+<span class="text-xs font-black">5.0</span>
+</div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Master Plumber</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-green-600">Available Today</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span class="text-xs font-bold">85 Jobs</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 bg-white dark:bg-slate-800 border-2 border-black rounded-xl neo-shadow-sm">
+<div class="w-16 h-16 rounded-lg border-2 border-black overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Professional beautician profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8ivo1GI0JHKx_Wy6XseHbzGd-fEMa6Sy6mWHE20Cl2DcexQ4Py824_RWI-6XJyIMt_9FTKD1C79K0KSEMqSYikvCMyReRcH4xTRquzVav5ebmRndiNcujtyZqf1zxNpQL1OI3hOaMYXol4SyQtnhJIs1Sovfytyh88dbW-uxlssQFDtuOIYkBYKnFaQTb1m6FF9UVyCjohMEivHR6FncRtGwOJNi0bxfd5LHgw6ha6tIs7YNIS0GOZMrWsvs1k1LOdaVVvHEMMXs"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<h4 class="font-bold">Sarah Jenkins</h4>
+<div class="flex items-center gap-0.5">
+<span class="material-symbols-outlined text-yellow-400 text-xs fill-current">star</span>
+<span class="text-xs font-black">4.8</span>
+</div>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase mb-1">Skin Specialist</p>
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-slate-400">Available Mon</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span class="text-xs font-bold">120 Jobs</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Map View Sticky Toggle -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-30">
+<button class="pride-gradient text-black font-black uppercase text-sm py-3 px-8 rounded-full border-2 border-black flex items-center gap-2 neo-shadow transition-transform active:scale-95">
+<span class="material-symbols-outlined font-black">map</span>
+            View on Map
+        </button>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t-4 border-black px-6 pb-6 pt-3 flex justify-between items-center z-40">
+<a class="flex flex-col items-center gap-1 group" href="#">
+<div class="w-12 h-12 bg-primary border-2 border-black rounded-xl neo-shadow-sm flex items-center justify-center -translate-y-2">
+<span class="material-symbols-outlined text-white font-bold">home</span>
+</div>
+<span class="text-[10px] font-black uppercase tracking-widest text-primary">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-400 dark:text-slate-500" href="#">
+<div class="w-10 h-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">explore</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Map</span>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-400 dark:text-slate-500" href="#">
+<div class="w-10 h-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">receipt_long</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Orders</span>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-400 dark:text-slate-500" href="#">
+<div class="w-10 h-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">favorite</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Saved</span>
+</a>
+<a class="flex flex-col items-center gap-1 group text-slate-400 dark:text-slate-500" href="#">
+<div class="w-10 h-10 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">person</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest">Profile</span>
+</a>
+</nav>
+</body></html>

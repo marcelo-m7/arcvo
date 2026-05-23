@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ServiceMap - Request Service</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9767e4",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171220",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .neo-brutalism-border {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+        .dark .neo-brutalism-border {
+            border: 3px solid #ffffff;
+            box-shadow: 4px 4px 0px 0px #9767e4;
+        }
+        .pride-sparkle-gradient {
+            background: linear-gradient(45deg, #9767e4, #ff00c1, #00fff0, #ff0050);
+            background-size: 200% 200%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-md mx-auto min-h-screen flex flex-col pb-10">
+<!-- Top App Bar -->
+<header class="flex items-center p-6 justify-between">
+<button class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/20 hover:bg-primary/30 text-primary neo-brutalism-border transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="text-2xl font-800 uppercase tracking-tighter text-slate-900 dark:text-white">Request Service</h1>
+<div class="size-12"></div> <!-- Spacer for symmetry -->
+</header>
+<!-- Form Content -->
+<main class="flex-1 px-6 space-y-8">
+<!-- Service Type -->
+<section class="space-y-2">
+<label class="block text-sm font-bold uppercase tracking-wider text-primary">Service Type</label>
+<div class="relative">
+<select class="w-full h-14 bg-white dark:bg-slate-800 neo-brutalism-border rounded-none appearance-none px-4 font-semibold text-slate-900 dark:text-white focus:ring-0 focus:outline-none">
+<option value="">Select a service category</option>
+<option value="plumbing">Plumbing &amp; Leaks</option>
+<option value="electrical">Electrical Repairs</option>
+<option value="cleaning">Professional Cleaning</option>
+<option value="carpentry">Carpentry &amp; Woodwork</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</section>
+<!-- Description -->
+<section class="space-y-2">
+<label class="block text-sm font-bold uppercase tracking-wider text-primary">Description of the problem</label>
+<textarea class="w-full bg-white dark:bg-slate-800 neo-brutalism-border rounded-none p-4 font-medium text-slate-900 dark:text-white min-h-[120px] focus:ring-0 focus:outline-none placeholder:text-slate-400" placeholder="Describe what needs to be fixed in detail..."></textarea>
+</section>
+<!-- Visuals / Upload -->
+<section class="space-y-2">
+<label class="block text-sm font-bold uppercase tracking-wider text-primary">Upload Photos</label>
+<div class="w-full aspect-video bg-primary/5 dark:bg-primary/10 border-2 border-dashed border-primary/50 flex flex-col items-center justify-center space-y-2 cursor-pointer hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-4xl text-primary">add_a_photo</span>
+<p class="text-xs font-bold uppercase">Tap to upload images</p>
+</div>
+</section>
+<!-- Address (Auto-filled) -->
+<section class="space-y-2">
+<label class="block text-sm font-bold uppercase tracking-wider text-primary">Service Address</label>
+<div class="flex items-center gap-3 p-4 bg-white dark:bg-slate-800 neo-brutalism-border">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<input class="bg-transparent border-none p-0 flex-1 font-semibold text-slate-900 dark:text-white focus:ring-0" readonly="" type="text" value="242 Innovation Way, Tech District"/>
+</div>
+</section>
+<!-- Date & Time -->
+<section class="space-y-2">
+<label class="block text-sm font-bold uppercase tracking-wider text-primary">Preferred Date &amp; Time</label>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 neo-brutalism-border">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+<input class="bg-transparent border-none p-0 text-sm font-bold w-full focus:ring-0" type="date"/>
+</div>
+<div class="flex items-center gap-2 p-3 bg-white dark:bg-slate-800 neo-brutalism-border">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<input class="bg-transparent border-none p-0 text-sm font-bold w-full focus:ring-0" type="time"/>
+</div>
+</div>
+</section>
+<!-- Map Preview (Secondary visual) -->
+<div class="w-full h-32 rounded-none overflow-hidden neo-brutalism-border">
+<img alt="Map view of the current location" class="w-full h-full object-cover grayscale contrast-125 brightness-50" data-alt="Abstract dark city map with neon routes" data-location="San Francisco" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzp8rS1YHnNzmiBy8G5sMAS8Oit2a1RZ3FphRW7Y3y3cIiCYn6ck6VYFbPfGKRRNUNuVJnp_vXC40JlYRpustatlEcP-ImbwQOcq41ljyp0hbsTVLoMBfX9BjNdrGSbbiP7KG4jL0RaXDZzoH4qqsOr3esNgNpvmHDq8mYZYYHImmY-w8nZagd3MdjlnZap3k47CzK5hAhzJeQDIvpmY0EXylrk1gbyNf-exEmDJc-76Fjx3UEgxYvkbo8DACb-fml4QtajXJJR2k"/>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-16 pride-sparkle-gradient neo-brutalism-border flex items-center justify-center gap-3 text-white font-black text-xl uppercase tracking-widest active:translate-x-1 active:translate-y-1 active:shadow-none transition-all">
+                Send Request
+                <span class="material-symbols-outlined">send</span>
+</button>
+</main>
+<!-- Footer Navigation Placeholder -->
+<footer class="mt-8 px-6 text-center">
+<p class="text-[10px] font-bold uppercase text-slate-500 tracking-widest">
+                ServiceMap Protocol v2.4.0 // Secure Connection Active
+            </p>
+</footer>
+</div>
+</body></html>
