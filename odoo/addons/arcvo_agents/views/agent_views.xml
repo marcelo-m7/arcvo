@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_arcvo_agent_list" model="ir.ui.view">
+        <field name="name">arcvo.agent.list</field>
+        <field name="model">arcvo.agent</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="role"/>
+                <field name="state"/>
+                <field name="is_available"/>
+                <field name="open_assignment_count"/>
+                <field name="success_rate"/>
+                <field name="last_heartbeat"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_arcvo_agent_form" model="ir.ui.view">
+        <field name="name">arcvo.agent.form</field>
+        <field name="model">arcvo.agent</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_heartbeat" type="object" string="Record Heartbeat"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="role"/>
+                            <field name="active"/>
+                            <field name="max_concurrent_tasks"/>
+                        </group>
+                        <group>
+                            <field name="is_available"/>
+                            <field name="open_assignment_count"/>
+                            <field name="completed_assignment_count"/>
+                            <field name="success_rate"/>
+                            <field name="last_heartbeat"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Profile">
+                            <field name="description"/>
+                            <field name="capability_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Assignments">
+                            <field name="assignment_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_arcvo_agents" model="ir.actions.act_window">
+        <field name="name">Arcvo Agents</field>
+        <field name="res_model">arcvo.agent</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_arcvo_root" name="Arcvo" sequence="80"/>
+    <menuitem id="menu_arcvo_agents" name="Agents" parent="menu_arcvo_root" action="action_arcvo_agents"/>
+</odoo>

@@ -1,133 +1,111 @@
 # Arcvo
 
-Autonomous multi-agent organization for digital archive coordination, backed by Odoo 19.
+Arcvo e uma linha de producao para publicar acervo YouTube no Odoo eLearning e administrar agentes rastreaveis em projetos Odoo.
 
-## Architecture
-
-**Arcvo** is built as a self-governing organization where agents autonomously claim and execute work tracked in Odoo.
-
-- **Agent Registry** (Odoo addon): Central nervous system for agent profiles, capabilities, assignments, and audit trails
-- **Agent APIs** (FastAPI): HTTP endpoints for agent coordination (heartbeat, task claiming, progress reporting)
-- **Demo Agents**: Pre-configured CEO, PM, developers, QA, and support agents ready to collaborate
-- **Audit Trail**: Immutable action logging for compliance and debugging
-
-See [AGENTS.md](AGENTS.md) for organization structure and workflows.
+O alvo oficial deste repositorio e o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
 
 ## Stack
 
-- Frontend: React, Vite, TypeScript, TailwindCSS, TanStack Query, Zustand
-- Backend: FastAPI, Pydantic, Uvicorn, XML-RPC/JSON-RPC Odoo client
-- Odoo: Odoo 19 with **agent_registry** addon for multi-agent orchestration
-- MCP: `mcp-server-odoo` configured for read-only YOLO mode (pending module install)
-- Integration: YouTube URLs, Supabase import, multi-provider archive
+- Frontend: React, Vite, TypeScript, TailwindCSS, TanStack Query, Zustand.
+- Backend: FastAPI, Pydantic, Uvicorn, XML-RPC/JSON-RPC para Odoo.
+- Odoo: Odoo 19 remoto com eLearning (`slide.channel`, `slide.slide`) e addon `arcvo_agents`.
+- Agentes: funcionarios digitais em `project.task`, assistidos por Ollama e auditados no Odoo.
+- Deploy: webhook Coolify manual pelo painel de Producao.
+- Fontes: Supabase Open2, URLs YouTube e oEmbed publico para metadados.
 
-## Quick Start
+## Linha De Producao
+
+```text
+Supabase / YouTube
+  -> backend FastAPI
+  -> normalizacao e enriquecimento
+  -> Odoo eLearning
+  -> admin React
+```
+
+Agentes seguem outro fluxo rastreavel:
+
+```text
+Projetos Odoo
+  -> project.task
+  -> arcvo_agents
+  -> /api/v1/agents
+  -> admin React
+```
+
+Execucao autonoma:
+
+```text
+arcvo.agent.assignment
+  -> backend runner
+  -> Ollama
+  -> allowlist de comandos
+  -> arcvo.agent.audit.log
+```
+
+## Comandos
 
 ```bash
-# Prerequisites
-make tools-check
-
-# Setup environment
 make install
-
-# Start services
-make dev          # Frontend + Backend locally
-make docker-up    # Odoo + PostgreSQL + addons
-
-# Access
-Frontend: http://localhost:5173
-Backend:  http://localhost:8000
-API Docs: http://localhost:8000/docs
-Odoo:     http://localhost:8069
-```
-
-## Agents & Autonomy
-
-The system is designed for autonomous operation:
-
-```bash
-# Validate Odoo connectivity and agent setup
+make dev
+make backend
+make frontend
+make lint
+make test
 make odoo-health
-
-# View agent registration in Odoo
-# → Go to http://localhost:8069 → Agents menu
-
-# Agents coordinate via REST API
-# → See http://localhost:8000/docs → /api/v1/agents/*
+make import-supabase-youtube
+make validate-arcvo-agents
 ```
 
-New agents register, discover tasks, and report progress autonomously. See [AGENTS.md](AGENTS.md) and [PHASE3_COMPLETION_REPORT.md](PHASE3_COMPLETION_REPORT.md) for implementation details.
+Frontend: `http://localhost:5173`
 
-## Documentation
+Backend: `http://localhost:8000`
 
-- **[AGENTS.md](AGENTS.md)** — Agent-based organization structure, workflows, troubleshooting
-- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** — Code conventions and standards
-- **[PHASE3_COMPLETION_REPORT.md](PHASE3_COMPLETION_REPORT.md)** — Multi-agent architecture implementation
-- **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** — Validation steps for agent registry
-- **[docs/technical-setup.md](docs/technical-setup.md)** — Low-level setup details
+API docs em desenvolvimento: `http://localhost:8000/docs`
 
-## Useful Commands
+## Variaveis
 
-```bash
-# Validation
-make tools-check      # Verify system dependencies
-make odoo-health      # Test Odoo XML-RPC connectivity
+Copie `.env.example` para `.env` e preencha segredos reais localmente. Nao commite `.env`.
 
-# Development
-make dev              # Frontend + Backend with auto-reload
-make backend          # Backend only
-make frontend         # Frontend only
+Obrigatorias:
 
-# Quality
-make lint             # Check code style (Ruff + ESLint)
-make test             # Run all tests (pytest + typecheck)
-make format           # Auto-format code
+- `APP_SECRET_KEY`
+- `APP_ADMIN_PASSWORD`
+- `ODOO_URL`
+- `ODOO_DB`
+- `ODOO_USER`
+- `ODOO_API_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY`
 
-# Infrastructure
-make docker-up        # Start Odoo + PostgreSQL
-make docker-down      # Stop containers
-```
+## Odoo
 
-## Architecture Overview
+Addons ativos ficam em `odoo/addons`.
 
-```
-Autonomous Multi-Agent Organization
-    ↓
-Odoo 19 (Central ERP)
-├── agent_registry addon
-│   ├── agent.agent (agent profiles + status)
-│   ├── agent.capability (skills catalog)
-│   ├── agent.assignment (task bindings)
-│   └── agent.audit_log (immutable actions)
-└── project module (extended)
-    └── project.task (with agent assignments)
-    ↑
-FastAPI Backend
-├── /api/v1/agents/* (agent CRUD + heartbeat)
-├── /api/v1/tasks/* (task coordination)
-└── /api/v1/audit/* (audit log queries)
-    ↑
-Autonomous Agents
-├── CEO (orchestration)
-├── PM (project management)
-├── Backend Dev (development)
-├── Frontend Dev (UI/UX)
-├── DevOps (infrastructure)
-├── QA (quality assurance)
-└── Docs (documentation)
-```
+- `arcvo_agents`: addon canonico para agentes e atribuicoes em `project.task`.
 
-## Key Features
+Addons congelados ficam em `odoo/frozen_addons` e nao fazem parte do deploy canonico.
 
-✅ Agent registration & discovery  
-✅ Capability-based task routing  
-✅ Real-time workload tracking  
-✅ Heartbeat health monitoring  
-✅ Immutable audit trail  
-✅ Automatic status indicators  
-✅ Task assignment workflows  
-✅ Progress reporting & completion tracking
+## APIs Principais
 
-## Default Admin Login
+- `GET /health`
+- `POST /api/v1/auth/login`
+- `GET /api/v1/odoo/health`
+- `GET /api/v1/archive/dashboard`
+- `GET /api/v1/archive/courses`
+- `GET /api/v1/archive/youtube/videos`
+- `POST /api/v1/archive/youtube/videos`
+- `GET /api/v1/agents`
+- `GET /api/v1/agents/{id}`
+- `POST /api/v1/agents/{id}/heartbeat`
+- `POST /api/v1/agents/{id}/run`
+- `POST /api/v1/agents/run-pending`
+- `GET /api/v1/agents/executions`
+- `GET /api/v1/agents/audit`
+- `POST /api/v1/agents/tasks/{task_id}/assign`
+- `GET /api/v1/deploy/coolify/status`
+- `POST /api/v1/deploy/coolify`
 
-Uses `APP_ADMIN_PASSWORD` from `.env`.
+## Documentacao
+
+Veja [docs/technical-setup.md](docs/technical-setup.md) para detalhes de ambiente, estrutura e validacao.

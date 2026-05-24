@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import agents, archive, auth, health, hermes, odoo
+from app.api.routes import agents, archive, auth, deploy, health, odoo
 from app.core.config import settings
 
 
@@ -26,7 +26,7 @@ def create_app() -> FastAPI:
     app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
     app.include_router(archive.router, prefix="/api/v1/archive", tags=["archive"])
     app.include_router(odoo.router, prefix="/api/v1/odoo", tags=["odoo"])
-    app.include_router(hermes.router, prefix="/api/v1/hermes", tags=["hermes"])
+    app.include_router(deploy.router, prefix="/api/v1/deploy", tags=["deploy"])
     return app
 
 

@@ -1,37 +1,55 @@
 # Arcvo Technical Setup
 
-## Environment
+## Ambiente
 
-Copy `.env.example` to `.env` and fill in real secrets locally. Do not commit `.env`.
+Copie `.env.example` para `.env` e preencha os segredos reais localmente.
 
-Required Odoo variables:
+Odoo remoto:
 
-- `ODOO_URL`
-- `ODOO_DB`
+- `ODOO_URL=https://marcelo-m7.com`
+- `ODOO_DB=odoo19`
 - `ODOO_USER`
 - `ODOO_API_KEY`
 - `ODOO_INTEGRATION_MODE=xmlrpc`
-- `ODOO_YOLO=read`
+- `ODOO_ALLOW_SELF_SIGNED_SSL=false`
 
-`ODOO_ALLOW_SELF_SIGNED_SSL=true` is a temporary workaround for the current Traefik default certificate on the remote Odoo endpoint. Disable it after HTTPS is fixed.
-
-Required admin variables:
+Admin local:
 
 - `APP_SECRET_KEY`
 - `APP_ADMIN_PASSWORD`
 - `APP_JWT_EXPIRES_MINUTES`
+- `CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173`
 
-## Development
+Supabase:
+
+- `SUPABASE_PROJECT_ID=wvkjainfwsyiyfcmbtid`
+- `SUPABASE_URL=https://wvkjainfwsyiyfcmbtid.supabase.co`
+- `SUPABASE_PUBLISHABLE_KEY`
+
+Ollama:
+
+- `OLLAMA_URI`
+- `OLLAMA_MODEL`
+- `OLLAMA_TIMEOUT_SECONDS`
+
+Coolify:
+
+- `COOLIFY_HOST`
+- `COOLIFY_API_KEY`
+- `COOLIFY_ARCVO_WEBHOOK`
+
+Agentes:
+
+- `AGENT_COMMAND_ALLOWLIST`
+
+## Desenvolvimento
 
 ```bash
-export PATH="$HOME/.local/bin:$PATH"
 make install
 make dev
 ```
 
-On this WSL workspace under `/mnt/c`, `pnpm install` may fail with `EACCES` during package renames. If that happens, run `npm install --prefix frontend` as a local fallback, or move the repository to the Linux filesystem, for example under `~/projects`, and rerun `pnpm install`.
-
-Run services separately:
+Servicos separados:
 
 ```bash
 make backend
@@ -40,80 +58,89 @@ make frontend
 
 ## Backend
 
-The FastAPI app lives in `backend/app`.
+O backend fica em `backend/app`.
 
-- `app/api/routes`: HTTP routes.
-- `app/core`: settings and security helpers.
-- `app/integrations/odoo`: XML-RPC/JSON-RPC client.
-- `app/services`: application service layer.
-- `app/schemas`: API response/request schemas.
+- `api/routes`: endpoints HTTP.
+- `core`: configuracao e seguranca.
+- `integrations/odoo`: cliente XML-RPC/JSON-RPC.
+- `services`: regras de acervo, Odoo, Supabase e agentes.
+- `schemas`: contratos Pydantic.
 
-Primary endpoints:
+Rotas mantidas:
 
 - `GET /health`
-- `GET /api/v1/odoo/health`
 - `POST /api/v1/auth/login`
-- `GET /api/v1/archive/dashboard`
-- `GET /api/v1/archive/courses`
-- `POST /api/v1/archive/courses`
-- `POST /api/v1/archive/youtube/preview`
-- `GET /api/v1/archive/youtube/videos`
-- `POST /api/v1/archive/youtube/videos`
-- `PATCH /api/v1/archive/youtube/videos/{id}`
-- `GET /api/v1/odoo/models/{model}/records`
-- `POST /api/v1/odoo/models/{model}/records`
-- `PATCH /api/v1/odoo/models/{model}/records/{id}`
+- `GET /api/v1/odoo/health`
+- `GET|POST|PATCH /api/v1/archive/*`
+- `GET|POST|PATCH /api/v1/odoo/models/*`
+- `GET|POST /api/v1/agents/*`
 
-## YouTube Archive
+## Acervo YouTube
 
-The archive admin maps YouTube content onto Odoo eLearning:
+O acervo usa modelos nativos do Odoo eLearning:
 
-- Course/category: `slide.channel`.
-- Video content: `slide.slide`.
-- YouTube metadata: fetched with public oEmbed, no YouTube API key required.
-- Publishing: controlled by the admin form and written to `is_published` and `website_published`.
+- Curso/categoria: `slide.channel`.
+- Video: `slide.slide`.
+- Metadados YouTube: oEmbed publico.
+- Importacao Supabase: categorias viram cursos; playlists Supabase sao ignoradas.
 
-Courses are created automatically when a submitted category name does not already exist.
+Comandos:
 
-Supabase import:
+```bash
+make odoo-health
+make import-supabase-youtube
+```
 
-- `make dry-run-supabase-youtube` fetches public Supabase rows and previews the Odoo import.
-- `make import-supabase-youtube` imports the public Supabase YouTube archive into Odoo.
-- Existing Supabase playlists are ignored; categories become Odoo courses.
-- AI enrichment fields are consumed when present in the exported rows. The public Supabase key currently cannot read `ai_enrichments` because of RLS, so the direct REST import uses the public video/category fields unless a privileged export is supplied.
+## Agentes Arcvo
+
+O addon canonico e `odoo/addons/arcvo_agents`.
+
+Modelos:
+
+- `arcvo.agent`
+- `arcvo.agent.capability`
+- `arcvo.agent.assignment`
+- `arcvo.agent.audit.log`
+
+O addon tambem estende `project.task` com:
+
+- `arcvo_agent_id`
+- `arcvo_requires_agent`
+- `arcvo_assignment_ids`
+
+Use `make validate-arcvo-agents` para validar a estrutura local do addon.
+
+O backend executa agentes por `arcvo.agent.assignment`: busca a tarefa, chama Ollama,
+executa apenas comandos presentes em `AGENT_COMMAND_ALLOWLIST` e registra tudo em
+`arcvo.agent.audit.log`. Odoo permanece como fonte de verdade.
 
 ## Frontend
 
-The React app lives in `frontend`.
+O frontend fica em `frontend`.
 
-- Vite + TypeScript.
-- TailwindCSS v4.
-- React Router for pages.
-- TanStack Query for server state.
-- Zustand for local UI state.
+- `/acervo`: dashboard e envio de videos.
+- `/agentes`: agentes, heartbeat, vinculo de tarefa e auditoria.
+- `/producao`: status do repositorio, Ollama, Coolify e webhook manual de deploy.
+- `/odoo`: healthcheck e diagnostico Odoo.
 
-Set `VITE_API_BASE_URL=http://localhost:8000` for local development.
+Configure `VITE_API_BASE_URL=http://localhost:8000` em desenvolvimento.
 
-## Odoo and MCP
-
-The backend uses XML-RPC as the primary integration path. JSON-RPC is available in the client for diagnostics.
-
-The MCP server is configured in Codex with:
-
-- `mcp-server-odoo 0.6.0`
-- `ODOO_YOLO=read`
-- `ODOO_DB=odoo19`
-
-The Odoo-side MCP routes currently return `404`, so full MCP controlled mode requires installing the Odoo MCP module in the Odoo instance.
-
-The Codex MCP connector may continue to show `Reauthentication required` until the MCP process is restarted and the app connection is reauthenticated. XML-RPC and JSON-RPC healthchecks are currently the reliable validation path.
-
-## System Tools
-
-Install tools with:
+## Validacao
 
 ```bash
-make install-system-tools
+make lint
+make test
 ```
 
-This command needs `sudo` for apt and Docker installation.
+Checks esperados:
+
+- Ruff no backend.
+- Pytest no backend.
+- ESLint, TypeScript e build no frontend.
+
+## Seguranca
+
+- Nunca commitar `.env`, `.env.local`, `.venv`, caches, logs ou build artifacts.
+- Nao registrar `ODOO_API_KEY`, `APP_ADMIN_PASSWORD`, JWTs ou chaves Supabase em logs.
+- `sc_react_theme` esta congelado em `odoo/frozen_addons` e fora do fluxo canonico.
+- `SUDO_PASSWORD`, quando existir localmente, e usado apenas para manutencao do WSL e nunca deve entrar em logs, prompts ou commits.

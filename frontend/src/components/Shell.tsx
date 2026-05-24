@@ -1,10 +1,12 @@
-import { Activity, Archive, Clapperboard, Database, LogOut } from "lucide-react";
+import { Activity, Archive, Bot, Clapperboard, Database, LogOut, Rocket } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { useAuthStore } from "@/store/auth";
 
 const navItems = [
   { to: "/acervo", label: "Acervo", icon: Clapperboard },
+  { to: "/agentes", label: "Agentes", icon: Bot },
+  { to: "/producao", label: "Producao", icon: Rocket },
   { to: "/odoo", label: "Odoo", icon: Database },
 ];
 
@@ -18,7 +20,7 @@ export function Shell() {
           <Archive className="h-6 w-6 text-emerald-700" aria-hidden />
           <div>
             <p className="text-sm font-semibold leading-5">Arcvo</p>
-            <p className="text-xs text-zinc-500">YouTube + eLearning</p>
+            <p className="text-xs text-zinc-500">Odoo remoto</p>
           </div>
         </div>
         <div className="flex h-[calc(100%-4rem)] flex-col justify-between">
@@ -63,7 +65,7 @@ export function Shell() {
             <Activity className="h-5 w-5 text-emerald-700" aria-hidden />
             <div>
               <h1 className="text-base font-semibold">Acervo Admin</h1>
-              <p className="text-xs text-zinc-500">Cursos, videos e Odoo eLearning</p>
+              <p className="text-xs text-zinc-500">Acervo, agentes e eLearning</p>
             </div>
           </div>
           <button

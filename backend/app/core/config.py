@@ -33,6 +33,22 @@ class Settings(BaseSettings):
     supabase_url: str = "https://wvkjainfwsyiyfcmbtid.supabase.co"
     supabase_publishable_key: str = ""
 
+    gemini_api_key: str = ""
+    openrouter_api_key: str = ""
+    ollama_uri: str = ""
+    ollama_base_url: str = "https://ollama.monynha.me"
+    ollama_model: str = "qwen2.5:1.5b"
+    ollama_timeout_seconds: float = 60.0
+
+    coolify_host: str = ""
+    coolify_api_key: str = ""
+    coolify_arcvo_webhook: str = ""
+
+    agent_command_allowlist: str = (
+        "git status,git branch,git rev-parse,make validate-arcvo-agents,"
+        "make lint,make test,make odoo-health"
+    )
+
     @property
     def is_development(self) -> bool:
         return self.app_env.lower() in {"dev", "development", "local"}
@@ -41,9 +57,17 @@ class Settings(BaseSettings):
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
-    gemini_api_key: str = ""
-    openrouter_api_key: str = ""
-    ollama_base_url: str = "https://ollama.monynha.me"
+    @property
+    def ollama_url(self) -> str:
+        return (self.ollama_uri or self.ollama_base_url).rstrip("/")
+
+    @property
+    def allowed_agent_commands(self) -> list[str]:
+        return [
+            command.strip()
+            for command in self.agent_command_allowlist.split(",")
+            if command.strip()
+        ]
 
     @property
     def has_odoo_credentials(self) -> bool:

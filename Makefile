@@ -1,11 +1,13 @@
 SHELL := /bin/bash
 PATH := $(HOME)/.local/bin:$(PATH)
+export UV_PROJECT_ENVIRONMENT := .venv-linux
+export UV_LINK_MODE := copy
 
-.PHONY: install dev frontend backend lint format test odoo-health docker-up docker-down tools-check install-system-tools
+.PHONY: install dev frontend backend lint format test odoo-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
 
 install: tools-check
 	cd backend && uv sync
-	pnpm install
+	CI=true pnpm install --package-import-method=copy
 
 dev:
 	$(MAKE) -j2 backend frontend
@@ -38,11 +40,8 @@ import-supabase-youtube:
 dry-run-supabase-youtube:
 	cd backend && uv run python -m scripts.import_supabase_youtube --fetch-supabase --export ../.data/supabase_youtube.json
 
-docker-up:
-	docker compose up -d
-
-docker-down:
-	docker compose down
+validate-arcvo-agents:
+	cd backend && uv run python -m scripts.validate_arcvo_agents
 
 tools-check:
 	@bash scripts/check-tools.sh

@@ -1,0 +1,118 @@
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
+
+
+class ArcvoAgent(models.Model):
+    _name = "arcvo.agent"
+    _description = "Arcvo Agent"
+    _order = "role, name"
+
+    name = fields.Char(required=True, index=True)
+    role = fields.Selection(
+        [
+            ("ceo", "CEO"),
+            ("coo", "Operations"),
+            ("cto", "Technology"),
+            ("pm", "Project Manager"),
+            ("odoo", "Odoo Specialist"),
+            ("backend", "Backend"),
+            ("frontend", "Frontend"),
+            ("data", "Data"),
+            ("qa", "Quality"),
+            ("docs", "Documentation"),
+        ],
+        default="odoo",
+        required=True,
+    )
+    state = fields.Selection(
+        [
+            ("idle", "Idle"),
+            ("busy", "Busy"),
+            ("blocked", "Blocked"),
+            ("offline", "Offline"),
+            ("disabled", "Disabled"),
+        ],
+        default="idle",
+        required=True,
+    )
+    description = fields.Text()
+    capability_ids = fields.Many2many(
+        "arcvo.agent.capability",
+        "arcvo_agent_capability_rel",
+        "agent_id",
+        "capability_id",
+        string="Capabilities",
+    )
+    max_concurrent_tasks = fields.Integer(default=3, required=True)
+    active = fields.Boolean(default=True)
+    last_heartbeat = fields.Datetime(readonly=True)
+    assignment_ids = fields.One2many("arcvo.agent.assignment", "agent_id", string="Assignments")
+    open_assignment_count = fields.Integer(compute="_compute_assignment_counts")
+    completed_assignment_count = fields.Integer(compute="_compute_assignment_counts")
+    total_executions = fields.Integer(default=0, readonly=True)
+    successful_executions = fields.Integer(default=0, readonly=True)
+    success_rate = fields.Float(compute="_compute_success_rate", store=True)
+    is_available = fields.Boolean(compute="_compute_is_available")
+
+    _sql_constraints = [
+        ("arcvo_agent_name_unique", "unique(name)", "Agent name must be unique."),
+        (
+            "arcvo_agent_max_tasks_positive",
+            "check(max_concurrent_tasks > 0)",
+            "Max concurrent tasks must be greater than zero.",
+        ),
+    ]
+
+    @api.depends("assignment_ids.status")
+    def _compute_assignment_counts(self):
+        for agent in self:
+            open_assignments = agent.assignment_ids.filtered(
+                lambda assignment: assignment.status in {"assigned", "in_progress", "blocked"}
+            )
+            completed_assignments = agent.assignment_ids.filtered(
+                lambda assignment: assignment.status == "completed"
+            )
+            agent.open_assignment_count = len(open_assignments)
+            agent.completed_assignment_count = len(completed_assignments)
+
+    @api.depends("total_executions", "successful_executions")
+    def _compute_success_rate(self):
+        for agent in self:
+            agent.success_rate = (
+                (agent.successful_executions / agent.total_executions) * 100
+                if agent.total_executions
+                else 0.0
+            )
+
+    @api.depends("active", "state", "open_assignment_count", "max_concurrent_tasks")
+    def _compute_is_available(self):
+        for agent in self:
+            agent.is_available = (
+                agent.active
+                and agent.state in {"idle", "busy"}
+                and agent.open_assignment_count < agent.max_concurrent_tasks
+            )
+
+    @api.constrains("max_concurrent_tasks")
+    def _check_max_concurrent_tasks(self):
+        for agent in self:
+            if agent.max_concurrent_tasks <= 0:
+                raise ValidationError("Max concurrent tasks must be greater than zero.")
+
+    def action_heartbeat(self):
+        self.write({"last_heartbeat": fields.Datetime.now()})
+        for agent in self:
+            self.env["arcvo.agent.audit.log"].sudo().create(
+                {
+                    "agent_id": agent.id,
+                    "action": "heartbeat",
+                    "message": "Heartbeat recorded.",
+                }
+            )
+
+    def record_execution(self, success):
+        for agent in self:
+            vals = {"total_executions": agent.total_executions + 1}
+            if success:
+                vals["successful_executions"] = agent.successful_executions + 1
+            agent.write(vals)

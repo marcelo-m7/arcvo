@@ -3,9 +3,11 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Shell } from "@/components/Shell";
+import { AgentsPage } from "@/features/agents/AgentsPage";
 import { ArchivePage } from "@/features/archive/ArchivePage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { OdooHealthPage } from "@/features/odoo/OdooHealthPage";
+import { ProductionPage } from "@/features/production/ProductionPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,7 +28,9 @@ export function App() {
             <Route element={<Shell />}>
               <Route index element={<Navigate to="/acervo" replace />} />
               <Route path="/acervo" element={<ArchivePage />} />
+              <Route path="/agentes" element={<AgentsPage />} />
               <Route path="/odoo" element={<OdooHealthPage />} />
+              <Route path="/producao" element={<ProductionPage />} />
             </Route>
           </Route>
         </Routes>

@@ -5,7 +5,7 @@ __pycache__/
 .env.local
 # C extensions
 *.so
-
+.venv-linux/
 # Distribution / packaging
 .Python
 build/
@@ -130,6 +130,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv-linux/
 env/
 venv/
 ENV/
