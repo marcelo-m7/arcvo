@@ -7,3 +7,5 @@ access_arcvo_agent_assignment_user,arcvo.agent.assignment.user,model_arcvo_agent
 access_arcvo_agent_assignment_manager,arcvo.agent.assignment.manager,model_arcvo_agent_assignment,base.group_system,1,1,1,1
 access_arcvo_agent_audit_log_user,arcvo.agent.audit.log.user,model_arcvo_agent_audit_log,base.group_user,1,0,0,0
 access_arcvo_agent_audit_log_manager,arcvo.agent.audit.log.manager,model_arcvo_agent_audit_log,base.group_system,1,1,1,1
+access_arcvo_agent_message_user,arcvo.agent.message.user,model_arcvo_agent_message,base.group_user,1,0,0,0
+access_arcvo_agent_message_manager,arcvo.agent.message.manager,model_arcvo_agent_message,base.group_system,1,1,1,1

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Cron Job: Run Active Agents -->
+        <record id="cron_run_active_agents" model="ir.cron">
+            <field name="name">Arcvo: Run Active Agents</field>
+            <field name="model_name">hr.employee</field>
+            <field name="state">code</field>
+            <field name="code">model._cron_run_active_agents()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="True" />
+            <field name="active" eval="True" />
+        </record>
+
+    </data>
+</odoo>

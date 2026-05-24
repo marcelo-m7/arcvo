@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    agents,
     archive,
     auth,
     deploy,
@@ -30,7 +29,6 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-    app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
     app.include_router(archive.router, prefix="/api/v1/archive", tags=["archive"])
     app.include_router(odoo.router, prefix="/api/v1/odoo", tags=["odoo"])
     app.include_router(deploy.router, prefix="/api/v1/deploy", tags=["deploy"])

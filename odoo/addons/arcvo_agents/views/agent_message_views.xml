@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- arcvo.agent.message Tree View -->
+        <record id="arcvo_agent_message_tree" model="ir.ui.view">
+            <field name="name">Agent Messages - Tree</field>
+            <field name="model">arcvo.agent.message</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="create_date" />
+                    <field name="agent_id" />
+                    <field name="project_id" />
+                    <field name="task_id" />
+                    <field name="status" decoration-success="status=='success'" decoration-danger="status=='error'" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- arcvo.agent.message Form View -->
+        <record id="arcvo_agent_message_form" model="ir.ui.view">
+            <field name="name">Agent Messages - Form</field>
+            <field name="model">arcvo.agent.message</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <field name="status" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="agent_id" />
+                                <field name="project_id" />
+                                <field name="task_id" />
+                            </group>
+                            <group>
+                                <field name="create_date" />
+                                <field name="executed_at" />
+                                <field name="completed_at" />
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Prompt &amp; Response">
+                                <group>
+                                    <field name="prompt" nolabel="1" />
+                                </group>
+                                <separator string="Raw Response" />
+                                <group>
+                                    <field name="raw_response" nolabel="1" />
+                                </group>
+                            </page>
+
+                            <page string="Parsed Decision">
+                                <group>
+                                    <field name="decision" nolabel="1" />
+                                </group>
+                            </page>
+
+                            <page string="Statistics">
+                                <group>
+                                    <field name="llm_duration_seconds" />
+                                    <field name="prompt_tokens" />
+                                    <field name="response_tokens" />
+                                </group>
+                                <separator string="Error Details" />
+                                <group>
+                                    <field name="error_message" nolabel="1" />
+                                </group>
+                            </page>
+
+                            <page string="Related">
+                                <group>
+                                    <field name="discuss_message_id" />
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- arcvo.agent.message Search View -->
+        <record id="arcvo_agent_message_search" model="ir.ui.view">
+            <field name="name">Agent Messages - Search</field>
+            <field name="model">arcvo.agent.message</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="agent_id" />
+                    <field name="project_id" />
+                    <field name="task_id" />
+                    <separator />
+                    <filter name="success" string="Success" domain="[('status', '=', 'success')]" />
+                    <filter name="error" string="Error" domain="[('status', '=', 'error')]" />
+                    <filter name="recent" string="Recent (24h)" domain="[('create_date', '&gt;=', (context_today() - timedelta(days=1)).isoformat())]" />
+                </search>
+            </field>
+        </record>
+
+        <!-- Action to view agent messages -->
+        <record id="arcvo_agent_message_action" model="ir.actions.act_window">
+            <field name="name">Agent Messages</field>
+            <field name="res_model">arcvo.agent.message</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help">View execution logs and decisions for all agents.</field>
+        </record>
+
+        <!-- Menu item -->
+        <menuitem
+            id="menu_arcvo_agent_message"
+            name="Agent Messages"
+            parent="menu_arcvo_root"
+            action="arcvo_agent_message_action"
+            sequence="30"
+        />
+
+    </data>
+</odoo>

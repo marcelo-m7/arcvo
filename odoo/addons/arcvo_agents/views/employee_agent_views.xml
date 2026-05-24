@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extend hr.employee Form View to show Agent fields -->
+        <record id="employee_agent_form_inherit" model="ir.ui.view">
+            <field name="name">hr.employee - Agent Configuration</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id">hr.view_employee_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Agent Configuration">
+                        <group>
+                            <group>
+                                <field name="is_agent" />
+                                <field name="agent_active" attrs="{'invisible': [('is_agent', '=', False)]}" />
+                                <field name="agent_status" attrs="{'invisible': [('is_agent', '=', False)]}" />
+                            </group>
+                            <group>
+                                <field name="agent_last_execution" attrs="{'invisible': [('is_agent', '=', False)]}" />
+                                <field name="agent_last_error" attrs="{'invisible': [('is_agent', '=', False)]}" nolabel="1" />
+                            </group>
+                        </group>
+
+                        <group attrs="{'invisible': [('is_agent', '=', False)]}">
+                            <field name="ollama_model" />
+                        </group>
+
+                        <group attrs="{'invisible': [('is_agent', '=', False)]}">
+                            <separator string="System Prompt" />
+                            <field name="ollama_system_prompt" nolabel="1" />
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Extend hr.employee Form View - Buttons -->
+        <record id="employee_agent_form_button_inherit" model="ir.ui.view">
+            <field name="name">hr.employee - Agent Actions</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id">hr.view_employee_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button
+                        name="action_test_agent"
+                        type="object"
+                        string="🤖 Test Agent"
+                        attrs="{'invisible': [('is_agent', '=', False)]}"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="action_pause_agent"
+                        type="object"
+                        string="⏸ Pause Agent"
+                        attrs="{'invisible': [('is_agent', '=', False), ('agent_active', '=', False)]}"
+                    />
+                    <button
+                        name="action_resume_agent"
+                        type="object"
+                        string="▶ Resume Agent"
+                        attrs="{'invisible': [('is_agent', '=', False), ('agent_active', '=', True)]}"
+                    />
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Agent Messages related field on hr.employee -->
+        <record id="employee_agent_messages_inherit" model="ir.ui.view">
+            <field name="name">hr.employee - Agent Messages</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id">hr.view_employee_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="Agent Execution Logs" attrs="{'invisible': [('is_agent', '=', False)]}">
+                        <field
+                            name="agent_message_ids"
+                            nolabel="1"
+                            domain="[('agent_id', '=', id)]"
+                        >
+                            <tree>
+                                <field name="create_date" />
+                                <field name="status" decoration-success="status=='success'" decoration-danger="status=='error'" />
+                                <field name="llm_duration_seconds" optional="hide" />
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Update hr.employee Tree View to show agent status -->
+        <record id="employee_agent_tree_inherit" model="ir.ui.view">
+            <field name="name">hr.employee - Tree (Agent Status)</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id">hr.view_employee_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="is_agent" optional="hide" />
+                    <field name="agent_status" optional="hide" decoration-warning="agent_status=='running'" decoration-danger="agent_status=='error'" />
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
