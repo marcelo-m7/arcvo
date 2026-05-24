@@ -86,6 +86,10 @@ Addons ativos ficam em `odoo/addons`.
 
 Addons congelados ficam em `odoo/frozen_addons` e nao fazem parte do deploy canonico.
 
+O arquivo `docker-compose.yaml` existe porque a instancia Odoo no Coolify usa Docker
+Compose buildpack e espera esse arquivo na raiz. Ele monta somente `./odoo/addons`
+como fonte de addons ativos.
+
 ## APIs Principais
 
 - `GET /health`

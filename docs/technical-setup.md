@@ -114,6 +114,14 @@ O backend executa agentes por `arcvo.agent.assignment`: busca a tarefa, chama Ol
 executa apenas comandos presentes em `AGENT_COMMAND_ALLOWLIST` e registra tudo em
 `arcvo.agent.audit.log`. Odoo permanece como fonte de verdade.
 
+## Coolify Odoo
+
+A instancia Odoo no Coolify usa Docker Compose buildpack. Por isso
+`docker-compose.yaml` deve permanecer na raiz do repositorio mesmo que o alvo
+operacional seja o Odoo remoto. O compose copia `./odoo/addons` para
+`/mnt/extra-addons` dentro do container Odoo; addons congelados em
+`odoo/frozen_addons` nao entram no deploy ativo.
+
 ## Frontend
 
 O frontend fica em `frontend`.
