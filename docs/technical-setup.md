@@ -118,9 +118,9 @@ executa apenas comandos presentes em `AGENT_COMMAND_ALLOWLIST` e registra tudo e
 
 A instancia Odoo no Coolify usa Docker Compose buildpack. Por isso
 `docker-compose.yaml` deve permanecer na raiz do repositorio mesmo que o alvo
-operacional seja o Odoo remoto. O compose monta `./odoo/addons` diretamente em
-`/mnt/extra-addons`; addons congelados em `odoo/frozen_addons` nao entram no
-deploy ativo.
+operacional seja o Odoo remoto. O servico Odoo usa `odoo/Dockerfile` para copiar
+`./odoo/addons` para `/mnt/extra-addons` dentro da imagem; addons congelados em
+`odoo/frozen_addons` nao entram no deploy ativo.
 
 ## Frontend
 

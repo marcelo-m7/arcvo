@@ -1,6 +1,8 @@
 services:
   odoo:
-    image: odoo:19
+    build:
+      context: .
+      dockerfile: odoo/Dockerfile
     restart: unless-stopped
     ports:
       - "8069:8069"
@@ -11,7 +13,6 @@ services:
       - PASSWORD=$SERVICE_PASSWORD_POSTGRES
     volumes:
       - odoo-web-data:/var/lib/odoo
-      - ./odoo/addons:/mnt/extra-addons:ro
     depends_on:
       postgresql:
         condition: service_healthy
