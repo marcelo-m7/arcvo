@@ -45,14 +45,12 @@ class Settings(BaseSettings):
     coolify_api_key: str = ""
     coolify_arcvo_webhook: str = ""
 
+    # NOTE: Hermes dashboard was removed (agents now orchestrated in Odoo addon).
+    # These fields are kept for backward compatibility but not used.
     hermes_dashboard_enabled: bool = False
-    hermes_dashboard_host: str = "127.0.0.1"
     hermes_dashboard_port: int = 8010
-    hermes_dashboard_internal_networks: str = "127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
     hermes_public_base_url: str = ""
-    hermes_cors_origins: str = "https://hermes.marcelo-m7.com,http://localhost:8010,http://127.0.0.1:8010"
     hermes_provider: str = "gemini"
-    hermes_model: str = "gemini-2.0-flash"
 
     agent_command_allowlist: str = (
         "git status,git branch,git rev-parse,make validate-arcvo-agents,"
@@ -84,14 +82,6 @@ class Settings(BaseSettings):
             command.strip()
             for command in self.agent_command_allowlist.split(",")
             if command.strip()
-        ]
-
-    @property
-    def dashboard_internal_network_list(self) -> list[str]:
-        return [
-            network.strip()
-            for network in self.hermes_dashboard_internal_networks.split(",")
-            if network.strip()
         ]
 
     @property

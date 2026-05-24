@@ -1,55 +1,53 @@
 # Arcvo
 
-Arcvo e uma operacao Odoo-first para acervo YouTube/eLearning e funcionarios digitais rastreaveis.
+Arcvo é uma operação Odoo-first para acervo YouTube/eLearning e funcionários digitais rastreáveis.
 
-O alvo oficial e o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
+O alvo oficial é o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
 
 ## Stack
 
-- Odoo 19 Community: SSOT para projetos, tarefas, agentes, Discuss, chatter e auditoria.
-- Hermes: interface operacional padrao para conversar com agentes e acionar ferramentas.
-- Backend: FastAPI, Pydantic, Uvicorn, XML-RPC/JSON-RPC para Odoo.
-- Ollama: motor auxiliar de raciocinio dos agentes.
-- Coolify: deploy automatico por push na `main` e webhook manual quando necessario.
-- Acervo: Supabase Open2, YouTube/oEmbed e Odoo eLearning (`slide.channel`, `slide.slide`).
+- **Odoo 19 Community**: SSOT para projetos, tarefas, agentes (hr.employee), Discuss, chatter e auditoria.
+- **Backend FastAPI**: Serviço de suporte (health, archive, deploy), sem lógica de agentes.
+- **Ollama**: Motor de raciocínio LLM para agentes (`gemma3:4b` recomendado).
+- **Arcvo Addon** (`arcvo_agents`): Orquestração de agentes, logs estruturados, integração Discuss.
+- **Coolify**: Deploy automático por push na `main` e webhook manual quando necessário.
+- **Acervo**: Supabase Open2, YouTube/oEmbed e Odoo eLearning (`slide.channel`, `slide.slide`).
 
-## Linha De Producao
+## Linha De Produção
 
+### Acervo (YouTube → Odoo eLearning)
 ```text
 Supabase / YouTube
-  -> backend FastAPI
-  -> normalizacao e enriquecimento
-  -> Odoo eLearning
+  → backend FastAPI (import/enrich)
+  → Odoo eLearning (slide.channel, slide.slide)
 ```
 
+### Agentes (Odoo Native Orchestration)
 ```text
-Odoo project.task
-  -> arcvo.agent.assignment
-  -> Hermes tools
-  -> Ollama
-  -> Discuss + chatter + arcvo.agent.audit.log
+Odoo hr.employee (is_agent=True)
+  ↓ Cron (5 min) ou Ação Manual
+  ↓ OllamaClient (Python addon)
+  ↓ Ollama API
+  ↓ arcvo.agent.message (auditoria) + Discuss
 ```
 
 ## Comandos
 
 ```bash
-make install
-make dev
-make backend
-make hermes
-make lint
-make test
-make ollama-health
-make odoo-health
-make import-supabase-youtube
-make validate-arcvo-agents
+make install           # Instala dependências (uv sync)
+make lint              # Validação ruff
+make format            # Auto-format código
+make test              # Executa pytest
+make backend           # Inicia FastAPI local (porta 8000)
+make odoo-health       # Verifica conectividade Odoo
+make ollama-health     # Verifica conectividade Ollama
+make validate-arcvo-agents  # Valida addon Python/XML
+make import-supabase-youtube  # Importa acervo de Supabase
 ```
 
-Backend local: `http://localhost:8000`
+**Backend Local:** `http://localhost:8000` (API docs: `/docs`)
 
-Hermes local: `http://localhost:8010`
-
-API docs em desenvolvimento: `http://localhost:8000/docs`
+**Agentes:** Executados via Odoo cron (5 min) + ações manuais (botão Test Agent)
 
 ## Variaveis
 
@@ -79,24 +77,16 @@ Addons ativos ficam em `odoo/addons`.
 
 O arquivo `docker-compose.yaml` permanece na raiz porque a instancia Coolify usa Docker Compose buildpack. O servico Odoo e construido por `odoo/Dockerfile`, que copia `./odoo/addons` para `/mnt/extra-addons` dentro da imagem.
 
-## APIs Principais
+## APIs Principais (Backend)
 
-- `GET /health`
-- `POST /api/v1/auth/login`
-- `GET /api/v1/odoo/health`
-- `GET|POST|PATCH /api/v1/archive/*`
-- `GET /api/v1/agents`
-- `GET /api/v1/agents/{id}`
-- `POST /api/v1/agents/{id}/heartbeat`
-- `POST /api/v1/agents/{id}/message`
-- `GET /api/v1/agents/{id}/messages`
-- `POST /api/v1/agents/{id}/run`
-- `POST /api/v1/agents/run-pending`
-- `GET /api/v1/agents/executions`
-- `GET /api/v1/agents/audit`
-- `POST /api/v1/agents/tasks/{task_id}/assign`
-- `GET /api/v1/deploy/coolify/status`
-- `POST /api/v1/deploy/coolify`
+- `GET /health` — health check geral
+- `POST /api/v1/auth/login` — autenticação
+- `GET /api/v1/odoo/health` — status Odoo
+- `GET|POST|PATCH /api/v1/archive/*` — gerenciamento acervo
+- `GET /api/v1/deploy/coolify/status` — status deploy
+- `POST /api/v1/deploy/coolify` — trigger deploy
+
+**Nota:** Lógica de agentes foi movida para Odoo addon. Veja [docs/odoo-agent-orchestration.md](docs/odoo-agent-orchestration.md) para orquestração de agentes.
 
 ## Documentacao
 

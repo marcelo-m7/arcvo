@@ -3,21 +3,13 @@ PATH := $(HOME)/.local/bin:$(PATH)
 export UV_PROJECT_ENVIRONMENT := .venv-linux
 export UV_LINK_MODE := copy
 
-.PHONY: install dev backend hermes hermes-dashboard lint format test odoo-health ollama-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
+.PHONY: install backend lint format test odoo-health ollama-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
 
 install: tools-check
 	cd backend && uv sync
 
-dev:
-	$(MAKE) -j2 backend hermes
-
 backend:
 	cd backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-
-hermes:
-	cd backend && uv run python -m scripts.run_hermes_dashboard
-
-hermes-dashboard: hermes
 
 lint:
 	cd backend && uv run --no-sync ruff check .
@@ -42,6 +34,9 @@ dry-run-supabase-youtube:
 
 validate-arcvo-agents:
 	cd backend && uv run --no-sync python -m scripts.validate_arcvo_agents
+
+.PHONY: all
+all: lint test validate-arcvo-agents  # Full CI-like validation
 
 tools-check:
 	@bash scripts/check-tools.sh
