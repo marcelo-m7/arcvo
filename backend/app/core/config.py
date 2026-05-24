@@ -36,9 +36,9 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     openrouter_api_key: str = ""
     ollama_uri: str = ""
-    ollama_base_url: str = "https://ollama.monynha.me"
+    ollama_base_url: str = "https://api.ollama.monynha.me"
     ollama_model: str = "qwen2.5:1.5b"
-    ollama_timeout_seconds: float = 60.0
+    ollama_timeout_seconds: float = 90.0
     ollama_ui_senha: str = ""
 
     coolify_host: str = ""

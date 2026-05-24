@@ -23,13 +23,12 @@ class OllamaClient:
 
     async def health(self) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=10, verify=False) as client:
-            response = await client.get(
-                f"{self.base_url}/ollama/api/version", headers=self._headers()
-            )
-            if response.status_code == 404:
+            for path in ("/api/version", "/ollama/api/version"):
                 response = await client.get(
-                    f"{self.base_url}/api/version", headers=self._headers()
+                    f"{self.base_url}{path}", headers=self._headers()
                 )
+                if response.status_code != 404:
+                    break
             response.raise_for_status()
             return response.json()
 
@@ -41,17 +40,14 @@ class OllamaClient:
             "options": {"temperature": 0.2},
         }
         async with httpx.AsyncClient(timeout=self.timeout, verify=False) as client:
-            response = await client.post(
-                f"{self.base_url}/ollama/api/generate",
-                json=payload,
-                headers=self._headers(),
-            )
-            if response.status_code == 404:
+            for path in ("/api/generate", "/ollama/api/generate"):
                 response = await client.post(
-                    f"{self.base_url}/api/generate",
+                    f"{self.base_url}{path}",
                     json=payload,
                     headers=self._headers(),
                 )
+                if response.status_code != 404:
+                    break
             if response.status_code >= 400:
                 raise OllamaError(f"Ollama generation failed with HTTP {response.status_code}")
             data = response.json()

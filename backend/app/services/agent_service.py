@@ -136,12 +136,11 @@ class AgentService:
                 "assignment_id",
                 "action",
                 "message",
-                "payload",
                 "created_at",
             ],
             limit=limit,
         )
-        return [AgentAuditLog(**record) for record in records]
+        return [AgentAuditLog(**{**record, "payload": None}) for record in records]
 
     @staticmethod
     def _agent_fields() -> list[str]:
