@@ -326,3 +326,44 @@ Respond ONLY with valid JSON in this format (no markdown, no extra text):
 
 Current time: {datetime.now().isoformat()}
 """
+
+
+class ProjectTaskWebhook(models.Model):
+    """Extend project.task to support webhook dispatching on creation/update."""
+
+    _inherit = "project.task"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create to dispatch webhooks when tasks are created."""
+        records = super().create(vals_list)
+        
+        # Dispatch webhooks for task.created trigger
+        try:
+            webhook_model = self.env.get("arcvo.automation.webhook")
+            if webhook_model:
+                for record in records:
+                    webhook_model._dispatch(record, "created")
+        except Exception as e:
+            _logger.warning(f"Error dispatching webhooks on task creation: {e}")
+        
+        return records
+
+    def write(self, vals):
+        """Override write to dispatch webhooks when tasks are updated."""
+        result = super().write(vals)
+        
+        # Dispatch webhooks for task.write trigger
+        try:
+            webhook_model = self.env.get("arcvo.automation.webhook")
+            if webhook_model:
+                for record in self:
+                    webhook_model._dispatch(record, "write")
+                    
+                    # Also dispatch task.state_change if state field was updated
+                    if "state" in vals:
+                        webhook_model._dispatch(record, "state_change")
+        except Exception as e:
+            _logger.warning(f"Error dispatching webhooks on task update: {e}")
+        
+        return result

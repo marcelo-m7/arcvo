@@ -9,3 +9,7 @@ access_arcvo_agent_audit_log_user,arcvo.agent.audit.log.user,model_arcvo_agent_a
 access_arcvo_agent_audit_log_manager,arcvo.agent.audit.log.manager,model_arcvo_agent_audit_log,base.group_system,1,1,1,1
 access_arcvo_agent_message_user,arcvo.agent.message.user,model_arcvo_agent_message,base.group_user,1,0,0,0
 access_arcvo_agent_message_manager,arcvo.agent.message.manager,model_arcvo_agent_message,base.group_system,1,1,1,1
+access_arcvo_automation_webhook_user,arcvo.automation.webhook.user,model_arcvo_automation_webhook,base.group_user,1,0,0,0
+access_arcvo_automation_webhook_manager,arcvo.automation.webhook.manager,model_arcvo_automation_webhook,base.group_system,1,1,1,1
+access_arcvo_automation_log_user,arcvo.automation.log.user,model_arcvo_automation_log,base.group_user,1,0,0,0
+access_arcvo_automation_log_manager,arcvo.automation.log.manager,model_arcvo_automation_log,base.group_system,1,1,1,1

@@ -23,6 +23,7 @@ source of operational work and every agent action is traceable in Odoo.
         "views/project_task_views.xml",
         "views/agent_message_views.xml",
         "views/employee_agent_views.xml",
+        "views/automation_webhook_views.xml",
         "data/arcvo_agent_data.xml",
         "data/cron_jobs.xml",
     ],

@@ -6,3 +6,4 @@ from . import project_task
 from . import ollama_client
 from . import agent_message
 from . import agent_orchestration
+from . import automation_webhook
