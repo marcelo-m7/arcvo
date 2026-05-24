@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
@@ -60,6 +60,13 @@ class Settings(BaseSettings):
     @property
     def is_development(self) -> bool:
         return self.app_env.lower() in {"dev", "development", "local"}
+
+    @field_validator("ollama_timeout_seconds", mode="before")
+    @classmethod
+    def _normalize_ollama_timeout(cls, value: object) -> object:
+        if value == "" or value is None:
+            return 90.0
+        return value
 
     @property
     def cors_origin_list(self) -> list[str]:

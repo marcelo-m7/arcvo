@@ -15,7 +15,7 @@ services:
       - ODOO_ALLOW_SELF_SIGNED_SSL=true
       - OLLAMA_URI
       - OLLAMA_MODEL
-      - OLLAMA_TIMEOUT_SECONDS
+      - OLLAMA_TIMEOUT_SECONDS=${OLLAMA_TIMEOUT_SECONDS:-90}
       - GEMINI_API_KEY
       - HERMES_PROVIDER=gemini
       - HERMES_MODEL=gemini-2.0-flash
