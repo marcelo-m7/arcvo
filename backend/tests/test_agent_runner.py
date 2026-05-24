@@ -63,8 +63,6 @@ def test_runner_prefers_odoo_domain_method_for_assignment_update() -> None:
 
     runner._apply_assignment_update(
         assignment_id=10,
-        agent_id=7,
-        task_id=55,
         status="completed",
         progress=100,
         message="ok",

@@ -134,8 +134,6 @@ class AgentRunner:
         }
         self._apply_assignment_update(
             assignment_id=assignment_id,
-            agent_id=agent_id,
-            task_id=task_id,
             status=status,
             progress=progress,
             message=message,
@@ -190,57 +188,20 @@ class AgentRunner:
     def _apply_assignment_update(
         self,
         assignment_id: int,
-        agent_id: int,
-        task_id: int,
         status: str,
         progress: int,
         message: str,
         payload: dict[str, Any],
     ) -> None:
-        execute_kw = getattr(self.client, "execute_kw", None)
-        if callable(execute_kw):
-            try:
-                execute_kw(
-                    ASSIGNMENT_MODEL,
-                    "action_apply_progress",
-                    [[assignment_id]],
-                    {
-                        "status": status,
-                        "progress": progress,
-                        "result": message,
-                        "error_message": message if status in {"failed", "blocked"} else "",
-                        "payload": payload,
-                    },
-                )
-                return
-            except Exception:
-                pass
-
-        self.client.write(
+        self.client.execute_kw(
             ASSIGNMENT_MODEL,
-            assignment_id,
+            "action_apply_progress",
+            [[assignment_id]],
             {
                 "status": status,
                 "progress": progress,
                 "result": message,
-            },
-        )
-        self.client.create(
-            AUDIT_MODEL,
-            {
-                "agent_id": agent_id,
-                "task_id": task_id,
-                "assignment_id": assignment_id,
-                "action": (
-                    "completed"
-                    if status == "completed"
-                    else "failed"
-                    if status == "failed"
-                    else "blocked"
-                    if status == "blocked"
-                    else "progress"
-                ),
-                "message": message,
+                "error_message": message if status in {"failed", "blocked"} else "",
                 "payload": payload,
             },
         )

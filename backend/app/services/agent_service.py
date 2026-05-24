@@ -1,5 +1,3 @@
-from datetime import UTC, datetime
-
 from app.core.config import settings
 from app.integrations.odoo.client import OdooClient, OdooCredentials
 from app.schemas.agents import (
@@ -41,38 +39,17 @@ class AgentService:
         return self._agent_from_record(records[0]) if records else None
 
     def record_heartbeat(self, agent_id: int, payload: AgentHeartbeat) -> AgentHeartbeatResponse:
-        execute_kw = getattr(self.client, "execute_kw", None)
-        if callable(execute_kw):
-            try:
-                execute_kw(
-                    AGENT_MODEL,
-                    "action_heartbeat",
-                    [[agent_id]],
-                    {"state": payload.state, "message": payload.message},
-                )
-            except Exception:
-                self._legacy_record_heartbeat(agent_id=agent_id, payload=payload)
-        else:
-            self._legacy_record_heartbeat(agent_id=agent_id, payload=payload)
+        self.client.execute_kw(
+            AGENT_MODEL,
+            "action_heartbeat",
+            [[agent_id]],
+            {"state": payload.state, "message": payload.message},
+        )
 
         return AgentHeartbeatResponse(
             agent_id=agent_id,
             status="ok",
             message="Heartbeat recorded",
-        )
-
-    def _legacy_record_heartbeat(self, agent_id: int, payload: AgentHeartbeat) -> None:
-        values = {"last_heartbeat": self._odoo_now()}
-        if payload.state:
-            values["state"] = payload.state
-        self.client.write(AGENT_MODEL, agent_id, values)
-        self.client.create(
-            AUDIT_MODEL,
-            {
-                "agent_id": agent_id,
-                "action": "heartbeat",
-                "message": payload.message or "Heartbeat recorded from Arcvo API.",
-            },
         )
 
     def assign_task(
@@ -191,11 +168,6 @@ class AgentService:
             is_available=record["is_available"],
             last_heartbeat=record.get("last_heartbeat") or None,
         )
-
-    @staticmethod
-    def _odoo_now() -> str:
-        return datetime.now(UTC).replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
-
 
 def get_agent_service() -> AgentService:
     credentials = OdooCredentials(
