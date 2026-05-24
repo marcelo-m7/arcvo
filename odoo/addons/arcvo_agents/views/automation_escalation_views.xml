@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Arcvo Smart Escalation Views -->
+
+    <!-- Tree View: Escalation Rules -->
+    <record id="view_automation_escalation_tree" model="ir.ui.view">
+        <field name="name">automation.escalation.tree</field>
+        <field name="model">arcvo.automation.escalation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="escalation_type"/>
+                <field name="blocked_threshold_hours"/>
+                <field name="max_retries"/>
+                <field name="active" widget="boolean"/>
+                <field name="escalation_count" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Escalation Rules -->
+    <record id="view_automation_escalation_form" model="ir.ui.view">
+        <field name="name">automation.escalation.form</field>
+        <field name="model">arcvo.automation.escalation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <div class="oe_edit_only">
+                            <label for="active"/>
+                            <field name="active"/>
+                        </div>
+                    </div>
+                    <group name="trigger">
+                        <group>
+                            <field name="sequence"/>
+                            <field name="blocked_threshold_hours"/>
+                            <field name="max_retries"/>
+                            <field name="min_priority"/>
+                        </group>
+                        <group>
+                            <label string="Trigger Conditions" class="oe_form_label"/>
+                            <p>This rule triggers when:</p>
+                            <ul>
+                                <li>Assignment stuck &gt; N hours</li>
+                                <li>Task attempted N times</li>
+                                <li>Priority &gt;= minimum</li>
+                            </ul>
+                        </group>
+                    </group>
+                    <group name="escalation" string="Escalation Target">
+                        <group>
+                            <field name="escalation_type"/>
+                            <field name="escalation_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <label string="When escalation_type='escalate_human':" class="oe_form_label" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
+                            <field name="escalate_to_user_id" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
+                            <field name="escalation_group_id" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
+                        </group>
+                    </group>
+                    <group name="agent_selection" string="Agent Selection (if escalation_type='find_agent')">
+                        <group>
+                            <field name="prefer_capability_match"/>
+                            <field name="require_availability"/>
+                            <field name="max_attempts_per_agent"/>
+                        </group>
+                        <group>
+                            <label string="When finding alternative agents:" class="oe_form_label"/>
+                            <p>
+                                <ul>
+                                    <li>Skip original agent</li>
+                                    <li>Prefer capability match (if enabled)</li>
+                                    <li>Only available agents (if enabled)</li>
+                                    <li>Sort by load (least loaded first)</li>
+                                </ul>
+                            </p>
+                        </group>
+                    </group>
+                    <group name="notify" string="Notification">
+                        <field name="send_discuss_message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Escalation Rules -->
+    <record id="view_automation_escalation_search" model="ir.ui.view">
+        <field name="name">automation.escalation.search</field>
+        <field name="model">arcvo.automation.escalation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="escalation_type"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="find_agent" string="Find Agent" domain="[('escalation_type', '=', 'find_agent')]"/>
+                <filter name="escalate_human" string="Escalate Human" domain="[('escalation_type', '=', 'escalate_human')]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_type" string="Type" context="{'group_by': 'escalation_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Open Escalation Rules -->
+    <record id="action_automation_escalation" model="ir.actions.act_window">
+        <field name="name">Escalation Rules</field>
+        <field name="res_model">arcvo.automation.escalation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Tree View: Escalation Logs -->
+    <record id="view_automation_escalation_log_tree" model="ir.ui.view">
+        <field name="name">automation.escalation.log.tree</field>
+        <field name="model">arcvo.automation.escalation.log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="original_agent_id"/>
+                <field name="escalation_action"/>
+                <field name="new_agent_id" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
+                <field name="escalated_to_user_id" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
+                <field name="blocked_hours"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Escalation Logs -->
+    <record id="view_automation_escalation_log_form" model="ir.ui.view">
+        <field name="name">automation.escalation.log.form</field>
+        <field name="model">arcvo.automation.escalation.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="task_id" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="create_date" readonly="1"/>
+                            <field name="escalation_id" readonly="1"/>
+                            <field name="original_agent_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="blocked_hours" readonly="1" widget="float" digits="[1,1]"/>
+                            <field name="attempt_count" readonly="1"/>
+                            <field name="escalation_action" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <label string="Reassignment:" class="oe_form_label" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
+                            <field name="new_agent_id" readonly="1" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
+                        </group>
+                        <group>
+                            <label string="Escalated To:" class="oe_form_label" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
+                            <field name="escalated_to_user_id" readonly="1" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason" readonly="1" nolabel="1"/>
+                    </group>
+                    <group>
+                        <field name="discuss_message_id" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Escalation Logs -->
+    <record id="view_automation_escalation_log_search" model="ir.ui.view">
+        <field name="name">automation.escalation.log.search</field>
+        <field name="model">arcvo.automation.escalation.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="original_agent_id"/>
+                <field name="escalation_action"/>
+                <filter name="found_agent" string="Found Agent" domain="[('escalation_action', '=', 'found_agent')]"/>
+                <filter name="escalated_human" string="Escalated Human" domain="[('escalation_action', '=', 'escalated_human')]"/>
+                <separator/>
+                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_agent" string="Original Agent" context="{'group_by': 'original_agent_id'}"/>
+                    <filter name="group_by_action" string="Action" context="{'group_by': 'escalation_action'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Open Escalation Logs -->
+    <record id="action_automation_escalation_log" model="ir.actions.act_window">
+        <field name="name">Escalation Logs</field>
+        <field name="res_model">arcvo.automation.escalation.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="menu_automation_escalation"
+        name="Escalation Rules"
+        action="action_automation_escalation"
+        parent="menu_arcvo_root"
+        sequence="44"/>
+
+    <menuitem
+        id="menu_automation_escalation_log"
+        name="Escalation Logs"
+        action="action_automation_escalation_log"
+        parent="menu_arcvo_root"
+        sequence="45"/>
+
+</odoo>

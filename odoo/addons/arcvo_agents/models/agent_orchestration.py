@@ -248,6 +248,14 @@ class HrEmployeeAgent(models.Model):
                 agent.agent_last_error = str(e)
         
         self.env.cr.commit()
+        
+        # Check for stuck assignments and escalate (Fase 4)
+        try:
+            escalation_engine = self.env["escalation.engine"]
+            escalation_engine._cron_check_escalations()
+        except Exception as e:
+            _logger.warning(f"Escalation check failed: {e}")
+        
         _logger.info("Cron_run_active_agents completed")
 
     def _execute_agent_cycle(self):

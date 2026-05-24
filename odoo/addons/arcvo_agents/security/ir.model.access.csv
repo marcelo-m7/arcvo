@@ -21,3 +21,7 @@ access_arcvo_automation_discuss_action_user,arcvo.automation.discuss.action.user
 access_arcvo_automation_discuss_action_manager,arcvo.automation.discuss.action.manager,model_arcvo_automation_discuss_action,base.group_system,1,1,1,1
 access_arcvo_automation_discuss_button_click_user,arcvo.automation.discuss.button.click.user,model_arcvo_automation_discuss_button_click,base.group_user,1,0,0,0
 access_arcvo_automation_discuss_button_click_manager,arcvo.automation.discuss.button.click.manager,model_arcvo_automation_discuss_button_click,base.group_system,1,1,1,1
+access_arcvo_automation_escalation_user,arcvo.automation.escalation.user,model_arcvo_automation_escalation,base.group_user,1,0,0,0
+access_arcvo_automation_escalation_manager,arcvo.automation.escalation.manager,model_arcvo_automation_escalation,base.group_system,1,1,1,1
+access_arcvo_automation_escalation_log_user,arcvo.automation.escalation.log.user,model_arcvo_automation_escalation_log,base.group_user,1,0,0,0
+access_arcvo_automation_escalation_log_manager,arcvo.automation.escalation.log.manager,model_arcvo_automation_escalation_log,base.group_system,1,1,1,1
