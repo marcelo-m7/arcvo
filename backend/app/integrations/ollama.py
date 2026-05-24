@@ -8,16 +8,28 @@ class OllamaError(RuntimeError):
 
 
 class OllamaClient:
-    def __init__(self, base_url: str, model: str, timeout: float = 60.0) -> None:
+    def __init__(
+        self, base_url: str, model: str, timeout: float = 60.0, password: str = ""
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.timeout = timeout
+        self._password = password
+
+    def _headers(self) -> dict[str, str]:
+        if self._password:
+            return {"Authorization": f"Bearer {self._password}"}
+        return {}
 
     async def health(self) -> dict[str, Any]:
         async with httpx.AsyncClient(timeout=10, verify=False) as client:
-            response = await client.get(f"{self.base_url}/ollama/api/version")
+            response = await client.get(
+                f"{self.base_url}/ollama/api/version", headers=self._headers()
+            )
             if response.status_code == 404:
-                response = await client.get(f"{self.base_url}/api/version")
+                response = await client.get(
+                    f"{self.base_url}/api/version", headers=self._headers()
+                )
             response.raise_for_status()
             return response.json()
 
@@ -29,9 +41,17 @@ class OllamaClient:
             "options": {"temperature": 0.2},
         }
         async with httpx.AsyncClient(timeout=self.timeout, verify=False) as client:
-            response = await client.post(f"{self.base_url}/ollama/api/generate", json=payload)
+            response = await client.post(
+                f"{self.base_url}/ollama/api/generate",
+                json=payload,
+                headers=self._headers(),
+            )
             if response.status_code == 404:
-                response = await client.post(f"{self.base_url}/api/generate", json=payload)
+                response = await client.post(
+                    f"{self.base_url}/api/generate",
+                    json=payload,
+                    headers=self._headers(),
+                )
             if response.status_code >= 400:
                 raise OllamaError(f"Ollama generation failed with HTTP {response.status_code}")
             data = response.json()

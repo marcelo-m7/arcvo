@@ -64,5 +64,6 @@ def get_deploy_service() -> DeployService:
             base_url=settings.ollama_url,
             model=settings.ollama_model,
             timeout=settings.ollama_timeout_seconds,
+            password=settings.ollama_ui_senha,
         ),
     )

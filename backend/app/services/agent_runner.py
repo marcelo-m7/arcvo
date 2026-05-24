@@ -178,5 +178,6 @@ def get_agent_runner() -> AgentRunner:
         base_url=settings.ollama_url,
         model=settings.ollama_model,
         timeout=settings.ollama_timeout_seconds,
+        password=settings.ollama_ui_senha,
     )
     return AgentRunner(OdooClient(credentials), ollama)

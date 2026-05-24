@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     ollama_base_url: str = "https://ollama.monynha.me"
     ollama_model: str = "qwen2.5:1.5b"
     ollama_timeout_seconds: float = 60.0
+    ollama_ui_senha: str = ""
 
     coolify_host: str = ""
     coolify_api_key: str = ""
