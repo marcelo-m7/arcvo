@@ -25,3 +25,7 @@ access_arcvo_automation_escalation_user,arcvo.automation.escalation.user,model_a
 access_arcvo_automation_escalation_manager,arcvo.automation.escalation.manager,model_arcvo_automation_escalation,base.group_system,1,1,1,1
 access_arcvo_automation_escalation_log_user,arcvo.automation.escalation.log.user,model_arcvo_automation_escalation_log,base.group_user,1,0,0,0
 access_arcvo_automation_escalation_log_manager,arcvo.automation.escalation.log.manager,model_arcvo_automation_escalation_log,base.group_system,1,1,1,1
+access_elearning_task_template_user,elearning.task.template.user,model_elearning_task_template,base.group_user,1,0,0,0
+access_elearning_task_template_manager,elearning.task.template.manager,model_elearning_task_template,base.group_system,1,1,1,1
+access_elearning_task_creation_log_user,elearning.task.creation.log.user,model_elearning_task_creation_log,base.group_user,1,0,0,0
+access_elearning_task_creation_log_manager,elearning.task.creation.log.manager,model_elearning_task_creation_log,base.group_system,1,1,1,1

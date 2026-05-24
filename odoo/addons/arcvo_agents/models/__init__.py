@@ -11,3 +11,5 @@ from . import automation_matcher
 from . import discuss_response_engine
 from . import automation_discuss
 from . import automation_escalation
+from . import elearning_task_template
+from . import slide_management

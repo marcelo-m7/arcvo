@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- eLearning Agent Automation Views -->
+
+    <!-- Tree View: Task Templates -->
+    <record id="view_elearning_task_template_tree" model="ir.ui.view">
+        <field name="name">elearning.task.template.tree</field>
+        <field name="model">elearning.task.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="trigger_on"/>
+                <field name="assignment_strategy"/>
+                <field name="active" widget="boolean"/>
+                <field name="task_count" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Task Templates -->
+    <record id="view_elearning_task_template_form" model="ir.ui.view">
+        <field name="name">elearning.task.template.form</field>
+        <field name="model">elearning.task.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <div class="oe_edit_only">
+                            <label for="active"/>
+                            <field name="active"/>
+                        </div>
+                    </div>
+                    <group name="trigger" string="Trigger Conditions">
+                        <group>
+                            <field name="sequence"/>
+                            <field name="trigger_on"/>
+                            <field name="slide_type_filter"/>
+                        </group>
+                        <group>
+                            <field name="min_duration"/>
+                            <field name="channel_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <group name="task" string="Task Configuration">
+                        <group>
+                            <field name="task_name_template"/>
+                            <field name="task_priority"/>
+                        </group>
+                        <group>
+                            <field name="task_tags"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="task_description_template" placeholder="Task description (supports {slide_name}, {channel_name}, {slide_url})"/>
+                    </group>
+                    <group name="assignment" string="Agent Assignment">
+                        <group>
+                            <field name="assignment_strategy"/>
+                            <field name="required_capability_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="send_agent_notification"/>
+                        </group>
+                    </group>
+                    <group name="automation" string="Automation Options">
+                        <group>
+                            <field name="auto_publish_on_completion"/>
+                            <field name="require_agent_approval"/>
+                        </group>
+                        <group>
+                            <field name="task_count" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Task Templates -->
+    <record id="view_elearning_task_template_search" model="ir.ui.view">
+        <field name="name">elearning.task.template.search</field>
+        <field name="model">elearning.task.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="trigger_on"/>
+                <field name="assignment_strategy"/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="auto_publish" string="Auto-Publish" domain="[('auto_publish_on_completion', '=', True)]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_trigger" string="Trigger" context="{'group_by': 'trigger_on'}"/>
+                    <filter name="group_by_strategy" string="Strategy" context="{'group_by': 'assignment_strategy'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Open Task Templates -->
+    <record id="action_elearning_task_template" model="ir.actions.act_window">
+        <field name="name">Task Templates</field>
+        <field name="res_model">elearning.task.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Tree View: Task Creation Logs -->
+    <record id="view_elearning_task_creation_log_tree" model="ir.ui.view">
+        <field name="name">elearning.task.creation.log.tree</field>
+        <field name="model">elearning.task.creation.log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="slide_id"/>
+                <field name="task_id"/>
+                <field name="assigned_agent_id"/>
+                <field name="creation_status"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Task Creation Logs -->
+    <record id="view_elearning_task_creation_log_form" model="ir.ui.view">
+        <field name="name">elearning.task.creation.log.form</field>
+        <field name="model">elearning.task.creation.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="creation_status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="template_id" readonly="1"/>
+                            <field name="slide_id" readonly="1"/>
+                            <field name="task_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="assigned_agent_id" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="error_message" readonly="1" nolabel="1" attrs="{'invisible': [('error_message', '=', '')]}"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Task Creation Logs -->
+    <record id="view_elearning_task_creation_log_search" model="ir.ui.view">
+        <field name="name">elearning.task.creation.log.search</field>
+        <field name="model">elearning.task.creation.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="template_id"/>
+                <field name="assigned_agent_id"/>
+                <filter name="created" string="Created" domain="[('creation_status', '=', 'created')]"/>
+                <filter name="assigned" string="Assigned" domain="[('creation_status', '=', 'assigned')]"/>
+                <filter name="failed" string="Failed" domain="[('creation_status', '=', 'failed')]"/>
+                <separator/>
+                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_template" string="Template" context="{'group_by': 'template_id'}"/>
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'assigned_agent_id'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'creation_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Open Task Creation Logs -->
+    <record id="action_elearning_task_creation_log" model="ir.actions.act_window">
+        <field name="name">Task Creation Logs</field>
+        <field name="res_model">elearning.task.creation.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Extend slide.channel with agent fields -->
+    <record id="view_slide_channel_elearning_form" model="ir.ui.view">
+        <field name="name">slide.channel.elearning.form</field>
+        <field name="model">slide.channel</field>
+        <field name="inherit_id">website_slides.slide_channel_form_view</field>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Agent Automation" name="agent_automation">
+                    <group>
+                        <group>
+                            <field name="elearning_enabled"/>
+                            <field name="elearning_auto_publish" attrs="{'invisible': [('elearning_enabled', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="slides_pending_review" readonly="1"/>
+                            <field name="slides_published_by_agents" readonly="1"/>
+                        </group>
+                    </group>
+                    <group attrs="{'invisible': [('elearning_enabled', '=', False)]}">
+                        <field name="elearning_template_id" widget="selection"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend slide.slide with agent fields -->
+    <record id="view_slide_slide_elearning_form" model="ir.ui.view">
+        <field name="name">slide.slide.elearning.form</field>
+        <field name="model">slide.slide</field>
+        <field name="inherit_id">website_slides.slide_slide_form_view</field>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Agent Review" name="agent_review">
+                    <group>
+                        <group>
+                            <field name="elearning_task_status" readonly="1"/>
+                            <field name="published_by_agent" readonly="1"/>
+                            <field name="agent_review_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="elearning_task_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="arcvo_agent_id"/>
+                            <field name="state"/>
+                            <field name="create_date"/>
+                        </tree>
+                    </field>
+                    <separator string="Agent Generated Content"/>
+                    <group>
+                        <field name="agent_generated_tags"/>
+                    </group>
+                    <field name="agent_analysis" placeholder="Agent analysis..."/>
+                    <field name="agent_recommendations" placeholder="Recommendations..."/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend project.task with eLearning fields -->
+    <record id="view_project_task_elearning_form" model="ir.ui.view">
+        <field name="name">project.task.elearning.form</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id">project.view_task_form2</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='priority']" position="after">
+                <field name="is_elearning_task" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
+                <field name="elearning_slide_id" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
+                <field name="agent_approval_pending" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="menu_elearning_task_template"
+        name="eLearning Templates"
+        action="action_elearning_task_template"
+        parent="menu_arcvo_root"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_elearning_task_creation_log"
+        name="Task Creation Logs"
+        action="action_elearning_task_creation_log"
+        parent="menu_arcvo_root"
+        sequence="51"/>
+
+</odoo>
