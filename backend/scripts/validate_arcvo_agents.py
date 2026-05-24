@@ -61,6 +61,8 @@ def main() -> None:
     for forbidden in FORBIDDEN_TEXT:
         if forbidden in all_text:
             raise SystemExit(f"Forbidden legacy reference found: {forbidden}")
+    if 'model="res.groups"' in all_text and "category_id" in all_text:
+        raise SystemExit("Odoo 19 res.groups records must not use category_id.")
 
     with (ADDON / "security" / "ir.model.access.csv").open(encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
