@@ -8,6 +8,7 @@ class FakeOdooClient:
     def __init__(self) -> None:
         self.created: list[tuple[str, dict[str, Any]]] = []
         self.writes: list[tuple[str, int, dict[str, Any]]] = []
+        self.execute_calls: list[tuple[str, str, list[Any], dict[str, Any]]] = []
         self.search_results: list[int] = []
 
     def search_read(
@@ -53,6 +54,16 @@ class FakeOdooClient:
         self.writes.append((model, record_id, values))
         return True
 
+    def execute_kw(
+        self,
+        model: str,
+        method: str,
+        args: list[Any],
+        kwargs: dict[str, Any] | None = None,
+    ) -> Any:
+        self.execute_calls.append((model, method, args, kwargs or {}))
+        return True
+
 
 def test_list_agents_reads_arcvo_agent_model() -> None:
     service = AgentService(FakeOdooClient())  # type: ignore[arg-type]
@@ -64,16 +75,19 @@ def test_list_agents_reads_arcvo_agent_model() -> None:
     assert agents[0].capability_ids == [1, 2]
 
 
-def test_record_heartbeat_writes_agent_and_audit_log() -> None:
+def test_record_heartbeat_writes_via_odoo_domain_method() -> None:
     client = FakeOdooClient()
     service = AgentService(client)  # type: ignore[arg-type]
 
     response = service.record_heartbeat(7, AgentHeartbeat(state="idle", message="ok"))
 
     assert response.status == "ok"
-    assert client.writes[0][0] == "arcvo.agent"
-    assert client.created[0][0] == "arcvo.agent.audit.log"
-    assert client.created[0][1]["action"] == "heartbeat"
+    assert client.execute_calls
+    model, method, args, kwargs = client.execute_calls[0]
+    assert model == "arcvo.agent"
+    assert method == "action_heartbeat"
+    assert args == [[7]]
+    assert kwargs["state"] == "idle"
 
 
 def test_assign_task_is_idempotent_for_open_assignment() -> None:
@@ -91,3 +105,17 @@ def test_assign_task_is_idempotent_for_open_assignment() -> None:
         {"arcvo_agent_id": 7, "arcvo_requires_agent": True},
     ) in client.writes
     assert all(model != "arcvo.agent.assignment" for model, _values in client.created)
+
+
+def test_record_heartbeat_prefers_odoo_domain_method() -> None:
+    client = FakeOdooClient()
+    service = AgentService(client)  # type: ignore[arg-type]
+
+    service.record_heartbeat(7, AgentHeartbeat(state="busy", message="heartbeat"))
+
+    assert client.execute_calls
+    model, method, args, kwargs = client.execute_calls[0]
+    assert model == "arcvo.agent"
+    assert method == "action_heartbeat"
+    assert args == [[7]]
+    assert kwargs["state"] == "busy"

@@ -3,6 +3,15 @@ from app.services.action_policy import ActionPolicy
 from app.services.agent_runner import AgentRunner
 
 
+class RunnerClientStub:
+    def __init__(self) -> None:
+        self.execute_calls: list[tuple[str, str, list, dict]] = []
+
+    def execute_kw(self, model: str, method: str, args: list, kwargs: dict | None = None):
+        self.execute_calls.append((model, method, args, kwargs or {}))
+        return True
+
+
 def test_agent_runner_parses_json_decision() -> None:
     data = AgentRunner._parse_decision('{"summary":"ok","status":"completed","progress":100}')
 
@@ -46,3 +55,25 @@ def test_agent_runner_prompt_contains_agent_and_task() -> None:
     assert "Backend Operator" in prompt
     assert "Fix health endpoint" in prompt
     assert "urgent" in prompt
+
+
+def test_runner_prefers_odoo_domain_method_for_assignment_update() -> None:
+    client = RunnerClientStub()
+    runner = AgentRunner(client=client, ollama=object())  # type: ignore[arg-type]
+
+    runner._apply_assignment_update(
+        assignment_id=10,
+        agent_id=7,
+        task_id=55,
+        status="completed",
+        progress=100,
+        message="ok",
+        payload={"source": "test"},
+    )
+
+    assert client.execute_calls
+    model, method, args, kwargs = client.execute_calls[0]
+    assert model == "arcvo.agent.assignment"
+    assert method == "action_apply_progress"
+    assert args == [[10]]
+    assert kwargs["status"] == "completed"

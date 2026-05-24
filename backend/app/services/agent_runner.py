@@ -127,29 +127,19 @@ class AgentRunner:
         progress = max(0, min(100, progress))
         message = str(decision.get("summary") or "Agent execution completed.")
 
-        self.client.write(
-            ASSIGNMENT_MODEL,
-            assignment_id,
-            {
-                "status": status,
-                "progress": progress,
-                "result": message,
-            },
-        )
-        self.client.create(
-            AUDIT_MODEL,
-            {
-                "agent_id": agent_id,
-                "task_id": task_id,
-                "assignment_id": assignment_id,
-                "action": "completed" if status == "completed" else "progress",
-                "message": message,
-                "payload": {
-                    "ollama_model": settings.ollama_model,
-                    "command": command,
-                    "command_result": command_result.__dict__ if command_result else None,
-                },
-            },
+        payload = {
+            "ollama_model": settings.ollama_model,
+            "command": command,
+            "command_result": command_result.__dict__ if command_result else None,
+        }
+        self._apply_assignment_update(
+            assignment_id=assignment_id,
+            agent_id=agent_id,
+            task_id=task_id,
+            status=status,
+            progress=progress,
+            message=message,
+            payload=payload,
         )
         return AgentExecution(
             assignment_id=assignment_id,
@@ -196,6 +186,64 @@ class AgentRunner:
             except json.JSONDecodeError:
                 pass
         return {"summary": text[:1000], "status": "in_progress", "progress": 25, "command": ""}
+
+    def _apply_assignment_update(
+        self,
+        assignment_id: int,
+        agent_id: int,
+        task_id: int,
+        status: str,
+        progress: int,
+        message: str,
+        payload: dict[str, Any],
+    ) -> None:
+        execute_kw = getattr(self.client, "execute_kw", None)
+        if callable(execute_kw):
+            try:
+                execute_kw(
+                    ASSIGNMENT_MODEL,
+                    "action_apply_progress",
+                    [[assignment_id]],
+                    {
+                        "status": status,
+                        "progress": progress,
+                        "result": message,
+                        "error_message": message if status in {"failed", "blocked"} else "",
+                        "payload": payload,
+                    },
+                )
+                return
+            except Exception:
+                pass
+
+        self.client.write(
+            ASSIGNMENT_MODEL,
+            assignment_id,
+            {
+                "status": status,
+                "progress": progress,
+                "result": message,
+            },
+        )
+        self.client.create(
+            AUDIT_MODEL,
+            {
+                "agent_id": agent_id,
+                "task_id": task_id,
+                "assignment_id": assignment_id,
+                "action": (
+                    "completed"
+                    if status == "completed"
+                    else "failed"
+                    if status == "failed"
+                    else "blocked"
+                    if status == "blocked"
+                    else "progress"
+                ),
+                "message": message,
+                "payload": payload,
+            },
+        )
 
 
 def get_agent_runner() -> AgentRunner:

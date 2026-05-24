@@ -41,6 +41,27 @@ class AgentService:
         return self._agent_from_record(records[0]) if records else None
 
     def record_heartbeat(self, agent_id: int, payload: AgentHeartbeat) -> AgentHeartbeatResponse:
+        execute_kw = getattr(self.client, "execute_kw", None)
+        if callable(execute_kw):
+            try:
+                execute_kw(
+                    AGENT_MODEL,
+                    "action_heartbeat",
+                    [[agent_id]],
+                    {"state": payload.state, "message": payload.message},
+                )
+            except Exception:
+                self._legacy_record_heartbeat(agent_id=agent_id, payload=payload)
+        else:
+            self._legacy_record_heartbeat(agent_id=agent_id, payload=payload)
+
+        return AgentHeartbeatResponse(
+            agent_id=agent_id,
+            status="ok",
+            message="Heartbeat recorded",
+        )
+
+    def _legacy_record_heartbeat(self, agent_id: int, payload: AgentHeartbeat) -> None:
         values = {"last_heartbeat": self._odoo_now()}
         if payload.state:
             values["state"] = payload.state
@@ -52,11 +73,6 @@ class AgentService:
                 "action": "heartbeat",
                 "message": payload.message or "Heartbeat recorded from Arcvo API.",
             },
-        )
-        return AgentHeartbeatResponse(
-            agent_id=agent_id,
-            status="ok",
-            message="Heartbeat recorded",
         )
 
     def assign_task(

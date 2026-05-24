@@ -99,14 +99,17 @@ class ArcvoAgent(models.Model):
             if agent.max_concurrent_tasks <= 0:
                 raise ValidationError("Max concurrent tasks must be greater than zero.")
 
-    def action_heartbeat(self):
-        self.write({"last_heartbeat": fields.Datetime.now()})
+    def action_heartbeat(self, state=None, message=None):
+        vals = {"last_heartbeat": fields.Datetime.now()}
+        if state in {"idle", "busy", "blocked", "offline", "disabled"}:
+            vals["state"] = state
+        self.write(vals)
         for agent in self:
             self.env["arcvo.agent.audit.log"].sudo().create(
                 {
                     "agent_id": agent.id,
                     "action": "heartbeat",
-                    "message": "Heartbeat recorded.",
+                    "message": message or "Heartbeat recorded.",
                 }
             )
 
