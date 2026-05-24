@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Arcvo Smart Discuss Response Audit Views -->
+
+    <!-- Tree View: Discuss Actions -->
+    <record id="view_automation_discuss_action_tree" model="ir.ui.view">
+        <field name="name">automation.discuss.action.tree</field>
+        <field name="model">arcvo.automation.discuss.action</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="agent_id"/>
+                <field name="action_type"/>
+                <field name="confidence" widget="float" digits="[1,2]"/>
+                <field name="status"/>
+                <field name="button_clicks" sum="Button Clicks"/>
+                <field name="needs_human_review"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Discuss Actions -->
+    <record id="view_automation_discuss_action_form" model="ir.ui.view">
+        <field name="name">automation.discuss.action.form</field>
+        <field name="model">arcvo.automation.discuss.action</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_accept" type="object" string="✓ Accept" class="oe_highlight" states="pending"/>
+                    <button name="action_pause" type="object" string="⏸ Pause" states="pending"/>
+                    <button name="action_retry" type="object" string="🔄 Retry" states="pending"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="agent_id" readonly="1"/>
+                            <span class="oe_read_only"> - </span>
+                            <field name="action_type" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="mention_message_id" readonly="1"/>
+                            <field name="response_message_id" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="response_delay_seconds" readonly="1" widget="float" digits="[1,2]"/>
+                        </group>
+                        <group>
+                            <field name="confidence" widget="float" digits="[1,3]"/>
+                            <field name="button_clicks" readonly="1"/>
+                            <field name="needs_human_review"/>
+                            <field name="created_by" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Response" name="response">
+                            <field name="response_text" readonly="1" nolabel="1"/>
+                        </page>
+                        <page string="Next Steps" name="next_steps">
+                            <field name="suggested_next_step" nolabel="1"/>
+                        </page>
+                        <page string="Button Clicks" name="button_clicks">
+                            <field name="button_click_ids" nolabel="1" readonly="1">
+                                <tree>
+                                    <field name="create_date"/>
+                                    <field name="button_type"/>
+                                    <field name="clicked_by"/>
+                                    <field name="notes"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View: Discuss Actions -->
+    <record id="view_automation_discuss_action_search" model="ir.ui.view">
+        <field name="name">automation.discuss.action.search</field>
+        <field name="model">arcvo.automation.discuss.action</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="agent_id"/>
+                <field name="action_type"/>
+                <field name="status"/>
+                <filter name="needs_review" string="Needs Review" domain="[('needs_human_review', '=', True)]"/>
+                <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
+                <filter name="accepted" string="Accepted" domain="[('status', '=', 'accepted')]"/>
+                <filter name="paused" string="Paused" domain="[('status', '=', 'paused')]"/>
+                <filter name="escalated" string="Escalated" domain="[('status', '=', 'escalated')]"/>
+                <separator/>
+                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
+                    <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_by_action_type" string="Action Type" context="{'group_by': 'action_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action: Open Discuss Actions -->
+    <record id="action_automation_discuss_action" model="ir.actions.act_window">
+        <field name="name">Discuss Responses</field>
+        <field name="res_model">arcvo.automation.discuss.action</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Discuss responses yet.
+            </p>
+            <p>
+                Smart Discuss responses are generated when agents are @mentioned.
+                Track responses, button clicks, and agent actions here.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu: Discuss Responses -->
+    <menuitem
+        id="menu_automation_discuss_action"
+        name="Discuss Responses"
+        action="action_automation_discuss_action"
+        parent="menu_arcvo_root"
+        sequence="43"/>
+
+    <!-- Tree View: Button Clicks -->
+    <record id="view_automation_discuss_button_click_tree" model="ir.ui.view">
+        <field name="name">automation.discuss.button.click.tree</field>
+        <field name="model">arcvo.automation.discuss.button.click</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="button_type"/>
+                <field name="clicked_by"/>
+                <field name="action_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View: Button Clicks -->
+    <record id="view_automation_discuss_button_click_form" model="ir.ui.view">
+        <field name="name">automation.discuss.button.click.form</field>
+        <field name="model">arcvo.automation.discuss.button.click</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="action_id" readonly="1"/>
+                        <field name="button_type" readonly="1"/>
+                        <field name="clicked_by" readonly="1"/>
+                        <field name="create_date" readonly="1"/>
+                    </group>
+                    <field name="notes" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

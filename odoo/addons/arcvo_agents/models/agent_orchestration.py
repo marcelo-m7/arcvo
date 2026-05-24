@@ -450,3 +450,99 @@ class ProjectTaskWebhook(models.Model):
         # No matcher succeeded
         _logger.warning(f"No matcher could assign task {self.name}")
         return False
+
+
+class MailMessageDiscussHandler(models.Model):
+    """Handle Discuss messages and dispatch to agents on @mention."""
+
+    _inherit = "mail.message"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Override create to detect @mentions and dispatch to agents."""
+        messages = super().create(vals_list)
+        
+        # Process messages for Discuss agent responses
+        for message in messages:
+            try:
+                if message.message_type != "comment":
+                    continue  # Only process comments
+                
+                # Check if message mentions any agents
+                self._dispatch_to_mentioned_agents(message)
+                
+            except Exception as e:
+                _logger.warning(f"Error processing Discuss message {message.id}: {e}")
+        
+        return messages
+
+    def _dispatch_to_mentioned_agents(self, message):
+        """
+        Check if message mentions agents and dispatch Smart Discuss responses.
+        
+        Looks for @agent-name patterns in message body and triggers
+        discuss_response_engine for matching agents.
+        """
+        if not message.body:
+            return
+        
+        # Find all @mention patterns (simple regex: @word or @"word word")
+        import re
+        mention_pattern = r'@([a-zA-Z0-9._-]+(?:\s+[a-zA-Z0-9._-]+)*)'
+        mentions = re.findall(mention_pattern, message.body)
+        
+        if not mentions:
+            return
+        
+        _logger.debug(f"Found mentions in message {message.id}: {mentions}")
+        
+        # Search for matching agents
+        for mention in mentions:
+            agent = self.env["hr.employee"].search(
+                [
+                    ("is_agent", "=", True),
+                    ("agent_active", "=", True),
+                    ("|", ("name", "ilike", mention), ("user_id.login", "ilike", mention)),
+                ],
+                limit=1,
+            )
+            
+            if agent:
+                _logger.info(f"Agent {agent.name} mentioned in message {message.id}")
+                
+                # Dispatch to agent
+                try:
+                    self._handle_agent_mention(agent, message)
+                except Exception as e:
+                    _logger.exception(f"Error dispatching agent mention: {e}")
+
+    def _handle_agent_mention(self, agent, message):
+        """
+        Generate Smart Discuss response for mentioned agent.
+        
+        Args:
+            agent: hr.employee (agent)
+            message: mail.message (the mention)
+        """
+        # Get response engine
+        engine = self.env["discuss.response.engine"]
+        
+        # Collect context
+        context = engine.collect_thread_context(message)
+        _logger.debug(f"Collected context for agent {agent.name}: {len(context['recent_messages'])} messages")
+        
+        # Generate response
+        response_data = engine.generate_response(agent, message, context)
+        if not response_data:
+            _logger.warning(f"Failed to generate response for agent {agent.name}")
+            return
+        
+        _logger.info(f"Generated response for agent {agent.name}: {response_data.get('action_type', 'unknown')}")
+        
+        # Post to Discuss
+        response_msg = engine.post_discuss_response(agent, message, response_data)
+        if response_msg:
+            _logger.info(f"Posted response message {response_msg.id}")
+        
+        # Create audit trail
+        engine.create_discuss_action_record(agent, message, response_data, response_msg)

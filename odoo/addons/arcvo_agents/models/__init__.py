@@ -8,3 +8,5 @@ from . import agent_message
 from . import agent_orchestration
 from . import automation_webhook
 from . import automation_matcher
+from . import discuss_response_engine
+from . import automation_discuss
