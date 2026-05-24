@@ -158,7 +158,7 @@ class ArcvoAutomationWebhook(models.Model):
         agent._execute_agent_cycle()
 
     def _execute_assign_and_run(self, task):
-        """Auto-assign task to agent and run immediately."""
+        """Auto-assign task to agent (via matcher) and run immediately."""
         self.ensure_one()
 
         if task.arcvo_agent_id:
@@ -166,12 +166,19 @@ class ArcvoAutomationWebhook(models.Model):
             self._execute_run_agent(task)
             return
 
-        # TODO: Use matcher from Fase 2 to auto-assign
-        # For now, just log that auto-assign is needed
-        _logger.warning(
-            f"Webhook assign_and_run: task {task.name} needs auto-assignment "
-            "(Fase 2 matcher not yet implemented)"
-        )
+        # Use matcher from Fase 2 to auto-assign
+        try:
+            assigned = self.env["project.task"]._auto_assign_task(task)
+            if assigned:
+                # Task was assigned, run it
+                self._execute_run_agent(task)
+            else:
+                _logger.warning(
+                    f"Webhook assign_and_run: task {task.name} could not be auto-assigned"
+                )
+        except Exception as e:
+            _logger.exception(f"Webhook assign_and_run failed: {e}")
+            raise ValidationError(f"Auto-assignment failed: {e}")
 
     def _execute_notify(self, task):
         """Send notification (stub for future use)."""

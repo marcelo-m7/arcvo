@@ -67,6 +67,25 @@ class HrEmployeeAgent(models.Model):
         help="Execution logs and decisions for this agent",
     )
 
+    # Agent capabilities (for Fase 2 matching)
+    capability_ids = fields.Many2many(
+        "arcvo.agent.capability",
+        "arcvo_agent_capability_rel",
+        "agent_id",
+        "capability_id",
+        string="Capabilities",
+        help="Skills this agent has (for task matching)",
+    )
+    max_concurrent_tasks = fields.Integer(
+        default=3,
+        help="Maximum number of concurrent task assignments",
+    )
+    open_assignment_count = fields.Integer(
+        compute="_compute_open_assignments",
+        store=False,
+        help="Current number of open assignments",
+    )
+
     def action_test_agent(self):
         """Manual action: Test agent immediately (outside cron)."""
         self.ensure_one()
@@ -327,6 +346,21 @@ Respond ONLY with valid JSON in this format (no markdown, no extra text):
 Current time: {datetime.now().isoformat()}
 """
 
+    @api.depends("is_agent")
+    def _compute_open_assignments(self):
+        """Compute number of open assignments for this agent."""
+        for employee in self:
+            if employee.is_agent:
+                open_assignments = self.env["arcvo.agent.assignment"].search_count(
+                    [
+                        ("agent_id", "=", employee.id),
+                        ("status", "in", ["assigned", "in_progress", "blocked"]),
+                    ]
+                )
+                employee.open_assignment_count = open_assignments
+            else:
+                employee.open_assignment_count = 0
+
 
 class ProjectTaskWebhook(models.Model):
     """Extend project.task to support webhook dispatching on creation/update."""
@@ -367,3 +401,52 @@ class ProjectTaskWebhook(models.Model):
             _logger.warning(f"Error dispatching webhooks on task update: {e}")
         
         return result
+
+    def _auto_assign_task(self):
+        """
+        Try to auto-assign this task to an agent using matchers (Fase 2).
+        
+        Dispatches all active matchers in sequence (priority order) until
+        one successfully assigns the task.
+        
+        Returns:
+            bool: True if task was successfully assigned
+        """
+        self.ensure_one()
+
+        # If already assigned, skip
+        if self.arcvo_agent_id:
+            _logger.info(f"Task {self.name} already assigned to {self.arcvo_agent_id.name}")
+            return True
+
+        # Get all active matchers
+        matcher_model = self.env.get("arcvo.automation.matcher")
+        if not matcher_model:
+            _logger.warning("Matcher model not found (Fase 2 not installed)")
+            return False
+
+        matchers = matcher_model.search(
+            [("active", "=", True)],
+            order="sequence ASC",
+        )
+
+        if not matchers:
+            _logger.warning(f"No active matchers found for task {self.name}")
+            return False
+
+        # Try each matcher in order
+        for matcher in matchers:
+            try:
+                if matcher.apply_matcher(self):
+                    _logger.info(
+                        f"Task {self.name} auto-assigned to {self.arcvo_agent_id.name} "
+                        f"by matcher {matcher.name}"
+                    )
+                    return True
+            except Exception as e:
+                _logger.exception(f"Error applying matcher {matcher.name}: {e}")
+                continue
+
+        # No matcher succeeded
+        _logger.warning(f"No matcher could assign task {self.name}")
+        return False
