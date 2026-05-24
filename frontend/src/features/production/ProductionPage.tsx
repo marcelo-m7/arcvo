@@ -40,6 +40,29 @@ export function ProductionPage() {
         <StatusCard icon={ServerCog} label="Ollama" value={data?.ollama_ok ? "ok" : "erro"} />
       </section>
 
+      <section className="grid gap-4 md:grid-cols-4">
+        <StatusCard
+          icon={ShieldCheck}
+          label="Support"
+          value={data?.support.available ? "ok" : "erro"}
+        />
+        <StatusCard
+          icon={ShieldCheck}
+          label="Tickets Abertos"
+          value={String(data?.support.helpdesk_open ?? "-")}
+        />
+        <StatusCard
+          icon={ShieldCheck}
+          label="SLA Vencido"
+          value={String(data?.support.helpdesk_sla_breached ?? "-")}
+        />
+        <StatusCard
+          icon={ShieldCheck}
+          label="Knowledge Publicado"
+          value={String(data?.support.knowledge_published ?? "-")}
+        />
+      </section>
+
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="rounded-md border border-zinc-200 bg-white">
           <div className="border-b border-zinc-200 px-4 py-3">

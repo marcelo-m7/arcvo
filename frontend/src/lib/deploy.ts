@@ -8,6 +8,15 @@ export type ProductionStatus = {
   coolify_api: Record<string, unknown>;
   ollama_ok: boolean;
   ollama_health: Record<string, unknown>;
+  support: {
+    available: boolean;
+    helpdesk_total: number | null;
+    helpdesk_open: number | null;
+    helpdesk_sla_breached: number | null;
+    knowledge_total: number | null;
+    knowledge_published: number | null;
+    error: string | null;
+  };
 };
 
 export type CoolifyDeployResult = {

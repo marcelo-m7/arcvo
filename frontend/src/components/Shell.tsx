@@ -43,7 +43,7 @@ export function Shell() {
                 <NavLink
                   key={item.to}
                   to={item.to}
-                  className={({ isActive }) =>
+                  className={({ isActive }: { isActive: boolean }) =>
                     [
                       "flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium",
                       isActive
