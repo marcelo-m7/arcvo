@@ -150,8 +150,35 @@ class ArcvoAutomationDiscussAction(models.Model):
                 f"User requested retry for discuss action {record.id} from agent {record.agent_id.name}"
             )
 
-            # Trigger re-generation (placeholder)
-            # TODO: Call discuss_response_engine again
+            # Trigger re-generation: collect context again and regenerate
+            try:
+                engine = self.env["discuss.response.engine"]
+                context = engine.collect_thread_context(record.mention_message_id)
+                
+                new_response = engine.generate_response(
+                    record.agent_id,
+                    record.mention_message_id,
+                    context
+                )
+                
+                if new_response:
+                    # Post new response
+                    new_msg = engine.post_discuss_response(
+                        record.agent_id,
+                        record.mention_message_id,
+                        new_response
+                    )
+                    
+                    # Update record with new response
+                    record.response_message_id = new_msg.id if new_msg else None
+                    record.response_text = new_response.get("response", "")
+                    record.status = "pending"  # Reset to pending
+                    
+                    _logger.info(f"Retry successful for action {record.id}")
+                else:
+                    _logger.warning(f"Retry failed to generate response for action {record.id}")
+            except Exception as e:
+                _logger.exception(f"Error during retry for action {record.id}: {e}")
 
     def _log_button_click(self, button_type):
         """Create button click record."""

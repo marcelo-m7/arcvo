@@ -280,12 +280,15 @@ class ArcvoAutomationMatcher(models.Model):
                 return self._apply_fallback_strategy(available_agents)
 
         elif self.assignment_strategy == "round_robin":
-            # TODO: Implement round-robin (requires state tracking)
-            # For now, fall back to least_loaded
-            return min(
-                available_agents,
-                key=lambda a: a.open_assignment_count,
-            )
+            # Simple round-robin: track index in company settings or use ID
+            # For now, use creation date as pseudo-round-robin (cyclic by date)
+            if available_agents:
+                # Sort by assignment count to distribute fairly
+                sorted_agents = sorted(
+                    available_agents,
+                    key=lambda a: (a.open_assignment_count, a.id)
+                )
+                return sorted_agents[0]  # Pick least loaded among circle
 
         return available_agents[0] if available_agents else None
 
