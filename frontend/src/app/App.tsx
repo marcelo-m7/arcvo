@@ -6,6 +6,8 @@ import { Shell } from "@/components/Shell";
 import { AgentsPage } from "@/features/agents/AgentsPage";
 import { ArchivePage } from "@/features/archive/ArchivePage";
 import { LoginPage } from "@/features/auth/LoginPage";
+import { HelpdeskPage } from "@/features/helpdesk/HelpdeskPage";
+import { KnowledgePage } from "@/features/knowledge/KnowledgePage";
 import { OdooHealthPage } from "@/features/odoo/OdooHealthPage";
 import { ProductionPage } from "@/features/production/ProductionPage";
 
@@ -29,6 +31,8 @@ export function App() {
               <Route index element={<Navigate to="/acervo" replace />} />
               <Route path="/acervo" element={<ArchivePage />} />
               <Route path="/agentes" element={<AgentsPage />} />
+              <Route path="/helpdesk" element={<HelpdeskPage />} />
+              <Route path="/knowledge" element={<KnowledgePage />} />
               <Route path="/odoo" element={<OdooHealthPage />} />
               <Route path="/producao" element={<ProductionPage />} />
             </Route>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_arcvo_knowledge_category_list" model="ir.ui.view">
+        <field name="name">arcvo.knowledge.category.list</field>
+        <field name="model">arcvo.knowledge.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence"/>
+                <field name="complete_name"/>
+                <field name="article_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_arcvo_knowledge_category_form" model="ir.ui.view">
+        <field name="name">arcvo.knowledge.category.form</field>
+        <field name="model">arcvo.knowledge.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="article_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_arcvo_knowledge_categories" model="ir.actions.act_window">
+        <field name="name">Knowledge Categories</field>
+        <field name="res_model">arcvo.knowledge.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -12,6 +12,8 @@
                         <field name="arcvo_agent_id"/>
                     </group>
                     <field name="arcvo_assignment_ids"/>
+                    <field name="arcvo_helpdesk_ticket_ids"/>
+                    <field name="arcvo_knowledge_article_ids"/>
                 </page>
             </xpath>
         </field>

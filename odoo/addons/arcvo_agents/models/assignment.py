@@ -104,3 +104,15 @@ class ArcvoAgentAssignment(models.Model):
                     "payload": payload if isinstance(payload, dict) else None,
                 }
             )
+            assignment._sync_related_tickets(status=status, summary=result or error_message)
+
+    def _sync_related_tickets(self, status, summary=""):
+        ticket_model = self.env["arcvo.helpdesk.ticket"]
+        for assignment in self:
+            tickets = ticket_model.search(
+                [
+                    ("task_id", "=", assignment.task_id.id),
+                    ("state", "not in", ["resolved", "closed"]),
+                ]
+            )
+            tickets.action_sync_from_assignment(status=status, summary=summary)

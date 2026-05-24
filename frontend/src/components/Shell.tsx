@@ -1,4 +1,14 @@
-import { Activity, Archive, Bot, Clapperboard, Database, LogOut, Rocket } from "lucide-react";
+import {
+  Activity,
+  Archive,
+  BookOpen,
+  Bot,
+  ClipboardList,
+  Clapperboard,
+  Database,
+  LogOut,
+  Rocket,
+} from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
 import { useAuthStore } from "@/store/auth";
@@ -6,6 +16,8 @@ import { useAuthStore } from "@/store/auth";
 const navItems = [
   { to: "/acervo", label: "Acervo", icon: Clapperboard },
   { to: "/agentes", label: "Agentes", icon: Bot },
+  { to: "/helpdesk", label: "Helpdesk", icon: ClipboardList },
+  { to: "/knowledge", label: "Knowledge", icon: BookOpen },
   { to: "/producao", label: "Producao", icon: Rocket },
   { to: "/odoo", label: "Odoo", icon: Database },
 ];
