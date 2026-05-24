@@ -10,6 +10,7 @@
                 <field name="state"/>
                 <field name="is_available"/>
                 <field name="open_assignment_count"/>
+                <field name="discuss_channel_id"/>
                 <field name="success_rate"/>
                 <field name="last_heartbeat"/>
             </list>
@@ -23,6 +24,8 @@
             <form>
                 <header>
                     <button name="action_heartbeat" type="object" string="Record Heartbeat"/>
+                    <button name="action_ensure_discuss_channel" type="object" string="Create Discuss Channel"/>
+                    <button name="action_open_discuss_channel" type="object" string="Open Discuss"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -32,6 +35,9 @@
                             <field name="role"/>
                             <field name="active"/>
                             <field name="max_concurrent_tasks"/>
+                            <field name="user_id"/>
+                            <field name="partner_id"/>
+                            <field name="discuss_channel_id"/>
                         </group>
                         <group>
                             <field name="is_available"/>
@@ -51,6 +57,7 @@
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

@@ -12,6 +12,7 @@ class ArcvoAgentAuditLog(models.Model):
     action = fields.Selection(
         [
             ("heartbeat", "Heartbeat"),
+            ("message", "Message"),
             ("assigned", "Assigned"),
             ("progress", "Progress"),
             ("completed", "Completed"),

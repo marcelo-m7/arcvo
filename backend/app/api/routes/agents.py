@@ -8,10 +8,13 @@ from app.schemas.agents import (
     AgentAuditLog,
     AgentChatMessage,
     AgentChatResponse,
+    AgentDiscussMessage,
     AgentExecution,
     AgentHeartbeat,
     AgentHeartbeatResponse,
     AgentInfo,
+    AgentMessageCreate,
+    AgentMessageResponse,
     AgentRunRequest,
 )
 from app.services.agent_runner import AgentRunner, get_agent_runner
@@ -90,6 +93,30 @@ def record_heartbeat(
 ) -> AgentHeartbeatResponse:
     try:
         return service.record_heartbeat(agent_id=agent_id, payload=payload)
+    except OdooClientError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.get("/{agent_id}/messages", response_model=list[AgentDiscussMessage])
+def list_agent_messages(
+    agent_id: int,
+    limit: int = Query(default=20, ge=1, le=100),
+    service: AgentService = agent_service_dependency,
+) -> list[AgentDiscussMessage]:
+    try:
+        return service.list_agent_messages(agent_id=agent_id, limit=limit)
+    except OdooClientError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.post("/{agent_id}/message", response_model=AgentMessageResponse)
+def send_agent_message(
+    agent_id: int,
+    payload: AgentMessageCreate,
+    service: AgentService = agent_service_dependency,
+) -> AgentMessageResponse:
+    try:
+        return service.send_agent_message(agent_id=agent_id, payload=payload)
     except OdooClientError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 

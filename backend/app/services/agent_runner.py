@@ -62,6 +62,7 @@ class AgentRunner:
         if not agents:
             raise ValueError(f"Agent {agent_id} not found")
         agent = agents[0]
+        self._post_agent_message(agent_id, f"Operador: {message}")
         prompt = (
             f"Voce e {agent['name']}, um agente Arcvo com o papel de {agent['role']}. "
             f"{agent.get('description') or ''} "
@@ -83,6 +84,7 @@ class AgentRunner:
                     pass
         except OllamaError as exc:
             reply = f"[Ollama indisponivel: {exc}]"
+        self._post_agent_message(agent_id, f"{agent['name']}: {reply}")
         return AgentChatResponse(
             agent_id=agent_id,
             agent_name=agent["name"],
@@ -204,6 +206,14 @@ class AgentRunner:
                 "error_message": message if status in {"failed", "blocked"} else "",
                 "payload": payload,
             },
+        )
+
+    def _post_agent_message(self, agent_id: int, body: str) -> None:
+        self.client.execute_kw(
+            AGENT_MODEL,
+            "action_post_discuss_message",
+            [[agent_id]],
+            {"body": body},
         )
 
 

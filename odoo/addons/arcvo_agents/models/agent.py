@@ -1,13 +1,15 @@
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools import html_escape
 
 
 class ArcvoAgent(models.Model):
     _name = "arcvo.agent"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Arcvo Agent"
     _order = "role, name"
 
-    name = fields.Char(required=True, index=True)
+    name = fields.Char(required=True, index=True, tracking=True)
     role = fields.Selection(
         [
             ("ceo", "CEO"),
@@ -23,6 +25,7 @@ class ArcvoAgent(models.Model):
         ],
         default="odoo",
         required=True,
+        tracking=True,
     )
     state = fields.Selection(
         [
@@ -34,8 +37,17 @@ class ArcvoAgent(models.Model):
         ],
         default="idle",
         required=True,
+        tracking=True,
     )
     description = fields.Text()
+    user_id = fields.Many2one("res.users", string="Odoo User")
+    partner_id = fields.Many2one("res.partner", string="Discuss Partner")
+    discuss_channel_id = fields.Many2one(
+        "discuss.channel",
+        string="Discuss Channel",
+        readonly=True,
+        copy=False,
+    )
     capability_ids = fields.Many2many(
         "arcvo.agent.capability",
         "arcvo_agent_capability_rel",
@@ -105,6 +117,9 @@ class ArcvoAgent(models.Model):
             vals["state"] = state
         self.write(vals)
         for agent in self:
+            if message:
+                agent._post_agent_chatter(message)
+                agent.action_post_discuss_message(body=message)
             self.env["arcvo.agent.audit.log"].sudo().create(
                 {
                     "agent_id": agent.id,
@@ -119,3 +134,76 @@ class ArcvoAgent(models.Model):
             if success:
                 vals["successful_executions"] = agent.successful_executions + 1
             agent.write(vals)
+
+    def action_ensure_discuss_channel(self):
+        for agent in self:
+            agent._ensure_discuss_channel()
+        return True
+
+    def action_open_discuss_channel(self):
+        self.ensure_one()
+        channel = self._ensure_discuss_channel()
+        return {
+            "type": "ir.actions.act_window",
+            "name": channel.display_name,
+            "res_model": "discuss.channel",
+            "res_id": channel.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
+    def action_post_discuss_message(self, body=None, task_id=None, assignment_id=None):
+        safe_body = body or _("Arcvo agent message.")
+        for agent in self:
+            channel = agent._ensure_discuss_channel()
+            channel.message_post(
+                body=agent._format_message_body(safe_body, task_id=task_id, assignment_id=assignment_id),
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
+            )
+            agent._post_agent_chatter(safe_body, task_id=task_id, assignment_id=assignment_id)
+            agent.env["arcvo.agent.audit.log"].sudo().create(
+                {
+                    "agent_id": agent.id,
+                    "task_id": task_id or False,
+                    "assignment_id": assignment_id or False,
+                    "action": "message",
+                    "message": safe_body,
+                    "payload": {"target": "discuss"},
+                }
+            )
+        return True
+
+    def _ensure_discuss_channel(self):
+        self.ensure_one()
+        if self.discuss_channel_id:
+            return self.discuss_channel_id
+
+        channel_model = self.env["discuss.channel"].sudo()
+        channel = channel_model.create(
+            {
+                "name": f"Arcvo Agent: {self.name}",
+                "channel_type": "channel",
+            }
+        )
+        self.sudo().write({"discuss_channel_id": channel.id})
+        self._post_agent_chatter(_("Discuss channel created for this Arcvo agent."))
+        return channel
+
+    def _post_agent_chatter(self, body, task_id=None, assignment_id=None):
+        self.ensure_one()
+        self.message_post(
+            body=self._format_message_body(body, task_id=task_id, assignment_id=assignment_id),
+            message_type="comment",
+            subtype_xmlid="mail.mt_comment",
+        )
+
+    @staticmethod
+    def _format_message_body(body, task_id=None, assignment_id=None):
+        details = []
+        if task_id:
+            details.append(f"Task #{int(task_id)}")
+        if assignment_id:
+            details.append(f"Assignment #{int(assignment_id)}")
+        suffix = f"<br/><small>{html_escape(' | '.join(details))}</small>" if details else ""
+        return f"{html_escape(body)}{suffix}"

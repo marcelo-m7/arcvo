@@ -16,6 +16,7 @@ class AgentInfo(BaseModel):
     success_rate: float
     is_available: bool
     last_heartbeat: str | None = None
+    discuss_channel_id: list[Any] | int | bool | None = None
 
 
 class AgentHeartbeat(BaseModel):
@@ -66,6 +67,25 @@ class AgentChatResponse(BaseModel):
     agent_name: str
     role: str
     reply: str
+
+
+class AgentMessageCreate(BaseModel):
+    body: str = Field(min_length=1, max_length=4000)
+    task_id: int | None = None
+    assignment_id: int | None = None
+
+
+class AgentMessageResponse(BaseModel):
+    agent_id: int
+    status: str
+    message: str
+
+
+class AgentDiscussMessage(BaseModel):
+    id: int
+    body: str | None = None
+    date: str | None = None
+    author_id: list[Any] | int | bool | None = None
 
 
 class AgentExecution(BaseModel):

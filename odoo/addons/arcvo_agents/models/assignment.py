@@ -4,11 +4,12 @@ from odoo.exceptions import ValidationError
 
 class ArcvoAgentAssignment(models.Model):
     _name = "arcvo.agent.assignment"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Arcvo Agent Assignment"
     _order = "assigned_at desc, id desc"
 
-    agent_id = fields.Many2one("arcvo.agent", required=True, ondelete="cascade")
-    task_id = fields.Many2one("project.task", required=True, ondelete="cascade")
+    agent_id = fields.Many2one("arcvo.agent", required=True, ondelete="cascade", tracking=True)
+    task_id = fields.Many2one("project.task", required=True, ondelete="cascade", tracking=True)
     status = fields.Selection(
         [
             ("assigned", "Assigned"),
@@ -20,11 +21,12 @@ class ArcvoAgentAssignment(models.Model):
         ],
         default="assigned",
         required=True,
+        tracking=True,
     )
     assigned_at = fields.Datetime(default=fields.Datetime.now, required=True)
     started_at = fields.Datetime()
     completed_at = fields.Datetime()
-    progress = fields.Integer(default=0)
+    progress = fields.Integer(default=0, tracking=True)
     result = fields.Text()
     error_message = fields.Text()
     notes = fields.Text()
@@ -39,16 +41,19 @@ class ArcvoAgentAssignment(models.Model):
 
     def action_start(self):
         self.write({"status": "in_progress", "started_at": fields.Datetime.now()})
+        self._post_progress_message("Assignment started.")
 
     def action_complete(self):
         self.write({"status": "completed", "progress": 100, "completed_at": fields.Datetime.now()})
         for assignment in self:
             assignment.agent_id.record_execution(True)
+        self._post_progress_message("Assignment completed.")
 
     def action_fail(self):
         self.write({"status": "failed", "completed_at": fields.Datetime.now()})
         for assignment in self:
             assignment.agent_id.record_execution(False)
+        self._post_progress_message("Assignment failed.")
 
     def action_apply_progress(
         self,
@@ -104,15 +109,23 @@ class ArcvoAgentAssignment(models.Model):
                     "payload": payload if isinstance(payload, dict) else None,
                 }
             )
-            assignment._sync_related_tickets(status=status, summary=result or error_message)
+            assignment._post_progress_message(result or error_message or "Assignment updated.")
 
-    def _sync_related_tickets(self, status, summary=""):
-        ticket_model = self.env["arcvo.helpdesk.ticket"]
+    def _post_progress_message(self, body):
         for assignment in self:
-            tickets = ticket_model.search(
-                [
-                    ("task_id", "=", assignment.task_id.id),
-                    ("state", "not in", ["resolved", "closed"]),
-                ]
+            message = f"{assignment.agent_id.name}: {body}"
+            assignment.message_post(
+                body=message,
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
             )
-            tickets.action_sync_from_assignment(status=status, summary=summary)
+            assignment.task_id.message_post(
+                body=message,
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
+            )
+            assignment.agent_id.action_post_discuss_message(
+                body=body,
+                task_id=assignment.task_id.id,
+                assignment_id=assignment.id,
+            )

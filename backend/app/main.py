@@ -5,11 +5,8 @@ from app.api.routes import (
     agents,
     archive,
     auth,
-    dashboard,
     deploy,
     health,
-    helpdesk,
-    knowledge,
     odoo,
 )
 from app.core.config import settings
@@ -35,11 +32,8 @@ def create_app() -> FastAPI:
     app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
     app.include_router(agents.router, prefix="/api/v1/agents", tags=["agents"])
     app.include_router(archive.router, prefix="/api/v1/archive", tags=["archive"])
-    app.include_router(helpdesk.router, prefix="/api/v1/helpdesk", tags=["helpdesk"])
-    app.include_router(knowledge.router, prefix="/api/v1/knowledge", tags=["knowledge"])
     app.include_router(odoo.router, prefix="/api/v1/odoo", tags=["odoo"])
     app.include_router(deploy.router, prefix="/api/v1/deploy", tags=["deploy"])
-    app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
     return app
 
 

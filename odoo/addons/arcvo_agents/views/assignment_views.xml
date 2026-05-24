@@ -41,6 +41,7 @@
                     <field name="result"/>
                     <field name="error_message"/>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

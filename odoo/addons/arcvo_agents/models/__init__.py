@@ -2,9 +2,4 @@ from . import capability
 from . import agent
 from . import assignment
 from . import audit_log
-from . import helpdesk_stage
-from . import helpdesk_ticket
-from . import helpdesk_comment
-from . import knowledge_category
-from . import knowledge_article
 from . import project_task

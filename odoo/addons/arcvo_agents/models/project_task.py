@@ -11,13 +11,3 @@ class ProjectTask(models.Model):
         "task_id",
         string="Arcvo Assignment History",
     )
-    arcvo_helpdesk_ticket_ids = fields.One2many(
-        "arcvo.helpdesk.ticket",
-        "task_id",
-        string="Arcvo Helpdesk Tickets",
-    )
-    arcvo_knowledge_article_ids = fields.One2many(
-        "arcvo.knowledge.article",
-        "task_id",
-        string="Arcvo Knowledge Articles",
-    )

@@ -3,16 +3,20 @@ from app.integrations.odoo.client import OdooClient, OdooCredentials
 from app.schemas.agents import (
     AgentAssignmentCreate,
     AgentAssignmentResponse,
+    AgentDiscussMessage,
     AgentAuditLog,
     AgentHeartbeat,
     AgentHeartbeatResponse,
     AgentInfo,
+    AgentMessageCreate,
+    AgentMessageResponse,
 )
 
 AGENT_MODEL = "arcvo.agent"
 ASSIGNMENT_MODEL = "arcvo.agent.assignment"
 AUDIT_MODEL = "arcvo.agent.audit.log"
 TASK_MODEL = "project.task"
+MAIL_MESSAGE_MODEL = "mail.message"
 
 
 class AgentService:
@@ -51,6 +55,52 @@ class AgentService:
             status="ok",
             message="Heartbeat recorded",
         )
+
+    def send_agent_message(
+        self,
+        agent_id: int,
+        payload: AgentMessageCreate,
+    ) -> AgentMessageResponse:
+        self.client.execute_kw(
+            AGENT_MODEL,
+            "action_post_discuss_message",
+            [[agent_id]],
+            {
+                "body": payload.body,
+                "task_id": payload.task_id,
+                "assignment_id": payload.assignment_id,
+            },
+        )
+        return AgentMessageResponse(
+            agent_id=agent_id,
+            status="ok",
+            message="Message posted to agent Discuss channel",
+        )
+
+    def list_agent_messages(self, agent_id: int, limit: int = 20) -> list[AgentDiscussMessage]:
+        agent = self._read_agent_record(agent_id, fields=["id", "discuss_channel_id"])
+        if not agent:
+            return []
+
+        channel_id = self._many2one_id(agent.get("discuss_channel_id"))
+        if not channel_id:
+            self.client.execute_kw(AGENT_MODEL, "action_ensure_discuss_channel", [[agent_id]], {})
+            agent = self._read_agent_record(agent_id, fields=["id", "discuss_channel_id"])
+            channel_id = self._many2one_id(agent.get("discuss_channel_id")) if agent else None
+        if not channel_id:
+            return []
+
+        records = self.client.search_read(
+            MAIL_MESSAGE_MODEL,
+            domain=[
+                ["model", "=", "discuss.channel"],
+                ["res_id", "=", channel_id],
+                ["message_type", "=", "comment"],
+            ],
+            fields=["id", "body", "date", "author_id"],
+            limit=limit,
+        )
+        return [AgentDiscussMessage(**record) for record in records]
 
     def assign_task(
         self,
@@ -150,6 +200,7 @@ class AgentService:
             "success_rate",
             "is_available",
             "last_heartbeat",
+            "discuss_channel_id",
         ]
 
     @staticmethod
@@ -167,7 +218,25 @@ class AgentService:
             success_rate=record["success_rate"],
             is_available=record["is_available"],
             last_heartbeat=record.get("last_heartbeat") or None,
+            discuss_channel_id=record.get("discuss_channel_id") or None,
         )
+
+    def _read_agent_record(self, agent_id: int, fields: list[str]) -> dict | None:
+        records = self.client.search_read(
+            AGENT_MODEL,
+            domain=[["id", "=", agent_id]],
+            fields=fields,
+            limit=1,
+        )
+        return records[0] if records else None
+
+    @staticmethod
+    def _many2one_id(value: object) -> int | None:
+        if isinstance(value, list) and value:
+            return int(value[0])
+        if isinstance(value, int):
+            return value
+        return None
 
 def get_agent_service() -> AgentService:
     credentials = OdooCredentials(
