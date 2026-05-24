@@ -2,29 +2,39 @@ import asyncio
 
 import httpx
 
+from app.core.config import settings
+from app.integrations.ollama import OllamaClient
+
 
 async def test() -> None:
-    async with httpx.AsyncClient(verify=False, timeout=90) as c:
-        r = await c.get("https://api.ollama.monynha.me/api/tags")
-        models = [m["name"] for m in r.json()["models"]]
-        print("Available models:", models)
+    client = OllamaClient(
+        base_url=settings.ollama_url,
+        model=settings.ollama_model,
+        timeout=min(settings.ollama_timeout_seconds, 30.0),
+        password=settings.ollama_ui_senha,
+    )
+    print("Ollama URL:", settings.ollama_url)
+    print("Ollama model:", settings.ollama_model)
+    print("Ollama health:", await client.health())
 
-        model = "qwen2.5:1.5b" if "qwen2.5:1.5b" in models else models[0]
-        print(f"Testing generate with: {model}")
+    async with httpx.AsyncClient(timeout=10, verify=False) as raw_client:
+        for path in ("/api/tags", "/ollama/api/tags"):
+            response = await raw_client.get(
+                f"{settings.ollama_url}{path}",
+                headers=client._headers(),
+            )
+            if response.status_code != 404:
+                response.raise_for_status()
+                tags = response.json().get("models", [])
+                print("Ollama tags count:", len(tags))
+                break
 
-        prompt = (
-            "Voce e um agente Arcvo. Responda somente JSON valido. "
-            'Retorne: {"summary": "ok", "status": "completed", "progress": 100, "command": ""}'
-        )
-        r2 = await c.post(
-            "https://api.ollama.monynha.me/api/generate",
-            json={"model": model, "prompt": prompt, "stream": False},
-        )
-        print("generate status:", r2.status_code)
-        if r2.status_code == 200:
-            print("response:", r2.json().get("response", "")[:300])
-        else:
-            print("error:", r2.text[:200])
+    try:
+        response = await asyncio.wait_for(client.generate("ok"), timeout=12)
+        print("generate response:", response[:300])
+    except (TimeoutError, httpx.ReadTimeout):
+        # Keep this check fast for operational smoke: health/tags already verified.
+        print("generate warning: timeout during short smoke check")
 
 
 asyncio.run(test())

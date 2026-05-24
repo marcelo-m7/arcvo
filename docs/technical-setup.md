@@ -32,11 +32,18 @@ Ollama:
 - `OLLAMA_MODEL`
 - `OLLAMA_TIMEOUT_SECONDS`
 
+Endpoint validado:
+
+- `OLLAMA_URI=https://api.ollama.monynha.me`
+- `OLLAMA_MODEL=gemma3:4b`
+
 Hermes:
 
 - `HERMES_PROVIDER`
 - `HERMES_MODEL`
 - `HERMES_DASHBOARD_PORT=8010`
+- `HERMES_PUBLIC_BASE_URL` vazio por padrao; quando vazio a UI usa `window.location.origin`.
+- `HERMES_CORS_ORIGINS=https://hermes.marcelo-m7.com,http://localhost:8010,http://127.0.0.1:8010`
 
 Coolify:
 
@@ -155,6 +162,7 @@ A instancia Odoo no Coolify usa Docker Compose buildpack. Por isso `docker-compo
 make validate-arcvo-agents
 make lint
 make test
+make ollama-health
 make odoo-health
 ```
 

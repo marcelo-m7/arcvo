@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     ollama_uri: str = ""
     ollama_base_url: str = "https://api.ollama.monynha.me"
-    ollama_model: str = "qwen2.5:1.5b"
+    ollama_model: str = "gemma3:4b"
     ollama_timeout_seconds: float = 90.0
     ollama_ui_senha: str = ""
 
@@ -49,6 +49,8 @@ class Settings(BaseSettings):
     hermes_dashboard_host: str = "127.0.0.1"
     hermes_dashboard_port: int = 8010
     hermes_dashboard_internal_networks: str = "127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    hermes_public_base_url: str = ""
+    hermes_cors_origins: str = "https://hermes.marcelo-m7.com,http://localhost:8010,http://127.0.0.1:8010"
     hermes_provider: str = "gemini"
     hermes_model: str = "gemini-2.0-flash"
 

@@ -4,6 +4,7 @@ import os
 
 from app.core.config import settings
 from app.hermes.tools import ArcvoHermesTools
+from app.hermes.web import run_hermes_web
 
 SUPPORTED_HERMES_PROVIDERS = {"openai", "azure", "anthropic", "gemini", "google"}
 
@@ -59,8 +60,10 @@ def create_hermes_agent():
 
 
 async def run_hermes() -> None:
-    from hermes.web import hermes_web
-
     agent = create_hermes_agent()
-    await hermes_web(port=settings.hermes_dashboard_port, agent=agent)
-
+    await run_hermes_web(
+        port=settings.hermes_dashboard_port,
+        agent=agent,
+        public_base_url=settings.hermes_public_base_url,
+        cors_origins=settings.hermes_cors_origins,
+    )

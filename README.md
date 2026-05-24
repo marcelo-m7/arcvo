@@ -39,6 +39,7 @@ make backend
 make hermes
 make lint
 make test
+make ollama-health
 make odoo-health
 make import-supabase-youtube
 make validate-arcvo-agents
@@ -66,6 +67,9 @@ Obrigatorias:
 - `SUPABASE_PUBLISHABLE_KEY`
 - `OLLAMA_URI`
 - `OLLAMA_MODEL`
+
+O endpoint Ollama validado e `https://api.ollama.monynha.me`.
+Modelo recomendado para runtime mais rapido: `gemma3:4b`.
 
 ## Odoo
 
