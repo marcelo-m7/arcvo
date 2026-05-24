@@ -3,7 +3,7 @@ PATH := $(HOME)/.local/bin:$(PATH)
 export UV_PROJECT_ENVIRONMENT := .venv-linux
 export UV_LINK_MODE := copy
 
-.PHONY: install dev frontend backend lint format test odoo-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
+.PHONY: install dev frontend backend hermes-dashboard lint format test odoo-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
 
 install: tools-check
 	cd backend && uv sync
@@ -17,6 +17,9 @@ frontend:
 
 backend:
 	cd backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+hermes-dashboard:
+	cd backend && uv run python -m scripts.run_hermes_dashboard
 
 lint:
 	cd backend && uv run ruff check .

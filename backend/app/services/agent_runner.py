@@ -4,7 +4,7 @@ from typing import Any
 from app.core.config import settings
 from app.integrations.odoo.client import OdooClient, OdooCredentials
 from app.integrations.ollama import OllamaClient, OllamaError
-from app.schemas.agents import AgentExecution
+from app.schemas.agents import AgentChatResponse, AgentExecution
 from app.services.action_policy import ActionPolicy
 from app.services.agent_service import AGENT_MODEL, ASSIGNMENT_MODEL, AUDIT_MODEL, TASK_MODEL
 
@@ -42,20 +42,52 @@ class AgentRunner:
         return executions
 
     def list_executions(self, limit: int = 50) -> list[dict[str, Any]]:
-        return self.client.search_read(
+        records = self.client.search_read(
             AUDIT_MODEL,
             domain=[["action", "in", ["progress", "completed", "failed", "blocked"]]],
             fields=[
-                "id",
-                "agent_id",
-                "task_id",
-                "assignment_id",
-                "action",
-                "message",
-                "payload",
-                "created_at",
+                "id", "agent_id", "task_id", "assignment_id", "action", "message", "created_at",
             ],
             limit=limit,
+        )
+        return [{**r, "payload": None} for r in records]
+
+    async def chat(self, agent_id: int, message: str) -> AgentChatResponse:
+        agents = self.client.search_read(
+            AGENT_MODEL,
+            domain=[["id", "=", agent_id]],
+            fields=["id", "name", "role", "description"],
+            limit=1,
+        )
+        if not agents:
+            raise ValueError(f"Agent {agent_id} not found")
+        agent = agents[0]
+        prompt = (
+            f"Voce e {agent['name']}, um agente Arcvo com o papel de {agent['role']}. "
+            f"{agent.get('description') or ''} "
+            "Responda em portugues, de forma direta e profissional, como um colaborador digital. "
+            "Nao use JSON. Responda naturalmente ao usuario.\n\n"
+            f"Usuario: {message}"
+        )
+        try:
+            reply = await self.ollama.generate(prompt)
+            # Strip JSON if the model accidentally returns it
+            stripped = reply.strip()
+            if stripped.startswith("{"):
+                import json as _json  # noqa: PLC0415
+
+                try:
+                    data = _json.loads(stripped)
+                    reply = data.get("summary") or data.get("reply") or stripped
+                except Exception:
+                    pass
+        except OllamaError as exc:
+            reply = f"[Ollama indisponivel: {exc}]"
+        return AgentChatResponse(
+            agent_id=agent_id,
+            agent_name=agent["name"],
+            role=agent["role"],
+            reply=reply,
         )
 
     async def _run_assignment(self, assignment: dict[str, Any]) -> AgentExecution:

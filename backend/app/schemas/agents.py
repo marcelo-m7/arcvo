@@ -57,6 +57,17 @@ class AgentRunRequest(BaseModel):
     limit: int = Field(default=1, ge=1, le=10)
 
 
+class AgentChatMessage(BaseModel):
+    message: str = Field(min_length=1, max_length=4000)
+
+
+class AgentChatResponse(BaseModel):
+    agent_id: int
+    agent_name: str
+    role: str
+    reply: str
+
+
 class AgentExecution(BaseModel):
     assignment_id: int
     agent_id: int

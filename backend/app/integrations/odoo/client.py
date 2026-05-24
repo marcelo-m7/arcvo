@@ -1,9 +1,20 @@
 import ssl
+import time
 import xmlrpc.client
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
+
+_RETRY_ERRORS = (ConnectionResetError, BrokenPipeError, TimeoutError)
+_TRANSIENT_SUBSTRINGS = ("EOF occurred", "Connection refused", "timed out", "reset by peer")
+
+
+def _is_transient(exc: Exception) -> bool:
+    if isinstance(exc, _RETRY_ERRORS):
+        return True
+    msg = str(exc).lower()
+    return any(s.lower() in msg for s in _TRANSIENT_SUBSTRINGS)
 
 
 class OdooClientError(RuntimeError):
@@ -90,20 +101,31 @@ class OdooClient:
         method: str,
         args: list[Any],
         kwargs: dict[str, Any] | None = None,
+        _retries: int = 2,
     ) -> Any:
         uid = self._uid or self.authenticate()
-        try:
-            return self._object_proxy().execute_kw(
-                self.credentials.database,
-                uid,
-                self.credentials.api_key,
-                model,
-                method,
-                args,
-                kwargs or {},
-            )
-        except Exception as exc:
-            raise OdooClientError(f"Odoo RPC call failed for {model}.{method}: {exc}") from exc
+        last_exc: Exception | None = None
+        for attempt in range(_retries + 1):
+            try:
+                return self._object_proxy().execute_kw(
+                    self.credentials.database,
+                    uid,
+                    self.credentials.api_key,
+                    model,
+                    method,
+                    args,
+                    kwargs or {},
+                )
+            except Exception as exc:
+                last_exc = exc
+                if attempt < _retries and _is_transient(exc):
+                    self._uid = None  # force re-auth on next attempt
+                    time.sleep(0.5 * (attempt + 1))
+                    continue
+                break
+        raise OdooClientError(
+            f"Odoo RPC call failed for {model}.{method}: {last_exc}"
+        ) from last_exc
 
     async def jsonrpc_version(self) -> dict[str, Any]:
         payload = {

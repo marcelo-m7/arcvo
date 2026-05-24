@@ -1,0 +1,28 @@
+# Python virtual environments
+**/.venv
+**/.venv*
+**/.venv-linux
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+
+# Node artifacts
+**/node_modules
+**/dist
+**/build
+
+# Git and editor
+.git
+.gitignore
+.vscode
+
+# Runtime and secrets
+.env
+.env.*
+*.log
+
+# Data and caches
+.data
+**/*.pyc
+**/*.pyo

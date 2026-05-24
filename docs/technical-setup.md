@@ -133,6 +133,46 @@ O frontend fica em `frontend`.
 
 Configure `VITE_API_BASE_URL=http://localhost:8000` em desenvolvimento.
 
+## Dashboard Python (Hermes)
+
+O dashboard Python para migracao do frontend roda com Hermes e ferramentas Arcvo.
+
+Comando:
+
+```bash
+cd backend && uv run python -m scripts.run_hermes_dashboard
+```
+
+Endpoint de status interno no backend FastAPI:
+
+- `GET /api/v1/dashboard/status`
+- `GET /api/v1/dashboard/overview` (payload agregado para a UI Python)
+
+Servico Docker Compose para Coolify:
+
+- `hermes` (imagem buildada de `backend/Dockerfile.hermes`)
+- Porta: `8010`
+- Healthcheck: `GET /`
+- Sobe junto de `odoo` no mesmo `docker-compose.yaml`
+
+Variaveis minimas no ambiente Coolify para o Hermes:
+
+- `ODOO_URL`
+- `ODOO_DB`
+- `ODOO_USER`
+- `ODOO_API_KEY`
+- `OLLAMA_URI`
+- `OLLAMA_MODEL`
+
+Execucao local do dashboard:
+
+```bash
+make hermes-dashboard
+```
+
+Obs.: o endpoint de status e restrito por rede interna (configuravel via
+`HERMES_DASHBOARD_INTERNAL_NETWORKS`).
+
 ## Validacao
 
 ```bash

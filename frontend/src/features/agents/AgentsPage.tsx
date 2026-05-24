@@ -1,15 +1,27 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Bot, CheckCircle2, ClipboardList, Loader2, Play, Radio, Shield } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import {
+  Bot,
+  CheckCircle2,
+  ClipboardList,
+  Loader2,
+  MessageSquare,
+  Play,
+  Radio,
+  Send,
+  Shield,
+} from "lucide-react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   assignAgentTask,
+  chatWithAgent,
   fetchAgentAudit,
   fetchAgentExecutions,
   fetchAgents,
   recordAgentHeartbeat,
   runAgent,
   runPendingAgents,
+  type AgentChatResponse,
   type AgentInfo,
 } from "@/lib/agents";
 
@@ -18,6 +30,12 @@ export function AgentsPage() {
   const [taskId, setTaskId] = useState("");
   const [agentId, setAgentId] = useState("");
   const [notes, setNotes] = useState("");
+  const [chatAgentId, setChatAgentId] = useState("");
+  const [chatInput, setChatInput] = useState("");
+  const [chatHistory, setChatHistory] = useState<
+    Array<{ role: "user" | "agent"; text: string; agentName?: string }>
+  >([]);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const agents = useQuery({ queryKey: ["agents"], queryFn: fetchAgents });
   const audit = useQuery({ queryKey: ["agent-audit"], queryFn: fetchAgentAudit });
@@ -59,11 +77,26 @@ export function AgentsPage() {
     },
   });
 
+  const chat = useMutation({
+    mutationFn: ({ id, message }: { id: number; message: string }) =>
+      chatWithAgent(id, message),
+    onSuccess: (data: AgentChatResponse) => {
+      setChatHistory((prev) => [
+        ...prev,
+        { role: "agent", text: data.reply, agentName: data.agent_name },
+      ]);
+    },
+  });
+
   const agentRows = useMemo(() => agents.data ?? [], [agents.data]);
   const availableCount = useMemo(
     () => agentRows.filter((agent) => agent.is_available).length,
     [agentRows],
   );
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatHistory]);
 
   function onAssign(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -72,6 +105,15 @@ export function AgentsPage() {
       task_id: Number(taskId),
       notes,
     });
+  }
+
+  function onChat(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!chatAgentId || !chatInput.trim()) return;
+    const message = chatInput.trim();
+    setChatInput("");
+    setChatHistory((prev) => [...prev, { role: "user", text: message }]);
+    chat.mutate({ id: Number(chatAgentId), message });
   }
 
   return (
@@ -256,6 +298,99 @@ export function AgentsPage() {
                 <p className="px-4 py-8 text-sm text-zinc-500">Sem execucoes registradas.</p>
               ) : null}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-md border border-zinc-200 bg-white">
+        <div className="flex items-center gap-2 border-b border-zinc-200 px-4 py-3">
+          <MessageSquare className="h-4 w-4 text-emerald-700" aria-hidden />
+          <h3 className="text-sm font-semibold">Chat com agente</h3>
+        </div>
+        <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+          <div className="flex flex-col gap-3">
+            <div className="flex min-h-[220px] max-h-[340px] flex-col gap-2 overflow-auto rounded-md border border-zinc-100 bg-zinc-50 p-3">
+              {chatHistory.length === 0 ? (
+                <p className="m-auto text-sm text-zinc-400">
+                  Selecione um agente e envie uma mensagem.
+                </p>
+              ) : (
+                chatHistory.map((msg, i) => (
+                  <div
+                    key={i}
+                    className={[
+                      "max-w-[80%] rounded-lg px-3 py-2 text-sm leading-6",
+                      msg.role === "user"
+                        ? "ml-auto bg-zinc-950 text-white"
+                        : "mr-auto bg-white border border-zinc-200 text-zinc-900",
+                    ].join(" ")}
+                  >
+                    {msg.role === "agent" && msg.agentName ? (
+                      <p className="mb-1 text-[11px] font-semibold text-emerald-700">
+                        {msg.agentName}
+                      </p>
+                    ) : null}
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                ))
+              )}
+              {chat.isPending ? (
+                <div className="mr-auto flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-500">
+                  <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                  Pensando...
+                </div>
+              ) : null}
+              <div ref={chatEndRef} />
+            </div>
+            <form onSubmit={onChat} className="flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Envie uma mensagem para o agente..."
+                disabled={chat.isPending || !chatAgentId}
+                className="h-10 flex-1 rounded-md border border-zinc-300 px-3 text-sm outline-none ring-emerald-600 focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60"
+              />
+              <button
+                type="submit"
+                disabled={chat.isPending || !chatAgentId || !chatInput.trim()}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-700 px-3 text-sm font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Send className="h-4 w-4" aria-hidden />
+              </button>
+            </form>
+          </div>
+          <div className="space-y-3">
+            <label className="block">
+              <span className="text-sm font-medium text-zinc-700">Agente</span>
+              <select
+                value={chatAgentId}
+                onChange={(e) => {
+                  setChatAgentId(e.target.value);
+                  setChatHistory([]);
+                }}
+                className="mt-2 h-10 w-full rounded-md border border-zinc-300 bg-white px-3 text-sm outline-none ring-emerald-600 focus:ring-2"
+              >
+                <option value="">Selecione</option>
+                {agentRows.map((agent) => (
+                  <option key={agent.id} value={agent.id}>
+                    {agent.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={() => setChatHistory([])}
+              className="w-full rounded-md border border-zinc-200 px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-50"
+            >
+              Limpar historico
+            </button>
+            {chat.isError ? (
+              <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
+                Falha ao obter resposta do agente.
+              </p>
+            ) : null}
           </div>
         </div>
       </section>

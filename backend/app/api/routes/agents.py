@@ -6,6 +6,8 @@ from app.schemas.agents import (
     AgentAssignmentCreate,
     AgentAssignmentResponse,
     AgentAuditLog,
+    AgentChatMessage,
+    AgentChatResponse,
     AgentExecution,
     AgentHeartbeat,
     AgentHeartbeatResponse,
@@ -112,5 +114,19 @@ def assign_task(
 ) -> AgentAssignmentResponse:
     try:
         return service.assign_task(task_id=task_id, payload=payload)
+    except OdooClientError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+
+@router.post("/{agent_id}/chat", response_model=AgentChatResponse)
+async def chat_with_agent(
+    agent_id: int,
+    payload: AgentChatMessage,
+    runner: AgentRunner = agent_runner_dependency,
+) -> AgentChatResponse:
+    try:
+        return await runner.chat(agent_id=agent_id, message=payload.message)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     except OdooClientError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc

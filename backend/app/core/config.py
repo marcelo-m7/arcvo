@@ -45,6 +45,13 @@ class Settings(BaseSettings):
     coolify_api_key: str = ""
     coolify_arcvo_webhook: str = ""
 
+    hermes_dashboard_enabled: bool = False
+    hermes_dashboard_host: str = "127.0.0.1"
+    hermes_dashboard_port: int = 8010
+    hermes_dashboard_internal_networks: str = "127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    hermes_provider: str = "gemini"
+    hermes_model: str = "gemini-2.0-flash"
+
     agent_command_allowlist: str = (
         "git status,git branch,git rev-parse,make validate-arcvo-agents,"
         "make lint,make test,make odoo-health"
@@ -68,6 +75,14 @@ class Settings(BaseSettings):
             command.strip()
             for command in self.agent_command_allowlist.split(",")
             if command.strip()
+        ]
+
+    @property
+    def dashboard_internal_network_list(self) -> list[str]:
+        return [
+            network.strip()
+            for network in self.hermes_dashboard_internal_networks.split(",")
+            if network.strip()
         ]
 
     @property

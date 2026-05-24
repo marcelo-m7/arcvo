@@ -91,3 +91,17 @@ export async function fetchAgentExecutions() {
   const response = await api.get<AgentAuditLog[]>("/api/v1/agents/executions");
   return response.data;
 }
+
+export type AgentChatResponse = {
+  agent_id: number;
+  agent_name: string;
+  role: string;
+  reply: string;
+};
+
+export async function chatWithAgent(agentId: number, message: string) {
+  const response = await api.post<AgentChatResponse>(`/api/v1/agents/${agentId}/chat`, {
+    message,
+  });
+  return response.data;
+}
