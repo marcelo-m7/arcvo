@@ -1,18 +1,25 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
 
 from app.core.config import settings
-from app.schemas.agents import AgentAssignmentCreate
+from app.schemas.agents import AgentAssignmentCreate, AgentMessageCreate
 from app.services.agent_runner import get_agent_runner
 from app.services.agent_service import get_agent_service
 from app.services.deploy_service import get_deploy_service
 from app.services.odoo_service import get_odoo_service
 
 
-class ArcvoDashboardTools:
-    """Operational tools exposed to Hermes dashboard sessions."""
+class ArcvoHermesTools:
+    """Small Odoo-backed tools exposed to Hermes sessions."""
+
+    @staticmethod
+    def system_context() -> str:
+        return (
+            "Arcvo uses Odoo as the single source of truth for agents, tasks, "
+            "Discuss messages, chatter, audit, and deploy status. "
+            f"Odoo URL: {settings.odoo_url}. DB: {settings.odoo_db}."
+        )
 
     @staticmethod
     def list_agents(state: str = "", limit: int = 50) -> str:
@@ -21,9 +28,13 @@ class ArcvoDashboardTools:
         return json.dumps([row.model_dump() for row in rows], ensure_ascii=False)
 
     @staticmethod
-    def list_agent_audit(limit: int = 20) -> str:
+    def list_agent_audit(
+        agent_id: int | None = None,
+        task_id: int | None = None,
+        limit: int = 20,
+    ) -> str:
         service = get_agent_service()
-        rows = service.list_audit_logs(limit=limit)
+        rows = service.list_audit_logs(agent_id=agent_id, task_id=task_id, limit=limit)
         return json.dumps([row.model_dump() for row in rows], ensure_ascii=False)
 
     @staticmethod
@@ -31,6 +42,26 @@ class ArcvoDashboardTools:
         service = get_agent_service()
         result = service.assign_task(task_id, AgentAssignmentCreate(agent_id=agent_id, notes=notes))
         return json.dumps(result.model_dump(), ensure_ascii=False)
+
+    @staticmethod
+    def send_agent_message(
+        agent_id: int,
+        body: str,
+        task_id: int | None = None,
+        assignment_id: int | None = None,
+    ) -> str:
+        service = get_agent_service()
+        result = service.send_agent_message(
+            agent_id,
+            AgentMessageCreate(body=body, task_id=task_id, assignment_id=assignment_id),
+        )
+        return json.dumps(result.model_dump(), ensure_ascii=False)
+
+    @staticmethod
+    def list_agent_messages(agent_id: int, limit: int = 20) -> str:
+        service = get_agent_service()
+        rows = service.list_agent_messages(agent_id=agent_id, limit=limit)
+        return json.dumps([row.model_dump() for row in rows], ensure_ascii=False)
 
     @staticmethod
     async def run_pending(limit: int = 5) -> str:
@@ -54,14 +85,8 @@ class ArcvoDashboardTools:
     def get_odoo_health() -> str:
         service = get_odoo_service()
         health = service.health()
-        return json.dumps(asdict(health), ensure_ascii=False)
-
-    @staticmethod
-    def system_context() -> str:
-        return (
-            "Arcvo ops dashboard. Use Odoo as source of truth with arcvo.* models. "
-            f"Odoo URL: {settings.odoo_url}. DB: {settings.odoo_db}."
-        )
+        return json.dumps(health.model_dump(), ensure_ascii=False)
 
 
-__all__ = ["ArcvoDashboardTools"]
+__all__ = ["ArcvoHermesTools"]
+

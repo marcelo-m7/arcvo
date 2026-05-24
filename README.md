@@ -1,17 +1,17 @@
 # Arcvo
 
-Arcvo e uma linha de producao para publicar acervo YouTube no Odoo eLearning e administrar agentes rastreaveis em projetos Odoo.
+Arcvo e uma operacao Odoo-first para acervo YouTube/eLearning e funcionarios digitais rastreaveis.
 
-O alvo oficial deste repositorio e o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
+O alvo oficial e o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
 
 ## Stack
 
-- Frontend: React, Vite, TypeScript, TailwindCSS, TanStack Query, Zustand.
+- Odoo 19 Community: SSOT para projetos, tarefas, agentes, Discuss, chatter e auditoria.
+- Hermes: interface operacional padrao para conversar com agentes e acionar ferramentas.
 - Backend: FastAPI, Pydantic, Uvicorn, XML-RPC/JSON-RPC para Odoo.
-- Odoo: Odoo 19 remoto com eLearning (`slide.channel`, `slide.slide`) e addon `arcvo_agents`.
-- Agentes: funcionarios digitais em `project.task`, assistidos por Ollama e auditados no Odoo.
-- Deploy: webhook Coolify manual pelo painel de Producao.
-- Fontes: Supabase Open2, URLs YouTube e oEmbed publico para metadados.
+- Ollama: motor auxiliar de raciocinio dos agentes.
+- Coolify: deploy automatico por push na `main` e webhook manual quando necessario.
+- Acervo: Supabase Open2, YouTube/oEmbed e Odoo eLearning (`slide.channel`, `slide.slide`).
 
 ## Linha De Producao
 
@@ -20,27 +20,14 @@ Supabase / YouTube
   -> backend FastAPI
   -> normalizacao e enriquecimento
   -> Odoo eLearning
-  -> admin React
 ```
 
-Agentes seguem outro fluxo rastreavel:
-
 ```text
-Projetos Odoo
-  -> project.task
-  -> arcvo_agents
-  -> /api/v1/agents
-  -> admin React
-```
-
-Execucao autonoma:
-
-```text
-arcvo.agent.assignment
-  -> backend runner
+Odoo project.task
+  -> arcvo.agent.assignment
+  -> Hermes tools
   -> Ollama
-  -> allowlist de comandos
-  -> arcvo.agent.audit.log
+  -> Discuss + chatter + arcvo.agent.audit.log
 ```
 
 ## Comandos
@@ -49,7 +36,7 @@ arcvo.agent.assignment
 make install
 make dev
 make backend
-make frontend
+make hermes
 make lint
 make test
 make odoo-health
@@ -57,9 +44,9 @@ make import-supabase-youtube
 make validate-arcvo-agents
 ```
 
-Frontend: `http://localhost:5173`
+Backend local: `http://localhost:8000`
 
-Backend: `http://localhost:8000`
+Hermes local: `http://localhost:8010`
 
 API docs em desenvolvimento: `http://localhost:8000/docs`
 
@@ -77,32 +64,28 @@ Obrigatorias:
 - `ODOO_API_KEY`
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
+- `OLLAMA_URI`
+- `OLLAMA_MODEL`
 
 ## Odoo
 
 Addons ativos ficam em `odoo/addons`.
 
-- `arcvo_agents`: addon canonico para agentes e atribuicoes em `project.task`.
+- `arcvo_agents`: addon canonico para agentes, atribuicoes, Discuss e auditoria em `project.task`.
 
-Addons congelados ficam em `odoo/frozen_addons` e nao fazem parte do deploy canonico.
-
-O arquivo `docker-compose.yaml` existe porque a instancia Odoo no Coolify usa Docker
-Compose buildpack e espera esse arquivo na raiz. O servico Odoo e construido por
-`odoo/Dockerfile`, que copia `./odoo/addons` para `/mnt/extra-addons` dentro da
-imagem para evitar bind mounts vazios no runtime.
+O arquivo `docker-compose.yaml` permanece na raiz porque a instancia Coolify usa Docker Compose buildpack. O servico Odoo e construido por `odoo/Dockerfile`, que copia `./odoo/addons` para `/mnt/extra-addons` dentro da imagem.
 
 ## APIs Principais
 
 - `GET /health`
 - `POST /api/v1/auth/login`
 - `GET /api/v1/odoo/health`
-- `GET /api/v1/archive/dashboard`
-- `GET /api/v1/archive/courses`
-- `GET /api/v1/archive/youtube/videos`
-- `POST /api/v1/archive/youtube/videos`
+- `GET|POST|PATCH /api/v1/archive/*`
 - `GET /api/v1/agents`
 - `GET /api/v1/agents/{id}`
 - `POST /api/v1/agents/{id}/heartbeat`
+- `POST /api/v1/agents/{id}/message`
+- `GET /api/v1/agents/{id}/messages`
 - `POST /api/v1/agents/{id}/run`
 - `POST /api/v1/agents/run-pending`
 - `GET /api/v1/agents/executions`

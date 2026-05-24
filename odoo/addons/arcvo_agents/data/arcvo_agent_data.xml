@@ -17,7 +17,7 @@
     </record>
     <record id="capability_frontend" model="arcvo.agent.capability">
         <field name="name">hermes_operations</field>
-        <field name="category">frontend</field>
+        <field name="category">hermes</field>
         <field name="description">Hermes puro, ferramentas operacionais e experiencia de comando.</field>
     </record>
     <record id="capability_data_archive" model="arcvo.agent.capability">
@@ -53,10 +53,10 @@
         <field name="capability_ids" eval="[(6, 0, [ref('capability_backend'), ref('capability_qa_deploy')])]"/>
     </record>
     <record id="agent_frontend" model="arcvo.agent">
-        <field name="name">Frontend Maintainer</field>
-        <field name="role">frontend</field>
+        <field name="name">Hermes Operator</field>
+        <field name="role">hermes</field>
         <field name="state">idle</field>
-        <field name="description">Mantem a experiencia operacional no Hermes puro, sem frontend React ativo.</field>
+        <field name="description">Mantem a experiencia operacional no Hermes puro.</field>
         <field name="capability_ids" eval="[(6, 0, [ref('capability_frontend')])]"/>
     </record>
     <record id="agent_data" model="arcvo.agent">

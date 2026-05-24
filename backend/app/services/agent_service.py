@@ -3,8 +3,8 @@ from app.integrations.odoo.client import OdooClient, OdooCredentials
 from app.schemas.agents import (
     AgentAssignmentCreate,
     AgentAssignmentResponse,
-    AgentDiscussMessage,
     AgentAuditLog,
+    AgentDiscussMessage,
     AgentHeartbeat,
     AgentHeartbeatResponse,
     AgentInfo,
@@ -237,6 +237,7 @@ class AgentService:
         if isinstance(value, int):
             return value
         return None
+
 
 def get_agent_service() -> AgentService:
     credentials = OdooCredentials(

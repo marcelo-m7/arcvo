@@ -1,5 +1,4 @@
 import subprocess
-from datetime import UTC, datetime
 from pathlib import Path
 
 from app.core.config import settings
@@ -29,7 +28,7 @@ class DeployService:
             ollama_health = {"error": str(exc)}
             ollama_ok = False
 
-        support = self._support_status()
+        operations = self._operations_status()
 
         return ProductionStatus(
             branch=branch,
@@ -39,7 +38,7 @@ class DeployService:
             coolify_api=coolify_api,
             ollama_ok=ollama_ok,
             ollama_health=ollama_health,
-            support=support,
+            operations=operations,
         )
 
     async def trigger_coolify(self) -> CoolifyDeployResult:
@@ -59,7 +58,7 @@ class DeployService:
         return completed.stdout.strip()
 
     @staticmethod
-    def _support_status() -> dict[str, object]:
+    def _operations_status() -> dict[str, object]:
         credentials = OdooCredentials(
             url=settings.odoo_url,
             database=settings.odoo_db,
@@ -68,44 +67,45 @@ class DeployService:
             allow_self_signed_ssl=settings.odoo_allow_self_signed_ssl,
         )
         client = OdooClient(credentials)
-        now = datetime.now(UTC).replace(tzinfo=None).strftime("%Y-%m-%d %H:%M:%S")
         try:
             client.authenticate()
-            helpdesk_total = client.search_count("arcvo.helpdesk.ticket")
-            helpdesk_open = client.search_count(
-                "arcvo.helpdesk.ticket",
-                [["state", "not in", ["resolved", "closed"]]],
+            agents_total = client.search_count("arcvo.agent")
+            agents_available = client.search_count(
+                "arcvo.agent",
+                [["active", "=", True], ["state", "in", ["idle", "busy"]]],
             )
-            helpdesk_sla_breached = client.search_count(
-                "arcvo.helpdesk.ticket",
-                [
-                    ["sla_deadline", "!=", False],
-                    ["sla_deadline", "<", now],
-                    ["state", "not in", ["resolved", "closed"]],
-                ],
+            assignments_open = client.search_count(
+                "arcvo.agent.assignment",
+                [["status", "in", ["assigned", "in_progress"]]],
             )
-            knowledge_total = client.search_count("arcvo.knowledge.article")
-            knowledge_published = client.search_count(
-                "arcvo.knowledge.article",
-                [["state", "=", "published"]],
+            assignments_blocked = client.search_count(
+                "arcvo.agent.assignment",
+                [["status", "=", "blocked"]],
             )
+            tasks_requiring_agent = client.search_count(
+                "project.task",
+                [["arcvo_requires_agent", "=", True]],
+            )
+            audit_total = client.search_count("arcvo.agent.audit.log")
             return {
                 "available": True,
-                "helpdesk_total": helpdesk_total,
-                "helpdesk_open": helpdesk_open,
-                "helpdesk_sla_breached": helpdesk_sla_breached,
-                "knowledge_total": knowledge_total,
-                "knowledge_published": knowledge_published,
+                "agents_total": agents_total,
+                "agents_available": agents_available,
+                "assignments_open": assignments_open,
+                "assignments_blocked": assignments_blocked,
+                "tasks_requiring_agent": tasks_requiring_agent,
+                "audit_total": audit_total,
                 "error": None,
             }
         except Exception as exc:
             return {
                 "available": False,
-                "helpdesk_total": None,
-                "helpdesk_open": None,
-                "helpdesk_sla_breached": None,
-                "knowledge_total": None,
-                "knowledge_published": None,
+                "agents_total": None,
+                "agents_available": None,
+                "assignments_open": None,
+                "assignments_blocked": None,
+                "tasks_requiring_agent": None,
+                "audit_total": None,
                 "error": str(exc),
             }
 

@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.schemas.agents import AgentAssignmentCreate, AgentHeartbeat
+from app.schemas.agents import AgentAssignmentCreate, AgentHeartbeat, AgentMessageCreate
 from app.services.agent_service import AgentService
 
 
@@ -34,6 +34,16 @@ class FakeOdooClient:
                     "success_rate": 100.0,
                     "is_available": True,
                     "last_heartbeat": False,
+                    "discuss_channel_id": [11, "Arcvo Agent: odoo_agent"],
+                }
+            ]
+        if model == "mail.message":
+            return [
+                {
+                    "id": 99,
+                    "body": "<p>hello</p>",
+                    "date": "2026-05-24 12:00:00",
+                    "author_id": [1, "Administrator"],
                 }
             ]
         return []
@@ -119,3 +129,29 @@ def test_record_heartbeat_prefers_odoo_domain_method() -> None:
     assert method == "action_heartbeat"
     assert args == [[7]]
     assert kwargs["state"] == "busy"
+
+
+def test_send_agent_message_posts_through_odoo_discuss_method() -> None:
+    client = FakeOdooClient()
+    service = AgentService(client)  # type: ignore[arg-type]
+
+    response = service.send_agent_message(
+        7,
+        AgentMessageCreate(body="deploy checked", task_id=55, assignment_id=12),
+    )
+
+    assert response.status == "ok"
+    model, method, args, kwargs = client.execute_calls[0]
+    assert model == "arcvo.agent"
+    assert method == "action_post_discuss_message"
+    assert args == [[7]]
+    assert kwargs == {"body": "deploy checked", "task_id": 55, "assignment_id": 12}
+
+
+def test_list_agent_messages_reads_mail_message_for_discuss_channel() -> None:
+    client = FakeOdooClient()
+    service = AgentService(client)  # type: ignore[arg-type]
+
+    messages = service.list_agent_messages(7)
+
+    assert messages[0].id == 99

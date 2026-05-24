@@ -1,10 +1,10 @@
 import asyncio
 
-from app.dashboard.launcher import run_dashboard
+from app.hermes.launcher import run_hermes
 
 
 def main() -> None:
-    asyncio.run(run_dashboard())
+    asyncio.run(run_hermes())
 
 
 if __name__ == "__main__":

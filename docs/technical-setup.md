@@ -18,7 +18,7 @@ Admin local:
 - `APP_SECRET_KEY`
 - `APP_ADMIN_PASSWORD`
 - `APP_JWT_EXPIRES_MINUTES`
-- `CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173`
+- `CORS_ORIGINS=http://localhost:8010,http://127.0.0.1:8010`
 
 Supabase:
 
@@ -31,6 +31,12 @@ Ollama:
 - `OLLAMA_URI`
 - `OLLAMA_MODEL`
 - `OLLAMA_TIMEOUT_SECONDS`
+
+Hermes:
+
+- `HERMES_PROVIDER`
+- `HERMES_MODEL`
+- `HERMES_DASHBOARD_PORT=8010`
 
 Coolify:
 
@@ -53,17 +59,18 @@ Servicos separados:
 
 ```bash
 make backend
-make frontend
+make hermes
 ```
 
 ## Backend
 
 O backend fica em `backend/app`.
 
-- `api/routes`: endpoints HTTP.
+- `api/routes`: endpoints HTTP internos.
 - `core`: configuracao e seguranca.
 - `integrations/odoo`: cliente XML-RPC/JSON-RPC.
-- `services`: regras de acervo, Odoo, Supabase e agentes.
+- `hermes`: agente e ferramentas para a UI padrao do Hermes.
+- `services`: regras de acervo, Odoo, Supabase, agentes e deploy.
 - `schemas`: contratos Pydantic.
 
 Rotas mantidas:
@@ -72,8 +79,8 @@ Rotas mantidas:
 - `POST /api/v1/auth/login`
 - `GET /api/v1/odoo/health`
 - `GET|POST|PATCH /api/v1/archive/*`
-- `GET|POST|PATCH /api/v1/odoo/models/*`
 - `GET|POST /api/v1/agents/*`
+- `GET|POST /api/v1/deploy/*`
 
 ## Acervo YouTube
 
@@ -108,87 +115,59 @@ O addon tambem estende `project.task` com:
 - `arcvo_requires_agent`
 - `arcvo_assignment_ids`
 
+Discuss e chatter:
+
+- cada agente possui `discuss_channel_id`;
+- mensagens operacionais sao postadas no Discuss do agente;
+- progresso de assignments tambem aparece no chatter do assignment e da tarefa;
+- auditoria fica em `arcvo.agent.audit.log`.
+
 Use `make validate-arcvo-agents` para validar a estrutura local do addon.
 
-O backend executa agentes por `arcvo.agent.assignment`: busca a tarefa, chama Ollama,
-executa apenas comandos presentes em `AGENT_COMMAND_ALLOWLIST` e registra tudo em
-`arcvo.agent.audit.log`. Odoo permanece como fonte de verdade.
+## Hermes
+
+Hermes e a mesa operacional. O codigo em `backend/app/hermes` cria um agente `ArcvoOdooOps` com ferramentas Odoo-backed.
+
+Comando local:
+
+```bash
+make hermes
+```
+
+Ferramentas expostas:
+
+- listar agentes;
+- listar auditoria;
+- atribuir tarefa;
+- enviar mensagem ao Discuss de um agente;
+- ler mensagens recentes do agente;
+- executar agente com Ollama;
+- executar pendencias;
+- consultar Odoo/Coolify/Ollama.
 
 ## Coolify Odoo
 
-A instancia Odoo no Coolify usa Docker Compose buildpack. Por isso
-`docker-compose.yaml` deve permanecer na raiz do repositorio mesmo que o alvo
-operacional seja o Odoo remoto. O servico Odoo usa `odoo/Dockerfile` para copiar
-`./odoo/addons` para `/mnt/extra-addons` dentro da imagem; addons congelados em
-`odoo/frozen_addons` nao entram no deploy ativo.
-
-## Frontend
-
-O frontend fica em `frontend`.
-
-- `/acervo`: dashboard e envio de videos.
-- `/agentes`: agentes, heartbeat, vinculo de tarefa e auditoria.
-- `/producao`: status do repositorio, Ollama, Coolify e webhook manual de deploy.
-- `/odoo`: healthcheck e diagnostico Odoo.
-
-Configure `VITE_API_BASE_URL=http://localhost:8000` em desenvolvimento.
-
-## Dashboard Python (Hermes)
-
-O dashboard Python para migracao do frontend roda com Hermes e ferramentas Arcvo.
-
-Comando:
-
-```bash
-cd backend && uv run python -m scripts.run_hermes_dashboard
-```
-
-Endpoint de status interno no backend FastAPI:
-
-- `GET /api/v1/dashboard/status`
-- `GET /api/v1/dashboard/overview` (payload agregado para a UI Python)
-
-Servico Docker Compose para Coolify:
-
-- `hermes` (imagem buildada de `backend/Dockerfile.hermes`)
-- Porta: `8010`
-- Healthcheck: `GET /`
-- Sobe junto de `odoo` no mesmo `docker-compose.yaml`
-
-Variaveis minimas no ambiente Coolify para o Hermes:
-
-- `ODOO_URL`
-- `ODOO_DB`
-- `ODOO_USER`
-- `ODOO_API_KEY`
-- `OLLAMA_URI`
-- `OLLAMA_MODEL`
-
-Execucao local do dashboard:
-
-```bash
-make hermes-dashboard
-```
-
-Obs.: o endpoint de status e restrito por rede interna (configuravel via
-`HERMES_DASHBOARD_INTERNAL_NETWORKS`).
+A instancia Odoo no Coolify usa Docker Compose buildpack. Por isso `docker-compose.yaml` deve permanecer na raiz do repositorio. O servico Odoo usa `odoo/Dockerfile` para copiar `./odoo/addons` para `/mnt/extra-addons` dentro da imagem.
 
 ## Validacao
 
 ```bash
+make validate-arcvo-agents
 make lint
 make test
+make odoo-health
 ```
 
 Checks esperados:
 
 - Ruff no backend.
 - Pytest no backend.
-- ESLint, TypeScript e build no frontend.
+- Validador local do addon `arcvo_agents`.
+- Healthcheck Odoo remoto autenticado.
 
 ## Seguranca
 
 - Nunca commitar `.env`, `.env.local`, `.venv`, caches, logs ou build artifacts.
 - Nao registrar `ODOO_API_KEY`, `APP_ADMIN_PASSWORD`, JWTs ou chaves Supabase em logs.
-- `sc_react_theme` esta congelado em `odoo/frozen_addons` e fora do fluxo canonico.
+- Segredos nao entram em prompts, respostas Hermes, mensagens Discuss ou auditoria.
 - `SUDO_PASSWORD`, quando existir localmente, e usado apenas para manutencao do WSL e nunca deve entrar em logs, prompts ou commits.
