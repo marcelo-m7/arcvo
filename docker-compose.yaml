@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: odoo/Dockerfile
     restart: unless-stopped
-    command: ["--proxy-mode"]
+    command: ["--proxy-mode", "--http-interface=0.0.0.0"]
     expose:
       - "8069"
 #    ports:
