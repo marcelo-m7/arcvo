@@ -43,7 +43,7 @@
                             <field name="min_priority"/>
                         </group>
                         <group>
-                            <label string="Trigger Conditions" class="oe_form_label"/>
+                            <label string="Trigger Conditions" class="o_form_label"/>
                             <p>This rule triggers when:</p>
                             <ul>
                                 <li>Assignment stuck &gt; N hours</li>
@@ -58,7 +58,7 @@
                             <field name="escalation_count" readonly="1"/>
                         </group>
                         <group>
-                            <label string="When escalation_type='escalate_human':" class="oe_form_label" invisible="escalation_type == 'find_agent'"/>
+                            <label string="When escalation_type='escalate_human':" class="o_form_label" invisible="escalation_type == 'find_agent'"/>
                             <field name="escalate_to_user_id" invisible="escalation_type == 'find_agent'"/>
                             <field name="escalation_group_id" invisible="escalation_type == 'find_agent'"/>
                         </group>
@@ -70,7 +70,7 @@
                             <field name="max_attempts_per_agent"/>
                         </group>
                         <group>
-                            <label string="When finding alternative agents:" class="oe_form_label"/>
+                            <label string="When finding alternative agents:" class="o_form_label"/>
                             <p>
                                 <ul>
                                     <li>Skip original agent</li>
@@ -100,7 +100,7 @@
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="find_agent" string="Find Agent" domain="[('escalation_type', '=', 'find_agent')]"/>
                 <filter name="escalate_human" string="Escalate Human" domain="[('escalation_type', '=', 'escalate_human')]"/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_type" string="Type" context="{'group_by': 'escalation_type'}"/>
                 </group>
             </search>
@@ -160,11 +160,11 @@
                     </group>
                     <group>
                         <group>
-                            <label string="Reassignment:" class="oe_form_label" invisible="escalation_action != 'found_agent'"/>
+                            <label string="Reassignment:" class="o_form_label" invisible="escalation_action != 'found_agent'"/>
                             <field name="new_agent_id" readonly="1" invisible="escalation_action != 'found_agent'"/>
                         </group>
                         <group>
-                            <label string="Escalated To:" class="oe_form_label" invisible="escalation_action != 'escalated_human'"/>
+                            <label string="Escalated To:" class="o_form_label" invisible="escalation_action != 'escalated_human'"/>
                             <field name="escalated_to_user_id" readonly="1" invisible="escalation_action != 'escalated_human'"/>
                         </group>
                     </group>
@@ -190,7 +190,7 @@
                 <filter name="found_agent" string="Found Agent" domain="[('escalation_action', '=', 'found_agent')]"/>
                 <filter name="escalated_human" string="Escalated Human" domain="[('escalation_action', '=', 'escalated_human')]"/>
                 <separator/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_agent" string="Original Agent" context="{'group_by': 'original_agent_id'}"/>
                     <filter name="group_by_action" string="Action" context="{'group_by': 'escalation_action'}"/>
                 </group>

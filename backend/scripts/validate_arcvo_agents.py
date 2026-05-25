@@ -1,5 +1,6 @@
 import ast
 import csv
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -86,6 +87,19 @@ def main() -> None:
     for forbidden in {"timedelta", "context_today"}:
         if forbidden in view_text:
             raise SystemExit(f"Forbidden dynamic view domain reference found: {forbidden}")
+    for view_file in (ADDON / "views").rglob("*.xml"):
+        root = ET.parse(view_file).getroot()
+        for search in root.iter("search"):
+            for group in search.iter("group"):
+                if group.attrib:
+                    raise SystemExit(
+                        f"Odoo 19 search <group> must not use attributes in {view_file}"
+                    )
+        for label in root.iter("label"):
+            if label.get("string") and not label.get("for") and label.get("class") == "oe_form_label":
+                raise SystemExit(
+                    f"Odoo 19 standalone <label> must use class='o_form_label' in {view_file}"
+                )
     if 'model="res.groups"' in all_text and "category_id" in all_text:
         raise SystemExit("Odoo 19 res.groups records must not use category_id.")
 

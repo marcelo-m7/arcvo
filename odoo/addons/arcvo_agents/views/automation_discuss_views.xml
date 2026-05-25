@@ -91,7 +91,7 @@
                 <filter name="paused" string="Paused" domain="[('status', '=', 'paused')]"/>
                 <filter name="escalated" string="Escalated" domain="[('status', '=', 'escalated')]"/>
                 <separator/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                     <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>
                     <filter name="group_by_action_type" string="Action Type" context="{'group_by': 'action_type'}"/>

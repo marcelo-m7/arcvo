@@ -91,7 +91,7 @@
                 <field name="assignment_strategy"/>
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="auto_publish" string="Auto-Publish" domain="[('auto_publish_on_completion', '=', True)]"/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_trigger" string="Trigger" context="{'group_by': 'trigger_on'}"/>
                     <filter name="group_by_strategy" string="Strategy" context="{'group_by': 'assignment_strategy'}"/>
                 </group>
@@ -160,7 +160,7 @@
                 <filter name="assigned" string="Assigned" domain="[('creation_status', '=', 'assigned')]"/>
                 <filter name="failed" string="Failed" domain="[('creation_status', '=', 'failed')]"/>
                 <separator/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_template" string="Template" context="{'group_by': 'template_id'}"/>
                     <filter name="group_by_agent" string="Agent" context="{'group_by': 'assigned_agent_id'}"/>
                     <filter name="group_by_status" string="Status" context="{'group_by': 'creation_status'}"/>
