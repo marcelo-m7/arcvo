@@ -95,11 +95,14 @@ def main() -> None:
                     raise SystemExit(
                         f"Odoo 19 search <group> must not use attributes in {view_file}"
                     )
+<<<<<<< HEAD
         for label in root.iter("label"):
             if label.get("string") and not label.get("for") and label.get("class") == "oe_form_label":
                 raise SystemExit(
                     f"Odoo 19 standalone <label> must use class='o_form_label' in {view_file}"
                 )
+=======
+>>>>>>> 50eedf40a202cd71ef7d1fb57ec4f3cbd5dd844e
     if 'model="res.groups"' in all_text and "category_id" in all_text:
         raise SystemExit("Odoo 19 res.groups records must not use category_id.")
 
