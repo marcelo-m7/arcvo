@@ -13,7 +13,7 @@
                 <field name="trigger_on"/>
                 <field name="assignment_strategy"/>
                 <field name="active" widget="boolean"/>
-                <field name="task_count" sum="Total"/>
+                <field name="task_count"/>
             </list>
         </field>
     </record>

@@ -36,7 +36,7 @@ class ArcvoAutomationWebhook(models.Model):
     )
     domain = fields.Json(
         string="Domain Filter",
-        default="[]",
+        default=list,
         help="""Domain filter (JSON format). Example:
         [["project_id", "=", 5], ["arcvo_requires_agent", "=", true]]
         Empty = applies to all tasks matching trigger.""",

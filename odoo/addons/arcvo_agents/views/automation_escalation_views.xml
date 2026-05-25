@@ -14,7 +14,7 @@
                 <field name="blocked_threshold_hours"/>
                 <field name="max_retries"/>
                 <field name="active" widget="boolean"/>
-                <field name="escalation_count" sum="Total"/>
+                <field name="escalation_count"/>
             </list>
         </field>
     </record>
@@ -43,8 +43,8 @@
                             <field name="min_priority"/>
                         </group>
                         <group>
-                            <label string="Trigger Conditions" class="o_form_label"/>
-                            <p>This rule triggers when:</p>
+                            <div class="o_form_label">Trigger Conditions</div>
+                            <div>This rule triggers when:</div>
                             <ul>
                                 <li>Assignment stuck &gt; N hours</li>
                                 <li>Task attempted N times</li>
@@ -58,7 +58,7 @@
                             <field name="escalation_count" readonly="1"/>
                         </group>
                         <group>
-                            <label string="When escalation_type='escalate_human':" class="o_form_label" invisible="escalation_type == 'find_agent'"/>
+                            <div class="o_form_label" invisible="escalation_type == 'find_agent'">When escalation_type='escalate_human':</div>
                             <field name="escalate_to_user_id" invisible="escalation_type == 'find_agent'"/>
                             <field name="escalation_group_id" invisible="escalation_type == 'find_agent'"/>
                         </group>
@@ -70,15 +70,13 @@
                             <field name="max_attempts_per_agent"/>
                         </group>
                         <group>
-                            <label string="When finding alternative agents:" class="o_form_label"/>
-                            <p>
-                                <ul>
-                                    <li>Skip original agent</li>
-                                    <li>Prefer capability match (if enabled)</li>
-                                    <li>Only available agents (if enabled)</li>
-                                    <li>Sort by load (least loaded first)</li>
-                                </ul>
-                            </p>
+                            <div class="o_form_label">When finding alternative agents:</div>
+                            <ul>
+                                <li>Skip original agent</li>
+                                <li>Prefer capability match (if enabled)</li>
+                                <li>Only available agents (if enabled)</li>
+                                <li>Sort by load (least loaded first)</li>
+                            </ul>
                         </group>
                     </group>
                     <group name="notify" string="Notification">
@@ -160,11 +158,11 @@
                     </group>
                     <group>
                         <group>
-                            <label string="Reassignment:" class="o_form_label" invisible="escalation_action != 'found_agent'"/>
+                            <div class="o_form_label" invisible="escalation_action != 'found_agent'">Reassignment:</div>
                             <field name="new_agent_id" readonly="1" invisible="escalation_action != 'found_agent'"/>
                         </group>
                         <group>
-                            <label string="Escalated To:" class="o_form_label" invisible="escalation_action != 'escalated_human'"/>
+                            <div class="o_form_label" invisible="escalation_action != 'escalated_human'">Escalated To:</div>
                             <field name="escalated_to_user_id" readonly="1" invisible="escalation_action != 'escalated_human'"/>
                         </group>
                     </group>

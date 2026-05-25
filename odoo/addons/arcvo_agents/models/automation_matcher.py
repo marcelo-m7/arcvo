@@ -66,7 +66,7 @@ class ArcvoAutomationMatcher(models.Model):
     # Custom domain
     domain = fields.Json(
         string="Domain Filter",
-        default="[]",
+        default=list,
         help="Custom Odoo domain to match tasks",
     )
 

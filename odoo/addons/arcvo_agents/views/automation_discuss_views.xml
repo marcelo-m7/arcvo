@@ -13,7 +13,7 @@
                 <field name="action_type"/>
                 <field name="confidence" widget="float" digits="[1,2]"/>
                 <field name="status"/>
-                <field name="button_clicks" sum="Button Clicks"/>
+                <field name="button_clicks"/>
                 <field name="needs_human_review"/>
             </list>
         </field>

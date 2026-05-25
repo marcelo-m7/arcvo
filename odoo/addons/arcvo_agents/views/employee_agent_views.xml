@@ -42,6 +42,8 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//header" position="inside">
+                    <field name="is_agent" invisible="1"/>
+                    <field name="agent_active" invisible="1"/>
                     <button
                         name="action_test_agent"
                         type="object"
@@ -73,6 +75,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
                     <page string="Agent Execution Logs" invisible="not is_agent">
+                        <field name="is_agent" invisible="1"/>
                         <field
                             name="agent_message_ids"
                             nolabel="1"
