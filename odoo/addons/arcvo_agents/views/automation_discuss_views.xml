@@ -91,8 +91,6 @@
                 <filter name="paused" string="Paused" domain="[('status', '=', 'paused')]"/>
                 <filter name="escalated" string="Escalated" domain="[('status', '=', 'escalated')]"/>
                 <separator/>
-                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
-                <separator/>
                 <group expand="1" string="Group By">
                     <filter name="group_by_agent" string="Agent" context="{'group_by': 'agent_id'}"/>
                     <filter name="group_by_status" string="Status" context="{'group_by': 'status'}"/>

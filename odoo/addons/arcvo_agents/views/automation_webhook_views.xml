@@ -157,7 +157,6 @@ Each webhook can fire on task creation, state change, or update, and trigger age
                     <filter name="error" string="Error" domain="[('result', '=', 'error')]" />
                     <filter name="skipped" string="Skipped" domain="[('result', '=', 'skipped')]" />
                     <separator />
-                    <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().isoformat())]" />
                 </search>
             </field>
         </record>

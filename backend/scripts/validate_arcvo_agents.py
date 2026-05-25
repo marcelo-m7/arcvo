@@ -78,6 +78,14 @@ def main() -> None:
     for forbidden in FORBIDDEN_TEXT:
         if forbidden in all_text:
             raise SystemExit(f"Forbidden legacy reference found: {forbidden}")
+    view_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (ADDON / "views").rglob("*.xml")
+        if path.is_file()
+    )
+    for forbidden in {"timedelta", "context_today"}:
+        if forbidden in view_text:
+            raise SystemExit(f"Forbidden dynamic view domain reference found: {forbidden}")
     if 'model="res.groups"' in all_text and "category_id" in all_text:
         raise SystemExit("Odoo 19 res.groups records must not use category_id.")
 

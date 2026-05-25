@@ -160,7 +160,6 @@
                 <filter name="assigned" string="Assigned" domain="[('creation_status', '=', 'assigned')]"/>
                 <filter name="failed" string="Failed" domain="[('creation_status', '=', 'failed')]"/>
                 <separator/>
-                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
                 <group expand="1" string="Group By">
                     <filter name="group_by_template" string="Template" context="{'group_by': 'template_id'}"/>
                     <filter name="group_by_agent" string="Agent" context="{'group_by': 'assigned_agent_id'}"/>

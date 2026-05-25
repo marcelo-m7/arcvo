@@ -190,7 +190,6 @@
                 <filter name="found_agent" string="Found Agent" domain="[('escalation_action', '=', 'found_agent')]"/>
                 <filter name="escalated_human" string="Escalated Human" domain="[('escalation_action', '=', 'escalated_human')]"/>
                 <separator/>
-                <filter name="today" string="Today" domain="[('create_date', '&gt;=', context_today().strftime('%Y-%m-%d')), ('create_date', '&lt;', (context_today() + timedelta(days=1)).strftime('%Y-%m-%d'))]"/>
                 <group expand="1" string="Group By">
                     <filter name="group_by_agent" string="Original Agent" context="{'group_by': 'original_agent_id'}"/>
                     <filter name="group_by_action" string="Action" context="{'group_by': 'escalation_action'}"/>

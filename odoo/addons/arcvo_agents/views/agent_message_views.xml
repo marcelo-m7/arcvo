@@ -92,7 +92,6 @@
                     <separator />
                     <filter name="success" string="Success" domain="[('status', '=', 'success')]" />
                     <filter name="error" string="Error" domain="[('status', '=', 'error')]" />
-                    <filter name="recent" string="Recent (24h)" domain="[('create_date', '&gt;=', (context_today() - timedelta(days=1)).isoformat())]" />
                 </search>
             </field>
         </record>
