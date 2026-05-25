@@ -100,7 +100,7 @@
                 <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                 <filter name="find_agent" string="Find Agent" domain="[('escalation_type', '=', 'find_agent')]"/>
                 <filter name="escalate_human" string="Escalate Human" domain="[('escalation_type', '=', 'escalate_human')]"/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_type" string="Type" context="{'group_by': 'escalation_type'}"/>
                 </group>
             </search>
@@ -190,7 +190,7 @@
                 <filter name="found_agent" string="Found Agent" domain="[('escalation_action', '=', 'found_agent')]"/>
                 <filter name="escalated_human" string="Escalated Human" domain="[('escalation_action', '=', 'escalated_human')]"/>
                 <separator/>
-                <group expand="1" string="Group By">
+                <group>
                     <filter name="group_by_agent" string="Original Agent" context="{'group_by': 'original_agent_id'}"/>
                     <filter name="group_by_action" string="Action" context="{'group_by': 'escalation_action'}"/>
                 </group>
