@@ -51,8 +51,8 @@ class ArcvoAgent(models.Model):
     )
     capability_ids = fields.Many2many(
         "arcvo.agent.capability",
-        "arcvo_agent_capability_rel",
-        "agent_id",
+        "arcvo_agent_arcvo_capability_rel",
+        "arcvo_agent_id",
         "capability_id",
         string="Capabilities",
     )
