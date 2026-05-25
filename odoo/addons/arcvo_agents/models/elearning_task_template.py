@@ -211,16 +211,16 @@ class SlideChannelElearning(models.Model):
         help="Total slides published by agents",
     )
 
-    @api.depends("slide_ids.state")
+    @api.depends("slide_ids.is_published")
     def _compute_pending_review(self):
-        """Count slides in draft waiting for agent."""
+        """Count slides in draft (unpublished) waiting for agent."""
         for record in self:
             count = self.env["slide.slide"].search_count(
-                [("channel_id", "=", record.id), ("state", "=", "draft")]
+                [("channel_id", "=", record.id), ("is_published", "=", False)]
             )
             record.slides_pending_review = count
 
-    @api.depends("slide_ids.publish_date")
+    @api.depends("slide_ids.is_published")
     def _compute_published_by_agents(self):
         """Count slides published via agent automation."""
         for record in self:
@@ -228,7 +228,7 @@ class SlideChannelElearning(models.Model):
             count = self.env["slide.slide"].search_count(
                 [
                     ("channel_id", "=", record.id),
-                    ("state", "=", "published"),
+                    ("is_published", "=", True),
                 ]
             )
             record.slides_published_by_agents = count
