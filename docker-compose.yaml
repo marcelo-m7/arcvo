@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: odoo/Dockerfile
     restart: unless-stopped
-    ports:
-      - "8069:8069"
+#    ports:
+#      - "8069:8069"
     environment:
       - SERVICE_URL_ODOO_8069
       - HOST=postgresql
@@ -25,8 +25,8 @@ services:
   postgresql:
     image: postgres:16-alpine
     restart: unless-stopped
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
     environment:
       - POSTGRES_USER=$SERVICE_USER_POSTGRES
       - POSTGRES_PASSWORD=$SERVICE_PASSWORD_POSTGRES
