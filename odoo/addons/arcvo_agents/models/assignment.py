@@ -8,7 +8,13 @@ class ArcvoAgentAssignment(models.Model):
     _description = "Arcvo Agent Assignment"
     _order = "assigned_at desc, id desc"
 
-    agent_id = fields.Many2one("arcvo.agent", required=True, ondelete="cascade", tracking=True)
+    agent_id = fields.Many2one(
+        "hr.employee",
+        required=True,
+        ondelete="cascade",
+        tracking=True,
+        domain=[("is_agent", "=", True)],
+    )
     task_id = fields.Many2one("project.task", required=True, ondelete="cascade", tracking=True)
     status = fields.Selection(
         [

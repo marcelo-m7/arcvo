@@ -6,7 +6,7 @@ class ArcvoAgentAuditLog(models.Model):
     _description = "Arcvo Agent Audit Log"
     _order = "created_at desc, id desc"
 
-    agent_id = fields.Many2one("arcvo.agent", ondelete="set null")
+    agent_id = fields.Many2one("hr.employee", ondelete="set null", domain=[("is_agent", "=", True)])
     task_id = fields.Many2one("project.task", ondelete="set null")
     assignment_id = fields.Many2one("arcvo.agent.assignment", ondelete="set null")
     action = fields.Selection(

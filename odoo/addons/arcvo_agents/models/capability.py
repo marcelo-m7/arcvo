@@ -25,11 +25,12 @@ class ArcvoAgentCapability(models.Model):
     )
     active = fields.Boolean(default=True)
     agent_ids = fields.Many2many(
-        "arcvo.agent",
+        "hr.employee",
         "arcvo_agent_capability_rel",
         "capability_id",
         "agent_id",
         string="Agents",
+        domain=[("is_agent", "=", True)],
     )
 
     _sql_constraints = [

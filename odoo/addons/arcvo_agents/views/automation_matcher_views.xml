@@ -7,7 +7,7 @@
             <field name="name">Automation Matcher - Tree</field>
             <field name="model">arcvo.automation.matcher</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="sequence" widget="handle" />
                     <field name="name" />
                     <field name="match_type" />
@@ -15,7 +15,7 @@
                     <field name="active" widget="boolean" />
                     <field name="assignment_count" />
                     <field name="last_assignment" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -42,7 +42,7 @@
                         </group>
 
                         <!-- Match Type: Tag -->
-                        <group attrs="{'invisible': [('match_type', '!=', 'tag')]}">
+                        <group invisible="match_type != 'tag'">
                             <separator string="Tag-Based Matching" colspan="2" />
                             <field name="task_tag_ids" widget="many2many_tags" colspan="2" />
                             <p class="text-muted" colspan="2">
@@ -51,7 +51,7 @@
                         </group>
 
                         <!-- Match Type: Keyword -->
-                        <group attrs="{'invisible': [('match_type', '!=', 'keyword')]}">
+                        <group invisible="match_type != 'keyword'">
                             <separator string="Keyword Matching" colspan="2" />
                             <field name="keyword" colspan="2" />
                             <p class="text-muted" colspan="2">
@@ -60,7 +60,7 @@
                         </group>
 
                         <!-- Match Type: Project -->
-                        <group attrs="{'invisible': [('match_type', '!=', 'project')]}">
+                        <group invisible="match_type != 'project'">
                             <separator string="Project Matching" colspan="2" />
                             <field name="project_id" colspan="2" />
                             <p class="text-muted" colspan="2">
@@ -69,7 +69,7 @@
                         </group>
 
                         <!-- Match Type: Custom -->
-                        <group attrs="{'invisible': [('match_type', '!=', 'custom')]}">
+                        <group invisible="match_type != 'custom'">
                             <separator string="Custom Domain Filter" colspan="2" />
                             <p class="text-muted" colspan="2">
                                 Enter an Odoo domain filter (JSON array) to identify matching tasks.
@@ -85,8 +85,8 @@
                                 <field name="require_all_capabilities" />
                             </group>
                             <group>
-                                <field name="preferred_agent_id" attrs="{'invisible': [('assignment_strategy', '!=', 'preferred')]}" />
-                                <field name="fallback_strategy" attrs="{'invisible': [('assignment_strategy', '!=', 'preferred')]}" />
+                                <field name="preferred_agent_id" invisible="assignment_strategy != 'preferred'" />
+                                <field name="fallback_strategy" invisible="assignment_strategy != 'preferred'" />
                             </group>
                         </group>
 
@@ -130,7 +130,7 @@
         <record id="arcvo_automation_matcher_action" model="ir.actions.act_window">
             <field name="name">Automation Matchers</field>
             <field name="res_model">arcvo.automation.matcher</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help">Configure rules to auto-assign tasks to agents based on tags, keywords, projects, or custom criteria.
 Each matcher can assign tasks using different strategies: first available, least loaded, preferred agent, or round-robin.</field>
         </record>

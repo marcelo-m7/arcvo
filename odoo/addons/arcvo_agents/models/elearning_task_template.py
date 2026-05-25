@@ -42,7 +42,12 @@ class ElearningTaskTemplate(models.Model):
         help="Only apply to these channels (empty = all)",
     )
     slide_type_filter = fields.Selection(
-        [("all", "All"), ("video", "Video"), ("document", "Document"), ("quiz", "Quiz")],
+        [
+            ("all", "All"),
+            ("video", "Video"),
+            ("document", "Document"),
+            ("quiz", "Quiz"),
+        ],
         default="all",
         help="Filter by slide type",
     )
@@ -292,11 +297,11 @@ class SlideSlideElearning(models.Model):
                 latest_task = record.elearning_task_ids.sorted(
                     key=lambda t: t.create_date, reverse=True
                 )[0]
-                if latest_task.state == "done":
+                if latest_task.state == "1_done":
                     record.elearning_task_status = "completed"
-                elif latest_task.state == "cancelled":
+                elif latest_task.state == "1_canceled":
                     record.elearning_task_status = "failed"
-                elif latest_task.state in ["todo", "in_progress"]:
+                elif latest_task.state in ["01_in_progress", "04_waiting_normal"]:
                     record.elearning_task_status = "in_progress"
                 else:
                     record.elearning_task_status = "pending"
@@ -338,11 +343,16 @@ class ProjectTaskElearning(models.Model):
             if not record.is_elearning_task:
                 continue
 
-            record.state = "done"
+            record.state = "1_done"
 
             # Auto-publish if enabled
             if record.elearning_channel_id.elearning_auto_publish:
                 if record.elearning_slide_id:
-                    record.elearning_slide_id.state = "published"
-                    record.elearning_slide_id.published_by_agent = True
-                    record.elearning_slide_id.agent_review_date = fields.Datetime.now()
+                    record.elearning_slide_id.write(
+                        {
+                            "is_published": True,
+                            "website_published": True,
+                            "published_by_agent": True,
+                            "agent_review_date": fields.Datetime.now(),
+                        }
+                    )

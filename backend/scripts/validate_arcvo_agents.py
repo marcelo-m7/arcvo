@@ -9,7 +9,7 @@ REQUIRED_FILES = [
     "__init__.py",
     "__manifest__.py",
     "models/__init__.py",
-    "models/agent.py",
+    "models/agent_orchestration.py",
     "models/capability.py",
     "models/assignment.py",
     "models/audit_log.py",
@@ -24,10 +24,10 @@ REQUIRED_FILES = [
 ]
 
 REQUIRED_MODELS = {
-    "arcvo.agent",
     "arcvo.agent.capability",
     "arcvo.agent.assignment",
     "arcvo.agent.audit.log",
+    "hr.employee",
 }
 
 FORBIDDEN_TEXT = {
@@ -35,7 +35,22 @@ FORBIDDEN_TEXT = {
     "autonomous_agents",
     '"agent.agent"',
     "'agent.agent'",
+    '_name = "arcvo.agent"',
+    "_name = 'arcvo.agent'",
+    'model="arcvo.agent"',
+    'res_model">arcvo.agent<',
+    "model_arcvo_agent,",
+    "<tree",
+    "</tree>",
+    "view_mode\">tree",
+    "attrs=",
+    "states=",
+    "numbercall",
+    "doall",
 }
+
+
+TEXT_SUFFIXES = {".csv", ".py", ".xml"}
 
 
 def main() -> None:
@@ -46,18 +61,20 @@ def main() -> None:
     manifest = ast.literal_eval((ADDON / "__manifest__.py").read_text(encoding="utf-8"))
     if manifest["name"] != "Arcvo Agents":
         raise SystemExit("Unexpected addon name in manifest.")
-    if "project" not in manifest.get("depends", []):
+    depends = manifest.get("depends", [])
+    if "project" not in depends:
         raise SystemExit("arcvo_agents must depend on project.")
+    if "website_slides" not in depends:
+        raise SystemExit("arcvo_agents must depend on website_slides.")
 
     all_text = "\n".join(
-        path.read_text(encoding="utf-8") for path in ADDON.rglob("*") if path.is_file()
+        path.read_text(encoding="utf-8")
+        for path in ADDON.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts and path.suffix in TEXT_SUFFIXES
     )
     for model in REQUIRED_MODELS:
         if model not in all_text:
             raise SystemExit(f"Required model not found in addon source: {model}")
-    for agent_name in ["Mona CEO", "Odoo Specialist", "Backend Operator", "Acervo Curator"]:
-        if agent_name not in all_text:
-            raise SystemExit(f"Seed agent not found in addon data: {agent_name}")
     for forbidden in FORBIDDEN_TEXT:
         if forbidden in all_text:
             raise SystemExit(f"Forbidden legacy reference found: {forbidden}")

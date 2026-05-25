@@ -69,10 +69,14 @@ class DeployService:
         client = OdooClient(credentials)
         try:
             client.authenticate()
-            agents_total = client.search_count("arcvo.agent")
+            agents_total = client.search_count("hr.employee", [["is_agent", "=", True]])
             agents_available = client.search_count(
-                "arcvo.agent",
-                [["active", "=", True], ["state", "in", ["idle", "busy"]]],
+                "hr.employee",
+                [
+                    ["is_agent", "=", True],
+                    ["agent_active", "=", True],
+                    ["agent_status", "in", ["idle", "busy"]],
+                ],
             )
             assignments_open = client.search_count(
                 "arcvo.agent.assignment",

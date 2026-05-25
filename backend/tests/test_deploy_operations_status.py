@@ -12,9 +12,9 @@ class FakeOdooClient:
 
     def search_count(self, model: str, domain: list[Any] | None = None) -> int:
         domain = domain or []
-        if model == "arcvo.agent" and domain:
+        if model == "hr.employee" and domain and len(domain) > 1:
             return 4
-        if model == "arcvo.agent":
+        if model == "hr.employee":
             return 6
         if model == "arcvo.agent.assignment" and domain[0][2] == "blocked":
             return 1

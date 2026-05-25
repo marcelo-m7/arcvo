@@ -2,10 +2,8 @@
 Slide Management Engine - Process slides and create auto-review tasks for agents.
 """
 import logging
-import re
 
-from odoo import api, fields, models
-from odoo.exceptions import ValidationError
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -82,16 +80,15 @@ class SlideManagementEngine(models.AbstractModel):
         # Check slide type
         if template.slide_type_filter != "all":
             slide_type_map = {
-                "video": "video",
-                "document": "document",
+                "video": {"youtube_video", "google_drive_video", "vimeo_video"},
+                "document": {"pdf", "doc", "slides", "sheet"},
                 "quiz": "quiz",
             }
-            if slide.slide_type != slide_type_map.get(template.slide_type_filter):
-                return False
-        
-        # Check video duration
-        if template.min_duration > 0 and slide.slide_type == "video":
-            if slide.duration_in_seconds < template.min_duration:
+            allowed_types = slide_type_map.get(template.slide_type_filter)
+            if isinstance(allowed_types, set):
+                if slide.slide_type not in allowed_types:
+                    return False
+            elif slide.slide_type != allowed_types:
                 return False
         
         return True
@@ -154,7 +151,6 @@ class SlideManagementEngine(models.AbstractModel):
 
 **Slide Details:**
 - Type: {slide.slide_type}
-- Duration: {slide.duration_in_seconds}s
 - URL: {slide.url}"""
         
         # Find project (eLearning review project)
@@ -165,8 +161,8 @@ class SlideManagementEngine(models.AbstractModel):
             "name": task_name,
             "description": task_description,
             "project_id": review_project.id,
-            "state": "todo",
-            "priority_custom": template.task_priority,
+            "state": "01_in_progress",
+            "priority": template.task_priority,
             "elearning_slide_id": slide.id,
             "is_elearning_task": True,
         }
@@ -239,18 +235,28 @@ class SlideManagementEngine(models.AbstractModel):
                 [
                     ("is_agent", "=", True),
                     ("agent_active", "=", True),
-                    ("open_assignment_count", "<", fields.F("max_concurrent_tasks")),
-                ],
-                order="open_assignment_count ASC",
-                limit=1,
+                ]
             )
-            return agents[0] if agents else None
+            available_agents = agents.filtered(
+                lambda agent: agent.open_assignment_count < agent.max_concurrent_tasks
+            )
+            return min(
+                available_agents,
+                key=lambda agent: agent.open_assignment_count,
+            ) if available_agents else None
         
         elif template.assignment_strategy == "capability":
             if not template.required_capability_ids:
-                return self._assign_agent(
-                    template.write({"assignment_strategy": "least_loaded"}), slide
+                agents = self.env["hr.employee"].search(
+                    [("is_agent", "=", True), ("agent_active", "=", True)]
                 )
+                available_agents = agents.filtered(
+                    lambda agent: agent.open_assignment_count < agent.max_concurrent_tasks
+                )
+                return min(
+                    available_agents,
+                    key=lambda agent: agent.open_assignment_count,
+                ) if available_agents else None
             
             agents = self.env["hr.employee"].search(
                 [
@@ -261,12 +267,15 @@ class SlideManagementEngine(models.AbstractModel):
                         "in",
                         template.required_capability_ids.ids,
                     ),
-                    ("open_assignment_count", "<", fields.F("max_concurrent_tasks")),
-                ],
-                order="open_assignment_count ASC",
-                limit=1,
+                ]
             )
-            return agents[0] if agents else None
+            available_agents = agents.filtered(
+                lambda agent: agent.open_assignment_count < agent.max_concurrent_tasks
+            )
+            return min(
+                available_agents,
+                key=lambda agent: agent.open_assignment_count,
+            ) if available_agents else None
         
         return None
 
@@ -307,8 +316,8 @@ class SlideManagementEngine(models.AbstractModel):
 You have been assigned a new slide review task.
 
 **Task:** {task.name}
-**Priority:** {task.priority_custom}
-**Link:** {task.get_access_token()}
+**Priority:** {task.priority}
+**Link:** {task.access_url or task.name}
 
 Please review the slide and approve for publication when ready."""
             

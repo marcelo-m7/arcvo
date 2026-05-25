@@ -7,14 +7,14 @@
         <field name="name">elearning.task.template.tree</field>
         <field name="model">elearning.task.template</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="trigger_on"/>
                 <field name="assignment_strategy"/>
                 <field name="active" widget="boolean"/>
                 <field name="task_count" sum="Total"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -103,7 +103,7 @@
     <record id="action_elearning_task_template" model="ir.actions.act_window">
         <field name="name">Task Templates</field>
         <field name="res_model">elearning.task.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Tree View: Task Creation Logs -->
@@ -111,13 +111,13 @@
         <field name="name">elearning.task.creation.log.tree</field>
         <field name="model">elearning.task.creation.log</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="slide_id"/>
                 <field name="task_id"/>
                 <field name="assigned_agent_id"/>
                 <field name="creation_status"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -142,7 +142,7 @@
                             <field name="create_date" readonly="1"/>
                         </group>
                     </group>
-                    <field name="error_message" readonly="1" nolabel="1" attrs="{'invisible': [('error_message', '=', '')]}"/>
+                    <field name="error_message" readonly="1" nolabel="1" invisible="not error_message"/>
                 </sheet>
             </form>
         </field>
@@ -174,28 +174,28 @@
     <record id="action_elearning_task_creation_log" model="ir.actions.act_window">
         <field name="name">Task Creation Logs</field>
         <field name="res_model">elearning.task.creation.log</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Extend slide.channel with agent fields -->
     <record id="view_slide_channel_elearning_form" model="ir.ui.view">
         <field name="name">slide.channel.elearning.form</field>
         <field name="model">slide.channel</field>
-        <field name="inherit_id">website_slides.slide_channel_form_view</field>
+        <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Agent Automation" name="agent_automation">
                     <group>
                         <group>
                             <field name="elearning_enabled"/>
-                            <field name="elearning_auto_publish" attrs="{'invisible': [('elearning_enabled', '=', False)]}"/>
+                            <field name="elearning_auto_publish" invisible="not elearning_enabled"/>
                         </group>
                         <group>
                             <field name="slides_pending_review" readonly="1"/>
                             <field name="slides_published_by_agents" readonly="1"/>
                         </group>
                     </group>
-                    <group attrs="{'invisible': [('elearning_enabled', '=', False)]}">
+                    <group invisible="not elearning_enabled">
                         <field name="elearning_template_id" widget="selection"/>
                     </group>
                 </page>
@@ -207,7 +207,7 @@
     <record id="view_slide_slide_elearning_form" model="ir.ui.view">
         <field name="name">slide.slide.elearning.form</field>
         <field name="model">slide.slide</field>
-        <field name="inherit_id">website_slides.slide_slide_form_view</field>
+        <field name="inherit_id" ref="website_slides.view_slide_slide_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Agent Review" name="agent_review">
@@ -219,12 +219,12 @@
                         </group>
                     </group>
                     <field name="elearning_task_ids" readonly="1" nolabel="1">
-                        <tree>
+                        <list>
                             <field name="name"/>
                             <field name="arcvo_agent_id"/>
                             <field name="state"/>
                             <field name="create_date"/>
-                        </tree>
+                        </list>
                     </field>
                     <separator string="Agent Generated Content"/>
                     <group>
@@ -241,12 +241,12 @@
     <record id="view_project_task_elearning_form" model="ir.ui.view">
         <field name="name">project.task.elearning.form</field>
         <field name="model">project.task</field>
-        <field name="inherit_id">project.view_task_form2</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='priority']" position="after">
-                <field name="is_elearning_task" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
-                <field name="elearning_slide_id" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
-                <field name="agent_approval_pending" attrs="{'invisible': [('is_elearning_task', '=', False)]}"/>
+                <field name="is_elearning_task" invisible="not is_elearning_task"/>
+                <field name="elearning_slide_id" invisible="not is_elearning_task"/>
+                <field name="agent_approval_pending" invisible="not is_elearning_task"/>
             </xpath>
         </field>
     </record>

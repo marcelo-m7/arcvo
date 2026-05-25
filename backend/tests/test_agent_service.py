@@ -19,21 +19,23 @@ class FakeOdooClient:
         limit: int = 20,
         offset: int = 0,
     ) -> list[dict[str, Any]]:
-        if model == "arcvo.agent":
+        if model == "hr.employee":
             return [
                 {
                     "id": 7,
                     "name": "odoo_agent",
-                    "role": "odoo",
-                    "state": "idle",
-                    "description": "Odoo specialist",
+                    "is_agent": True,
+                    "agent_status": "idle",
+                    "agent_active": True,
+                    "job_title": "odoo",
+                    "work_email": "odoo@example.com",
                     "capability_ids": [1, 2],
                     "max_concurrent_tasks": 3,
                     "open_assignment_count": 0,
                     "completed_assignment_count": 4,
                     "success_rate": 100.0,
                     "is_available": True,
-                    "last_heartbeat": False,
+                    "agent_last_heartbeat": False,
                     "discuss_channel_id": [11, "Arcvo Agent: odoo_agent"],
                 }
             ]
@@ -94,7 +96,7 @@ def test_record_heartbeat_writes_via_odoo_domain_method() -> None:
     assert response.status == "ok"
     assert client.execute_calls
     model, method, args, kwargs = client.execute_calls[0]
-    assert model == "arcvo.agent"
+    assert model == "hr.employee"
     assert method == "action_heartbeat"
     assert args == [[7]]
     assert kwargs["state"] == "idle"
@@ -125,7 +127,7 @@ def test_record_heartbeat_prefers_odoo_domain_method() -> None:
 
     assert client.execute_calls
     model, method, args, kwargs = client.execute_calls[0]
-    assert model == "arcvo.agent"
+    assert model == "hr.employee"
     assert method == "action_heartbeat"
     assert args == [[7]]
     assert kwargs["state"] == "busy"
@@ -142,7 +144,7 @@ def test_send_agent_message_posts_through_odoo_discuss_method() -> None:
 
     assert response.status == "ok"
     model, method, args, kwargs = client.execute_calls[0]
-    assert model == "arcvo.agent"
+    assert model == "hr.employee"
     assert method == "action_post_discuss_message"
     assert args == [[7]]
     assert kwargs == {"body": "deploy checked", "task_id": 55, "assignment_id": 12}

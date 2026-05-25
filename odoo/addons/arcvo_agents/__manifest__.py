@@ -12,7 +12,7 @@ source of operational work and every agent action is traceable in Odoo.
     "website": "https://marcelo-m7.com",
     "category": "Project",
     "version": "19.0.2.0.0",
-    "depends": ["base", "mail", "project", "hr"],
+    "depends": ["base", "mail", "project", "hr", "website_slides"],
     "data": [
         "security/security_groups.xml",
         "security/ir.model.access.csv",

@@ -5,8 +5,9 @@ import logging
 import time
 from datetime import datetime
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import html_escape
 
 from .ollama_client import OllamaClient
 
@@ -26,6 +27,10 @@ class HrEmployeeAgent(models.Model):
     agent_status = fields.Selection(
         [
             ("idle", "Idle"),
+            ("busy", "Busy"),
+            ("blocked", "Blocked"),
+            ("offline", "Offline"),
+            ("disabled", "Disabled"),
             ("running", "Running"),
             ("paused", "Paused"),
             ("error", "Error"),
@@ -58,6 +63,16 @@ class HrEmployeeAgent(models.Model):
         default=True,
         help="Whether cron should execute this agent",
     )
+    discuss_channel_id = fields.Many2one(
+        "discuss.channel",
+        string="Discuss Channel",
+        readonly=True,
+        copy=False,
+    )
+    agent_last_heartbeat = fields.Datetime(
+        string="Last Heartbeat",
+        readonly=True,
+    )
 
     # Related logs
     agent_message_ids = fields.One2many(
@@ -85,6 +100,40 @@ class HrEmployeeAgent(models.Model):
         store=False,
         help="Current number of open assignments",
     )
+    completed_assignment_count = fields.Integer(
+        compute="_compute_open_assignments",
+        store=False,
+        help="Completed assignments for this agent",
+    )
+    total_executions = fields.Integer(default=0, readonly=True)
+    successful_executions = fields.Integer(default=0, readonly=True)
+    success_rate = fields.Float(compute="_compute_success_rate", store=True)
+    is_available = fields.Boolean(compute="_compute_is_available")
+
+    arcvo_assignment_ids = fields.One2many(
+        "arcvo.agent.assignment",
+        "agent_id",
+        string="Arcvo Assignments",
+    )
+
+    @api.depends("total_executions", "successful_executions")
+    def _compute_success_rate(self):
+        for agent in self:
+            agent.success_rate = (
+                (agent.successful_executions / agent.total_executions) * 100
+                if agent.total_executions
+                else 0.0
+            )
+
+    @api.depends("agent_active", "agent_status", "open_assignment_count", "max_concurrent_tasks")
+    def _compute_is_available(self):
+        for agent in self:
+            agent.is_available = (
+                agent.is_agent
+                and agent.agent_active
+                and agent.agent_status in {"idle", "busy"}
+                and agent.open_assignment_count < agent.max_concurrent_tasks
+            )
 
     def action_test_agent(self):
         """Manual action: Test agent immediately (outside cron)."""
@@ -94,7 +143,6 @@ class HrEmployeeAgent(models.Model):
         
         try:
             self.agent_status = "running"
-            self.env.cr.commit()
             
             # Run a simple test
             test_prompt = f"Hello, I am {self.name}. Respond briefly with your understanding of your role as an agent."
@@ -109,7 +157,6 @@ class HrEmployeeAgent(models.Model):
                 f"System prompt test successful.\n\n**Input:** {test_prompt}\n\n**Response:**\n{response}",
             )
             
-            self.env.cr.commit()
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
@@ -124,7 +171,6 @@ class HrEmployeeAgent(models.Model):
             _logger.exception(f"Agent test failed for {self.name}: {e}")
             self.agent_status = "error"
             self.agent_last_error = str(e)
-            self.env.cr.commit()
             raise UserError(f"Agent test failed: {e}")
 
     def action_pause_agent(self):
@@ -222,6 +268,102 @@ class HrEmployeeAgent(models.Model):
                 f"Cannot post to Discuss for {self.name} (no user/partner)"
             )
 
+    def action_heartbeat(self, state=None, message=None):
+        vals = {"agent_last_heartbeat": fields.Datetime.now()}
+        if state in {"idle", "busy", "blocked", "offline", "disabled", "paused", "error"}:
+            vals["agent_status"] = state
+        self.write(vals)
+        for agent in self:
+            if message:
+                agent._post_agent_chatter(message)
+                agent.action_post_discuss_message(body=message)
+            self.env["arcvo.agent.audit.log"].sudo().create(
+                {
+                    "agent_id": agent.id,
+                    "action": "heartbeat",
+                    "message": message or "Heartbeat recorded.",
+                }
+            )
+
+    def record_execution(self, success):
+        for agent in self:
+            vals = {"total_executions": agent.total_executions + 1}
+            if success:
+                vals["successful_executions"] = agent.successful_executions + 1
+            agent.write(vals)
+
+    def action_ensure_discuss_channel(self):
+        for agent in self:
+            agent._ensure_discuss_channel()
+        return True
+
+    def action_open_discuss_channel(self):
+        self.ensure_one()
+        channel = self._ensure_discuss_channel()
+        return {
+            "type": "ir.actions.act_window",
+            "name": channel.display_name,
+            "res_model": "discuss.channel",
+            "res_id": channel.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+
+    def action_post_discuss_message(self, body=None, task_id=None, assignment_id=None):
+        safe_body = body or _("Arcvo agent message.")
+        for agent in self:
+            channel = agent._ensure_discuss_channel()
+            channel.message_post(
+                body=agent._format_message_body(safe_body, task_id=task_id, assignment_id=assignment_id),
+                message_type="comment",
+                subtype_xmlid="mail.mt_comment",
+            )
+            agent._post_agent_chatter(safe_body, task_id=task_id, assignment_id=assignment_id)
+            agent.env["arcvo.agent.audit.log"].sudo().create(
+                {
+                    "agent_id": agent.id,
+                    "task_id": task_id or False,
+                    "assignment_id": assignment_id or False,
+                    "action": "message",
+                    "message": safe_body,
+                    "payload": {"target": "discuss"},
+                }
+            )
+        return True
+
+    def _ensure_discuss_channel(self):
+        self.ensure_one()
+        if self.discuss_channel_id:
+            return self.discuss_channel_id
+
+        channel = self.env["discuss.channel"].sudo().create(
+            {
+                "name": f"Arcvo Agent: {self.name}",
+                "channel_type": "channel",
+            }
+        )
+        self.sudo().write({"discuss_channel_id": channel.id})
+        self._post_agent_chatter(_("Discuss channel created for this Arcvo agent."))
+        return channel
+
+    def _post_agent_chatter(self, body, task_id=None, assignment_id=None):
+        self.ensure_one()
+        self.message_post(
+            body=self._format_message_body(body, task_id=task_id, assignment_id=assignment_id),
+            message_type="comment",
+            subtype_xmlid="mail.mt_comment",
+        )
+
+    @staticmethod
+    def _format_message_body(body, task_id=None, assignment_id=None):
+        details = []
+        if task_id:
+            details.append(f"Task #{int(task_id)}")
+        if assignment_id:
+            details.append(f"Assignment #{int(assignment_id)}")
+        suffix = f"<br/><small>{html_escape(' | '.join(details))}</small>" if details else ""
+        return f"{html_escape(body)}{suffix}"
+
     @api.model
     def _cron_run_active_agents(self):
         """
@@ -246,8 +388,6 @@ class HrEmployeeAgent(models.Model):
                 _logger.exception(f"Agent cycle failed for {agent.name}: {e}")
                 agent.agent_status = "error"
                 agent.agent_last_error = str(e)
-        
-        self.env.cr.commit()
         
         # Check for stuck assignments and escalate (Fase 4)
         try:
@@ -287,7 +427,7 @@ class HrEmployeeAgent(models.Model):
             decision = ollama_client.extract_json_from_text(raw_response)
             
             # Log to arcvo.agent.message
-            message_log = self.env["arcvo.agent.message"]._log_message(
+            self.env["arcvo.agent.message"]._log_message(
                 agent=self,
                 prompt=prompt,
                 raw_response=raw_response,
@@ -354,20 +494,22 @@ Respond ONLY with valid JSON in this format (no markdown, no extra text):
 Current time: {datetime.now().isoformat()}
 """
 
-    @api.depends("is_agent")
+    @api.depends("is_agent", "arcvo_assignment_ids.status")
     def _compute_open_assignments(self):
         """Compute number of open assignments for this agent."""
         for employee in self:
             if employee.is_agent:
-                open_assignments = self.env["arcvo.agent.assignment"].search_count(
-                    [
-                        ("agent_id", "=", employee.id),
-                        ("status", "in", ["assigned", "in_progress", "blocked"]),
-                    ]
+                open_assignments = employee.arcvo_assignment_ids.filtered(
+                    lambda assignment: assignment.status in {"assigned", "in_progress", "blocked"}
                 )
-                employee.open_assignment_count = open_assignments
+                completed_assignments = employee.arcvo_assignment_ids.filtered(
+                    lambda assignment: assignment.status == "completed"
+                )
+                employee.open_assignment_count = len(open_assignments)
+                employee.completed_assignment_count = len(completed_assignments)
             else:
                 employee.open_assignment_count = 0
+                employee.completed_assignment_count = 0
 
 
 class ProjectTaskWebhook(models.Model):
@@ -382,10 +524,9 @@ class ProjectTaskWebhook(models.Model):
         
         # Dispatch webhooks for task.created trigger
         try:
-            webhook_model = self.env.get("arcvo.automation.webhook")
-            if webhook_model:
-                for record in records:
-                    webhook_model._dispatch(record, "created")
+            webhook_model = self.env["arcvo.automation.webhook"]
+            for record in records:
+                webhook_model._dispatch(record, "created")
         except Exception as e:
             _logger.warning(f"Error dispatching webhooks on task creation: {e}")
         
@@ -397,14 +538,13 @@ class ProjectTaskWebhook(models.Model):
         
         # Dispatch webhooks for task.write trigger
         try:
-            webhook_model = self.env.get("arcvo.automation.webhook")
-            if webhook_model:
-                for record in self:
-                    webhook_model._dispatch(record, "write")
-                    
-                    # Also dispatch task.state_change if state field was updated
-                    if "state" in vals:
-                        webhook_model._dispatch(record, "state_change")
+            webhook_model = self.env["arcvo.automation.webhook"]
+            for record in self:
+                webhook_model._dispatch(record, "write")
+
+                # Also dispatch task.state_change if state field was updated
+                if "state" in vals:
+                    webhook_model._dispatch(record, "state_change")
         except Exception as e:
             _logger.warning(f"Error dispatching webhooks on task update: {e}")
         
@@ -428,11 +568,7 @@ class ProjectTaskWebhook(models.Model):
             return True
 
         # Get all active matchers
-        matcher_model = self.env.get("arcvo.automation.matcher")
-        if not matcher_model:
-            _logger.warning("Matcher model not found (Fase 2 not installed)")
-            return False
-
+        matcher_model = self.env["arcvo.automation.matcher"]
         matchers = matcher_model.search(
             [("active", "=", True)],
             order="sequence ASC",

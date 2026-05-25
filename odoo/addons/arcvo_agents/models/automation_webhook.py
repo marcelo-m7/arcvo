@@ -168,7 +168,7 @@ class ArcvoAutomationWebhook(models.Model):
 
         # Use matcher from Fase 2 to auto-assign
         try:
-            assigned = self.env["project.task"]._auto_assign_task(task)
+            assigned = task._auto_assign_task()
             if assigned:
                 # Task was assigned, run it
                 self._execute_run_agent(task)

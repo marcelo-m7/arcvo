@@ -9,6 +9,8 @@ class AgentInfo(BaseModel):
     role: str
     state: str
     description: str | None = None
+    is_agent: bool = True
+    agent_active: bool = True
     capability_ids: list[int] = Field(default_factory=list)
     max_concurrent_tasks: int
     open_assignment_count: int

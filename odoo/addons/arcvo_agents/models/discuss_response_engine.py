@@ -265,12 +265,7 @@ Be concise, professional, and data-driven. When unsure, ask clarifying questions
             response_msg: mail.message (posted response) or None
         """
         try:
-            action_model = self.env.get("arcvo.automation.discuss.action")
-            if not action_model:
-                _logger.warning("arcvo.automation.discuss.action model not found")
-                return
-
-            action_model.create(
+            self.env["arcvo.automation.discuss.action"].create(
                 {
                     "agent_id": agent.id,
                     "mention_message_id": message.id,

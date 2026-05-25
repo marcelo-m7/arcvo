@@ -5,7 +5,6 @@ import logging
 from datetime import datetime, timedelta
 
 from odoo import api, fields, models
-from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -269,8 +268,8 @@ class ArcvoEscalationEngine(models.AbstractModel):
 
         # Check if assignment matches rule criteria
         task = assignment.task_id
-        if task.priority_custom:
-            priority = int(task.priority_custom)
+        if task.priority:
+            priority = int(task.priority)
         else:
             priority = 0
 
@@ -324,12 +323,11 @@ class ArcvoEscalationEngine(models.AbstractModel):
 
         # Create new assignment
         try:
-            new_assignment = self.env["arcvo.agent.assignment"].create(
+            self.env["arcvo.agent.assignment"].create(
                 {
                     "task_id": task.id,
                     "agent_id": best_agent.id,
                     "status": "assigned",
-                    "priority": assignment.priority,
                 }
             )
 

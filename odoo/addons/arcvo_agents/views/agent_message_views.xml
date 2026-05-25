@@ -7,13 +7,13 @@
             <field name="name">Agent Messages - Tree</field>
             <field name="model">arcvo.agent.message</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="create_date" />
                     <field name="agent_id" />
                     <field name="project_id" />
                     <field name="task_id" />
                     <field name="status" decoration-success="status=='success'" decoration-danger="status=='error'" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -101,7 +101,7 @@
         <record id="arcvo_agent_message_action" model="ir.actions.act_window">
             <field name="name">Agent Messages</field>
             <field name="res_model">arcvo.agent.message</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help">View execution logs and decisions for all agents.</field>
         </record>
 

@@ -7,7 +7,7 @@
         <field name="name">automation.discuss.action.tree</field>
         <field name="model">arcvo.automation.discuss.action</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="agent_id"/>
                 <field name="action_type"/>
@@ -15,7 +15,7 @@
                 <field name="status"/>
                 <field name="button_clicks" sum="Button Clicks"/>
                 <field name="needs_human_review"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -26,9 +26,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_accept" type="object" string="✓ Accept" class="oe_highlight" states="pending"/>
-                    <button name="action_pause" type="object" string="⏸ Pause" states="pending"/>
-                    <button name="action_retry" type="object" string="🔄 Retry" states="pending"/>
+                    <button name="action_accept" type="object" string="✓ Accept" class="oe_highlight" invisible="status != 'pending'"/>
+                    <button name="action_pause" type="object" string="⏸ Pause" invisible="status != 'pending'"/>
+                    <button name="action_retry" type="object" string="🔄 Retry" invisible="status != 'pending'"/>
                     <field name="status" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -62,12 +62,12 @@
                         </page>
                         <page string="Button Clicks" name="button_clicks">
                             <field name="button_click_ids" nolabel="1" readonly="1">
-                                <tree>
+                                <list>
                                     <field name="create_date"/>
                                     <field name="button_type"/>
                                     <field name="clicked_by"/>
                                     <field name="notes"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -106,7 +106,7 @@
     <record id="action_automation_discuss_action" model="ir.actions.act_window">
         <field name="name">Discuss Responses</field>
         <field name="res_model">arcvo.automation.discuss.action</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No Discuss responses yet.
@@ -131,12 +131,12 @@
         <field name="name">automation.discuss.button.click.tree</field>
         <field name="model">arcvo.automation.discuss.button.click</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="button_type"/>
                 <field name="clicked_by"/>
                 <field name="action_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 

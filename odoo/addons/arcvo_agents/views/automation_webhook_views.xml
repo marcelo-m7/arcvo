@@ -7,7 +7,7 @@
             <field name="name">Automation Webhooks - Tree</field>
             <field name="model">arcvo.automation.webhook</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="sequence" widget="handle" />
                     <field name="name" />
                     <field name="trigger" />
@@ -15,7 +15,7 @@
                     <field name="active" widget="boolean" />
                     <field name="execution_count" />
                     <field name="last_execution" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -84,7 +84,7 @@
         <record id="arcvo_automation_webhook_action" model="ir.actions.act_window">
             <field name="name">Automation Webhooks</field>
             <field name="res_model">arcvo.automation.webhook</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help">Configure event triggers for automatic agent execution (webhooks).
 Each webhook can fire on task creation, state change, or update, and trigger agent execution or other actions.</field>
         </record>
@@ -105,14 +105,14 @@ Each webhook can fire on task creation, state change, or update, and trigger age
             <field name="name">Automation Logs - Tree</field>
             <field name="model">arcvo.automation.log</field>
             <field name="arch" type="xml">
-                <tree create="0" edit="0">
+                <list create="0" edit="0">
                     <field name="create_date" />
                     <field name="webhook_id" />
                     <field name="task_id" />
                     <field name="action" />
                     <field name="result" decoration-success="result=='success'" decoration-danger="result=='error'" />
                     <field name="message" />
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -166,7 +166,7 @@ Each webhook can fire on task creation, state change, or update, and trigger age
         <record id="arcvo_automation_log_action" model="ir.actions.act_window">
             <field name="name">Automation Logs</field>
             <field name="res_model">arcvo.automation.log</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">list,form</field>
             <field name="help">View execution logs for all automated webhooks. This is an immutable audit trail.</field>
         </record>
 

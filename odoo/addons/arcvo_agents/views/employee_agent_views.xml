@@ -13,20 +13,20 @@
                         <group>
                             <group>
                                 <field name="is_agent" />
-                                <field name="agent_active" attrs="{'invisible': [('is_agent', '=', False)]}" />
-                                <field name="agent_status" attrs="{'invisible': [('is_agent', '=', False)]}" />
+                                <field name="agent_active" invisible="not is_agent" />
+                                <field name="agent_status" invisible="not is_agent" />
                             </group>
                             <group>
-                                <field name="agent_last_execution" attrs="{'invisible': [('is_agent', '=', False)]}" />
-                                <field name="agent_last_error" attrs="{'invisible': [('is_agent', '=', False)]}" nolabel="1" />
+                                <field name="agent_last_execution" invisible="not is_agent" />
+                                <field name="agent_last_error" invisible="not is_agent" nolabel="1" />
                             </group>
                         </group>
 
-                        <group attrs="{'invisible': [('is_agent', '=', False)]}">
+                        <group invisible="not is_agent">
                             <field name="ollama_model" />
                         </group>
 
-                        <group attrs="{'invisible': [('is_agent', '=', False)]}">
+                        <group invisible="not is_agent">
                             <separator string="System Prompt" />
                             <field name="ollama_system_prompt" nolabel="1" />
                         </group>
@@ -46,20 +46,20 @@
                         name="action_test_agent"
                         type="object"
                         string="🤖 Test Agent"
-                        attrs="{'invisible': [('is_agent', '=', False)]}"
+                        invisible="not is_agent"
                         class="btn-primary"
                     />
                     <button
                         name="action_pause_agent"
                         type="object"
                         string="⏸ Pause Agent"
-                        attrs="{'invisible': [('is_agent', '=', False), ('agent_active', '=', False)]}"
+                        invisible="not is_agent or not agent_active"
                     />
                     <button
                         name="action_resume_agent"
                         type="object"
                         string="▶ Resume Agent"
-                        attrs="{'invisible': [('is_agent', '=', False), ('agent_active', '=', True)]}"
+                        invisible="not is_agent or agent_active"
                     />
                 </xpath>
             </field>
@@ -72,17 +72,17 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//notebook" position="inside">
-                    <page string="Agent Execution Logs" attrs="{'invisible': [('is_agent', '=', False)]}">
+                    <page string="Agent Execution Logs" invisible="not is_agent">
                         <field
                             name="agent_message_ids"
                             nolabel="1"
                             domain="[('agent_id', '=', id)]"
                         >
-                            <tree>
+                            <list>
                                 <field name="create_date" />
                                 <field name="status" decoration-success="status=='success'" decoration-danger="status=='error'" />
                                 <field name="llm_duration_seconds" optional="hide" />
-                            </tree>
+                            </list>
                         </field>
                     </page>
                 </xpath>

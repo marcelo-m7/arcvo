@@ -12,7 +12,7 @@ from app.schemas.agents import (
     AgentMessageResponse,
 )
 
-AGENT_MODEL = "arcvo.agent"
+AGENT_MODEL = "hr.employee"
 ASSIGNMENT_MODEL = "arcvo.agent.assignment"
 AUDIT_MODEL = "arcvo.agent.audit.log"
 TASK_MODEL = "project.task"
@@ -24,7 +24,9 @@ class AgentService:
         self.client = client
 
     def list_agents(self, state: str | None = None) -> list[AgentInfo]:
-        domain = [["state", "=", state]] if state else []
+        domain = [["is_agent", "=", True]]
+        if state:
+            domain.append(["agent_status", "=", state])
         records = self.client.search_read(
             AGENT_MODEL,
             domain=domain,
@@ -190,16 +192,18 @@ class AgentService:
         return [
             "id",
             "name",
-            "role",
-            "state",
-            "description",
+            "is_agent",
+            "agent_status",
+            "agent_active",
+            "job_title",
+            "work_email",
             "capability_ids",
             "max_concurrent_tasks",
             "open_assignment_count",
             "completed_assignment_count",
             "success_rate",
             "is_available",
-            "last_heartbeat",
+            "agent_last_heartbeat",
             "discuss_channel_id",
         ]
 
@@ -208,16 +212,18 @@ class AgentService:
         return AgentInfo(
             id=record["id"],
             name=record["name"],
-            role=record["role"],
-            state=record["state"],
-            description=record.get("description") or None,
+            role=record.get("job_title") or "agent",
+            state=record.get("agent_status") or "idle",
+            description=record.get("work_email") or None,
+            is_agent=bool(record.get("is_agent")),
+            agent_active=bool(record.get("agent_active")),
             capability_ids=record.get("capability_ids") or [],
             max_concurrent_tasks=record["max_concurrent_tasks"],
             open_assignment_count=record["open_assignment_count"],
             completed_assignment_count=record["completed_assignment_count"],
             success_rate=record["success_rate"],
             is_available=record["is_available"],
-            last_heartbeat=record.get("last_heartbeat") or None,
+            last_heartbeat=record.get("agent_last_heartbeat") or None,
             discuss_channel_id=record.get("discuss_channel_id") or None,
         )
 

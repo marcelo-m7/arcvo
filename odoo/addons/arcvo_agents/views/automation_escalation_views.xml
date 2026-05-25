@@ -7,7 +7,7 @@
         <field name="name">automation.escalation.tree</field>
         <field name="model">arcvo.automation.escalation</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="escalation_type"/>
@@ -15,7 +15,7 @@
                 <field name="max_retries"/>
                 <field name="active" widget="boolean"/>
                 <field name="escalation_count" sum="Total"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -58,9 +58,9 @@
                             <field name="escalation_count" readonly="1"/>
                         </group>
                         <group>
-                            <label string="When escalation_type='escalate_human':" class="oe_form_label" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
-                            <field name="escalate_to_user_id" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
-                            <field name="escalation_group_id" attrs="{'invisible': [('escalation_type', '=', 'find_agent')]}"/>
+                            <label string="When escalation_type='escalate_human':" class="oe_form_label" invisible="escalation_type == 'find_agent'"/>
+                            <field name="escalate_to_user_id" invisible="escalation_type == 'find_agent'"/>
+                            <field name="escalation_group_id" invisible="escalation_type == 'find_agent'"/>
                         </group>
                     </group>
                     <group name="agent_selection" string="Agent Selection (if escalation_type='find_agent')">
@@ -111,7 +111,7 @@
     <record id="action_automation_escalation" model="ir.actions.act_window">
         <field name="name">Escalation Rules</field>
         <field name="res_model">arcvo.automation.escalation</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Tree View: Escalation Logs -->
@@ -119,15 +119,15 @@
         <field name="name">automation.escalation.log.tree</field>
         <field name="model">arcvo.automation.escalation.log</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="original_agent_id"/>
                 <field name="escalation_action"/>
-                <field name="new_agent_id" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
-                <field name="escalated_to_user_id" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
+                <field name="new_agent_id" optional="show"/>
+                <field name="escalated_to_user_id" optional="show"/>
                 <field name="blocked_hours"/>
                 <field name="status"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -160,12 +160,12 @@
                     </group>
                     <group>
                         <group>
-                            <label string="Reassignment:" class="oe_form_label" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
-                            <field name="new_agent_id" readonly="1" attrs="{'invisible': [('escalation_action', '!=', 'found_agent')]}"/>
+                            <label string="Reassignment:" class="oe_form_label" invisible="escalation_action != 'found_agent'"/>
+                            <field name="new_agent_id" readonly="1" invisible="escalation_action != 'found_agent'"/>
                         </group>
                         <group>
-                            <label string="Escalated To:" class="oe_form_label" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
-                            <field name="escalated_to_user_id" readonly="1" attrs="{'invisible': [('escalation_action', '!=', 'escalated_human')]}"/>
+                            <label string="Escalated To:" class="oe_form_label" invisible="escalation_action != 'escalated_human'"/>
+                            <field name="escalated_to_user_id" readonly="1" invisible="escalation_action != 'escalated_human'"/>
                         </group>
                     </group>
                     <group>
@@ -203,7 +203,7 @@
     <record id="action_automation_escalation_log" model="ir.actions.act_window">
         <field name="name">Escalation Logs</field>
         <field name="res_model">arcvo.automation.escalation.log</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu Items -->

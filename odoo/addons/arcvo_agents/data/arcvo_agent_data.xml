@@ -30,47 +30,4 @@
         <field name="category">qa</field>
         <field name="description">Validacao, qualidade, deploy e monitoramento Coolify.</field>
     </record>
-
-    <record id="agent_ceo" model="arcvo.agent">
-        <field name="name">Mona CEO</field>
-        <field name="role">ceo</field>
-        <field name="state">idle</field>
-        <field name="description">Coordena prioridades e delega trabalho para a operacao Arcvo.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_coordination'), ref('capability_qa_deploy')])]"/>
-    </record>
-    <record id="agent_odoo" model="arcvo.agent">
-        <field name="name">Odoo Specialist</field>
-        <field name="role">odoo</field>
-        <field name="state">idle</field>
-        <field name="description">Cuida dos modelos, tarefas, eLearning e consistencia do Odoo 19.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_odoo'), ref('capability_coordination')])]"/>
-    </record>
-    <record id="agent_backend" model="arcvo.agent">
-        <field name="name">Backend Operator</field>
-        <field name="role">backend</field>
-        <field name="state">idle</field>
-        <field name="description">Executa automacoes controladas no FastAPI e nas integracoes.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_backend'), ref('capability_qa_deploy')])]"/>
-    </record>
-    <record id="agent_frontend" model="arcvo.agent">
-        <field name="name">Hermes Operator</field>
-        <field name="role">hermes</field>
-        <field name="state">idle</field>
-        <field name="description">Mantem a experiencia operacional no Hermes puro.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_frontend')])]"/>
-    </record>
-    <record id="agent_data" model="arcvo.agent">
-        <field name="name">Acervo Curator</field>
-        <field name="role">data</field>
-        <field name="state">idle</field>
-        <field name="description">Organiza videos, cursos, categorias e importacoes do acervo.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_data_archive'), ref('capability_odoo')])]"/>
-    </record>
-    <record id="agent_qa" model="arcvo.agent">
-        <field name="name">QA Deploy</field>
-        <field name="role">qa</field>
-        <field name="state">idle</field>
-        <field name="description">Valida checks, acompanha deploy e registra problemas de producao.</field>
-        <field name="capability_ids" eval="[(6, 0, [ref('capability_qa_deploy'), ref('capability_backend')])]"/>
-    </record>
 </odoo>

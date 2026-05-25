@@ -1,6 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_arcvo_agent_user,arcvo.agent.user,model_arcvo_agent,base.group_user,1,0,0,0
-access_arcvo_agent_manager,arcvo.agent.manager,model_arcvo_agent,base.group_system,1,1,1,1
 access_arcvo_agent_capability_user,arcvo.agent.capability.user,model_arcvo_agent_capability,base.group_user,1,0,0,0
 access_arcvo_agent_capability_manager,arcvo.agent.capability.manager,model_arcvo_agent_capability,base.group_system,1,1,1,1
 access_arcvo_agent_assignment_user,arcvo.agent.assignment.user,model_arcvo_agent_assignment,base.group_user,1,1,1,0
