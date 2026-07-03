@@ -62,9 +62,8 @@
                 <field name="name" />
                 <field name="user_id" />
                 <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
-                <group expand="0" string="Group By">
-                    <filter string="Responsible" name="group_by_user" context="{'group_by': 'user_id'}" />
-                </group>
+                <separator string="Group By" />
+                <filter string="Responsible" name="group_by_user" context="{'group_by': 'user_id'}" />
             </search>
         </field>
     </record>

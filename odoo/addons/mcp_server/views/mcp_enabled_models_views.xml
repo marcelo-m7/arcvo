@@ -47,13 +47,14 @@
                         type="action"
                         string="Enable Models"
                         class="btn btn-primary"
+                        groups="mcp_server.group_mcp_admin"
                         display="always"
                         help="Enable multiple models at once" />
                     <button name="%(mcp_server.action_mcp_model_batch_wizard)d"
                         type="action"
                         string="Batch Update"
                         class="btn btn-secondary"
-                        context="{'default_mcp_model_ids': active_ids}"
+                        groups="mcp_server.group_mcp_admin"
                         display="always"
                         help="Update permissions for selected models" />
                 </header>
@@ -128,10 +129,9 @@
                 <separator />
                 <filter string="Full Access" name="full_access" 
                         domain="[('allow_read', '=', True), ('allow_create', '=', True), ('allow_write', '=', True), ('allow_unlink', '=', True)]" />
-                <group expand="0" string="Group By">
-                    <filter string="Read Allowed" name="group_by_read" context="{'group_by': 'allow_read'}" />
-                    <filter string="Action" name="group_by_write" context="{'group_by': 'allow_write'}" />
-                </group>
+                <separator string="Group By" />
+                <filter string="Read Allowed" name="group_by_read" context="{'group_by': 'allow_read'}" />
+                <filter string="Action" name="group_by_write" context="{'group_by': 'allow_write'}" />
             </search>
         </field>
     </record>
