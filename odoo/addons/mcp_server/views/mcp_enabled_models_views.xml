@@ -1,28 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="mcp_enabled_model_view_kanban" model="ir.ui.view">
+        <field name="name">mcp.enabled.model.kanban</field>
+        <field name="model">mcp.enabled.model</field>
+        <field name="arch" type="xml">
+            <kanban string="MCP Enabled Models" class="o_kanban_mobile">
+                <field name="model_id" />
+                <field name="model_name" />
+                <field name="allow_read" />
+                <field name="allow_create" />
+                <field name="allow_write" />
+                <field name="allow_unlink" />
+                <field name="active" />
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex flex-column h-100">
+                             <div class="d-flex mb-1">
+                                 <strong class="o_kanban_record_title me-auto">
+                                     <field name="model_id"/>
+                                 </strong>
+                                 <field name="active" widget="boolean_favorite" nolabel="1"/>
+                             </div>
+                             <div class="mb-2 text-muted">
+                                 <field name="model_name"/>
+                             </div>
+                             <div class="mt-auto d-flex flex-wrap gap-1">
+                                 <span t-if="record.allow_read.raw_value" class="badge rounded-pill text-bg-info">Read</span>
+                                 <span t-if="record.allow_create.raw_value" class="badge rounded-pill text-bg-success">Create</span>
+                                 <span t-if="record.allow_write.raw_value" class="badge rounded-pill text-bg-warning">Update</span>
+                                 <span t-if="record.allow_unlink.raw_value" class="badge rounded-pill text-bg-danger">Delete</span>
+                             </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="mcp_enabled_model_view_list" model="ir.ui.view">
         <field name="name">mcp.enabled.model.list</field>
         <field name="model">mcp.enabled.model</field>
         <field name="arch" type="xml">
-            <list string="MCP Enabled Models">
+            <list string="MCP Enabled Models" multi_edit="1">
                 <header>
                     <button name="%(mcp_server.action_mcp_model_selection_wizard)d"
                         type="action"
-                        string="Select Multiple Models"
+                        string="Enable Models"
                         class="btn btn-primary"
-                        context="{}"
                         display="always"
-                        help="Open wizard to enable multiple models at once" />
+                        help="Enable multiple models at once" />
+                    <button name="%(mcp_server.action_mcp_model_batch_wizard)d"
+                        type="action"
+                        string="Batch Update"
+                        class="btn btn-secondary"
+                        context="{'default_mcp_model_ids': active_ids}"
+                        display="always"
+                        help="Update permissions for selected models" />
                 </header>
-                <field name="model_id" />
-                <field name="model_name" />
-                <field name="active" />
+                <field name="model_id" readonly="1" />
+                <field name="model_name" groups="base.group_no_one" />
                 <field name="allow_read" widget="boolean_toggle" />
                 <field name="allow_create" widget="boolean_toggle" />
                 <field name="allow_write" widget="boolean_toggle" />
                 <field name="allow_unlink" widget="boolean_toggle" />
-                <field name="write_date" string="Last Modified" />
-                <field name="write_uid" string="Modified By" />
+                <field name="active" widget="boolean_toggle" />
+                <field name="write_date" string="Last Modified" optional="hide" />
             </list>
         </field>
     </record>
@@ -36,29 +78,33 @@
                     <div class="oe_title">
                         <label for="model_id" class="oe_edit_only" />
                         <h1>
-                            <field name="model_id" options="{'no_create': True}" />
+                            <field name="model_id" options="{'no_create': True, 'no_open': True}" />
                         </h1>
                         <field name="model_name" readonly="1" groups="base.group_no_one" />
                     </div>
                     <group>
-                        <group string="Access Settings">
-                            <field name="active" />
-                            <field name="allow_read" />
-                            <field name="allow_create" />
-                            <field name="allow_write" />
-                            <field name="allow_unlink" />
+                        <group string="Permissions">
+                            <field name="allow_read" widget="boolean_toggle" />
+                            <field name="allow_create" widget="boolean_toggle" />
+                            <field name="allow_write" widget="boolean_toggle" />
+                            <field name="allow_unlink" widget="boolean_toggle" />
                         </group>
-                        <group string="Additional Information">
-                            <field name="create_date" readonly="1" />
-                            <field name="create_uid" readonly="1" />
-                            <field name="write_date" readonly="1" />
-                            <field name="write_uid" readonly="1" />
+                        <group string="Status">
+                            <field name="active" widget="boolean_toggle" />
+                            <field name="write_date" readonly="1" string="Last Update" />
                         </group>
                     </group>
                     <notebook>
-                        <page string="Notes">
+                        <page string="Internal Notes" name="notes">
                             <field name="notes"
-                                placeholder="Add any notes about this model configuration..." />
+                                placeholder="Documentation for AI agents about this model..." />
+                        </page>
+                        <page string="Audit" name="audit" groups="base.group_no_one">
+                            <group>
+                                <field name="create_date" readonly="1" />
+                                <field name="create_uid" readonly="1" />
+                                <field name="write_uid" readonly="1" />
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -74,18 +120,17 @@
                 <field name="model_id" />
                 <field name="model_name" />
                 <filter string="Active" name="active" domain="[('active', '=', True)]" />
-                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]" />
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
                 <separator />
-                <filter string="Allow Read" name="allow_read" domain="[('allow_read', '=', True)]" />
-                <filter string="Allow Create" name="allow_create"
-                    domain="[('allow_create', '=', True)]" />
-                <filter string="Allow Write" name="allow_write"
-                    domain="[('allow_write', '=', True)]" />
-                <filter string="Allow Delete" name="allow_unlink"
-                    domain="[('allow_unlink', '=', True)]" />
-                <separator string="Group By"/>
-                <group>
-                    <filter string="Model" name="group_by_model" context="{'group_by': 'model_id'}" />
+                <filter string="Can Create" name="can_create" domain="[('allow_create', '=', True)]" />
+                <filter string="Can Update" name="can_write" domain="[('allow_write', '=', True)]" />
+                <filter string="Can Delete" name="can_unlink" domain="[('allow_unlink', '=', True)]" />
+                <separator />
+                <filter string="Full Access" name="full_access" 
+                        domain="[('allow_read', '=', True), ('allow_create', '=', True), ('allow_write', '=', True), ('allow_unlink', '=', True)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Read Allowed" name="group_by_read" context="{'group_by': 'allow_read'}" />
+                    <filter string="Action" name="group_by_write" context="{'group_by': 'allow_write'}" />
                 </group>
             </search>
         </field>
@@ -93,15 +138,15 @@
 
     <record id="action_mcp_enabled_models" model="ir.actions.act_window">
         <field name="name">MCP Models</field>
-        <field name="res_model">mcp.enabled.model</field>
-        <field name="view_mode">list,form</field>
+        <field name="res_model" >mcp.enabled.model</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="mcp_enabled_model_view_search" />
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No models enabled for MCP access
+                Control model visibility for AI Agentes
             </p>
             <p>
-                Add a model to make it accessible through MCP.
+                Add models here to expose them to your MCP-compatible AI assistants.
             </p>
         </field>
     </record>
