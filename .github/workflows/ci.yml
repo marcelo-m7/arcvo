@@ -27,6 +27,9 @@ jobs:
           enable-cache: true
           cache-dependency-glob: backend/uv.lock
 
+      - name: Install system tools
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
       - name: Install backend dependencies
         run: make install
 
