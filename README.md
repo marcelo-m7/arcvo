@@ -79,6 +79,10 @@ addon loading pattern.
 The `custom_theme` addon is now versioned directly in this repository at
 `odoo/addons/custom_theme`.
 
+The `custom_backend_layout` addon adds configurable backend layout settings in
+Odoo's General Settings. It is independent from website themes and is intended
+as the place for future backend layout customizations.
+
 To create a new addon:
 
 1. Copy `odoo/addons/custom_base` to a new addon directory.
