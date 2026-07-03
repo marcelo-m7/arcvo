@@ -25,7 +25,6 @@ backend/
 odoo/
   Dockerfile          Odoo image based on odoo:19
   addons/custom_base  minimal addon template
-  external-addons/    addon dependencies tracked as Git submodules
 docs/                 development notes
 docker-compose.yaml   Coolify-compatible Odoo + PostgreSQL stack
 ```
@@ -34,7 +33,6 @@ docker-compose.yaml   Coolify-compatible Odoo + PostgreSQL stack
 
 ```bash
 make install          # install backend dependencies with uv
-make submodules       # initialize external addon submodules
 make backend          # run FastAPI on http://localhost:8000
 make lint             # run ruff
 make format           # format backend Python files
@@ -73,38 +71,12 @@ set.
 
 ## Odoo Addons
 
-Custom addons live under `odoo/addons`. External addon sources live under
-`odoo/external-addons`. The Dockerfile copies local addons and selected external
-addons to `/mnt/extra-addons`, which keeps the image compatible with Odoo's
-standard addon loading pattern.
+Custom addons live under `odoo/addons`. The Dockerfile copies local addons to
+`/mnt/extra-addons`, which keeps the image compatible with Odoo's standard
+addon loading pattern.
 
-This template consumes the Fame Builders `custom_theme` addon from
-`https://github.com/Corvanis/famebuilders/` as a Git submodule at
-`odoo/external-addons/famebuilders`. The source addon path inside that submodule
-is `addons/custom_theme`; the Docker image copies only that addon to
-`/mnt/extra-addons/custom_theme`.
-
-After cloning this repository, initialize the submodule:
-
-```bash
-git submodule update --init --depth 1 odoo/external-addons/famebuilders
-git -C odoo/external-addons/famebuilders sparse-checkout init --cone
-git -C odoo/external-addons/famebuilders sparse-checkout set addons/custom_theme
-```
-
-Or run:
-
-```bash
-make submodules
-```
-
-To update the external theme later:
-
-```bash
-git -C odoo/external-addons/famebuilders fetch origin main
-git -C odoo/external-addons/famebuilders checkout origin/main
-git add odoo/external-addons/famebuilders
-```
+The `custom_theme` addon is now versioned directly in this repository at
+`odoo/addons/custom_theme`.
 
 To create a new addon:
 
@@ -137,7 +109,6 @@ Before handing off changes, run:
 
 ```bash
 make install
-make submodules
 make lint
 make test
 make all

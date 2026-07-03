@@ -1,4 +1,0 @@
-[submodule "odoo/external-addons/famebuilders"]
-	path = odoo/external-addons/famebuilders
-	url = https://github.com/Corvanis/famebuilders.git
-	shallow = true

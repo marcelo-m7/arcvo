@@ -1,0 +1,192 @@
+//------------------------------------------------------------------------------
+// Colors
+// Brutalist Luxury Engineering — FAME Builders
+// Primary (Obsidian): #131313  |  Architectural White: #e5e2e1
+// Safety Orange (CTA): #d54100  |  Steel: #c6c6c6
+//------------------------------------------------------------------------------
+
+$o-color-palettes: map-merge($o-color-palettes,
+    (
+        'fame_builders': (
+            // o-color-1 = Safety Orange (CTA / interactive)
+            // o-color-2 = Steel / Architectural White
+            // o-color-3 = Surface Bright (#393939)
+            // o-color-4 = On-Surface Warm White (#e5e2e1)
+            // o-color-5 = Obsidian (#131313)
+            'o-color-1': #d54100,
+            'o-color-2': #c6c6c6,
+            'o-color-3': #393939,
+            'o-color-4': #e5e2e1,
+            'o-color-5': #131313,
+
+            // cc1 — Warm White (default light sections)
+            'o-cc1-bg': 'o-color-4',
+            'o-cc1-text': 'o-color-5',
+            'o-cc1-headings': 'o-color-5',
+            'o-cc1-link': 'o-color-5',
+            'o-cc1-btn-primary': 'o-color-1',
+            'o-cc1-btn-primary-border': 'o-color-1',
+            'o-cc1-btn-secondary': 'o-color-4',
+            'o-cc1-btn-secondary-border': 'o-color-5',
+
+            // cc2 — Surface Bright (mid-dark sections)
+            'o-cc2-bg': 'o-color-3',
+            'o-cc2-text': 'o-color-4',
+            'o-cc2-headings': 'o-color-4',
+            'o-cc2-link': 'o-color-1',
+            'o-cc2-btn-primary': 'o-color-1',
+            'o-cc2-btn-primary-border': 'o-color-1',
+            'o-cc2-btn-secondary': 'o-color-3',
+            'o-cc2-btn-secondary-border': 'o-color-4',
+
+            // cc3 — Safety Orange (accent/highlight sections)
+            'o-cc3-bg': 'o-color-1',
+            'o-cc3-text': 'o-color-4',
+            'o-cc3-headings': 'o-color-4',
+            'o-cc3-link': 'o-color-4',
+            'o-cc3-btn-primary': 'o-color-5',
+            'o-cc3-btn-primary-border': 'o-color-5',
+            'o-cc3-btn-secondary': 'o-color-1',
+            'o-cc3-btn-secondary-border': 'o-color-4',
+
+            // cc4 — Obsidian (hero / full-dark sections)
+            'o-cc4-bg': 'o-color-5',
+            'o-cc4-text': 'o-color-4',
+            'o-cc4-headings': 'o-color-4',
+            'o-cc4-link': 'o-color-1',
+            'o-cc4-btn-primary': 'o-color-1',
+            'o-cc4-btn-primary-border': 'o-color-1',
+            'o-cc4-btn-secondary': 'o-color-5',
+            'o-cc4-btn-secondary-border': 'o-color-4',
+
+            // cc5 — Steel / Architectural White (technical/blueprint sections)
+            'o-cc5-bg': 'o-color-2',
+            'o-cc5-text': 'o-color-5',
+            'o-cc5-headings': 'o-color-5',
+            'o-cc5-link': 'o-color-1',
+            'o-cc5-btn-primary': 'o-color-1',
+            'o-cc5-btn-primary-border': 'o-color-1',
+            'o-cc5-btn-secondary': 'o-color-2',
+            'o-cc5-btn-secondary-border': 'o-color-5',
+
+            'menu': 4,
+            'menu-border-color': 'o-color-4',
+            'footer': 5,
+            'copyright': 5,
+        ),
+    )
+);
+
+$o-selected-color-palettes-names: append($o-selected-color-palettes-names, 'fame_builders');
+
+$o-theme-color-palettes: map-merge($o-theme-color-palettes,
+    (
+        'fame_builders': (
+            'alpha': #d54100,
+            'beta': #c6c6c6,
+            'gamma': #393939,
+            'delta': #e5e2e1,
+            'epsilon': #131313,
+            'success': #4a6741,
+            'info': #988e90,
+            'warning': #d54100,
+            'danger': #BA1A1A,
+        ),
+    )
+);
+
+//------------------------------------------------------------------------------
+// Fonts
+// Display / Headlines: Bodoni Moda (high-contrast editorial serifs)
+// Body / Technical:    JetBrains Mono (blueprint / specification feel)
+//------------------------------------------------------------------------------
+
+$o-theme-h1-font-size-multiplier: 4;
+$o-theme-h2-font-size-multiplier: 3;
+$o-theme-h3-font-size-multiplier: 2;
+$o-theme-h4-font-size-multiplier: 1.5;
+$o-theme-h5-font-size-multiplier: 1.25;
+$o-theme-h6-font-size-multiplier: 1;
+
+$o-theme-font-configs: (
+    'Bodoni Moda': (
+        'family': ('Bodoni Moda', serif),
+        'url': 'Bodoni+Moda:400,700,900',
+    ),
+    'JetBrains Mono': (
+        'family': ('JetBrains Mono', monospace),
+        'url': 'JetBrains+Mono:400,500,700',
+    ),
+);
+
+//------------------------------------------------------------------------------
+// Website customizations
+// Brutalist: 0 border-radius everywhere, 2px borders, no box-shadow
+// Big/Small philosophy: display up to 7.5rem, body stays at 0.875rem
+//------------------------------------------------------------------------------
+
+$o-website-values-palettes: (
+    (
+        'color-palettes-name': 'fame_builders',
+        'font': 'JetBrains Mono',
+        'headings-font': 'Bodoni Moda',
+        'navbar-font': 'JetBrains Mono',
+        'buttons-font': 'JetBrains Mono',
+        'header-template': 'default',
+        'header-links-style': 'border-bottom',
+        'header-font-size': 0.75rem,
+        'menu-border-width': 2px,
+        'menu-border-style': solid,
+        'menu-border-radius': 0,
+        'menu-box-shadow': none,
+        'logo-height': 3rem,
+
+        'font-size-base': 0.875rem,
+        'body-line-height': 1.714,
+        'paragraph-margin-bottom': 1.5rem,
+        'headings-line-height': 1.1,
+        'headings-margin-bottom': 1rem,
+        'display-1-font-size': 7.5rem,
+        'display-2-font-size': 5.5rem,
+        'display-3-font-size': 4.5rem,
+        'display-4-font-size': 3.5rem,
+
+        'btn-primary-outline': false,
+        'btn-secondary-outline': true,
+        'btn-primary-flat': false,
+        'btn-secondary-flat': false,
+        'btn-primary-outline-border-width': 2px,
+        'btn-secondary-outline-border-width': 2px,
+        'btn-padding-y': .75rem,
+        'btn-padding-x': 1.5rem,
+        'btn-padding-y-sm': .5rem,
+        'btn-padding-x-sm': 1rem,
+        'btn-padding-y-lg': 1rem,
+        'btn-padding-x-lg': 2rem,
+        'btn-border-width': 2px,
+        'btn-border-radius': 0,
+        'btn-border-radius-sm': 0,
+        'btn-border-radius-lg': 0,
+        'btn-ripple': false,
+
+        'input-padding-y': .75rem,
+        'input-padding-x': 1rem,
+        'input-border-width': 2px,
+        'input-border-radius': 0,
+        'input-border-radius-sm': 0,
+        'input-border-radius-lg': 0,
+        'link-underline': 'hover',
+    ),
+);
+
+$o-color-palettes-compatibility-indexes: (
+    1: 'fame_builders',
+);
+$o-theme-color-palettes-compatibility-indexes: (
+    1: 'fame_builders',
+);
+
+//------------------------------------------------------------------------------
+// Shapes
+// Brutalist aesthetic — remove organic/wavy shapes; only geometric allowed
+//------------------------------------------------------------------------------
