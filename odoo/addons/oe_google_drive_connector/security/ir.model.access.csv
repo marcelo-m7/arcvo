@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_gdrive_connection_user,gdrive.connection.user,model_gdrive_connection,group_gdrive_user,1,0,0,0
+access_gdrive_connection_manager,gdrive.connection.manager,model_gdrive_connection,group_gdrive_manager,1,1,1,1
+access_gdrive_mapping_user,gdrive.mapping.user,model_gdrive_mapping,group_gdrive_user,1,0,0,0
+access_gdrive_mapping_manager,gdrive.mapping.manager,model_gdrive_mapping,group_gdrive_manager,1,1,1,1
+access_gdrive_folder_user,gdrive.folder.user,model_gdrive_folder,group_gdrive_user,1,1,1,0
+access_gdrive_folder_manager,gdrive.folder.manager,model_gdrive_folder,group_gdrive_manager,1,1,1,1
+access_gdrive_log_user,gdrive.log.user,model_gdrive_log,group_gdrive_user,1,0,1,0
+access_gdrive_log_manager,gdrive.log.manager,model_gdrive_log,group_gdrive_manager,1,1,1,1
+access_gdrive_push_wizard_user,gdrive.push.wizard.user,model_gdrive_push_wizard,group_gdrive_user,1,1,1,1

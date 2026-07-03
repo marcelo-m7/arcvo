@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="gdrive_push_wizard_view_form" model="ir.ui.view">
+        <field name="name">gdrive.push.wizard.form</field>
+        <field name="model">gdrive.push.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Push to Google Drive">
+                <group>
+                    <field name="connection_id"/>
+                    <field name="total_count"/>
+                    <field name="syncable_count"/>
+                </group>
+                <div class="alert alert-info" role="alert"
+                     invisible="syncable_count == total_count">
+                    Some selected attachments are skipped (system files, already
+                    synced, or not linked to a record).
+                </div>
+                <footer>
+                    <button name="action_push" type="object" string="Push"
+                            class="btn-primary" invisible="syncable_count == 0"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

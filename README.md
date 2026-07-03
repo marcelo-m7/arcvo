@@ -83,6 +83,27 @@ The `custom_backend_layout` addon adds configurable backend layout settings in
 Odoo's General Settings. It is independent from website themes and is intended
 as the place for future backend layout customizations.
 
+## External Odoo Addons
+
+This repository also vendors third-party addons directly under `odoo/addons`:
+
+- `mcp_server`
+- `oe_google_drive_connector`
+
+Source: both modules are imported from third-party `.zip` packages distributed
+for Odoo 19.
+
+These addons are external and are not maintained by this template. Keep their
+upstream code unchanged unless a minimal compatibility fix is required.
+
+To update or replace them in the future:
+
+1. Replace the source `.zip` package locally.
+2. Re-extract the addon folder into `odoo/addons/<module_name>`.
+3. Remove temporary files and `.zip` artifacts.
+4. Run `make validate-addons`, `make all`, and Docker build checks.
+5. Commit only the extracted addon directory and docs updates.
+
 To create a new addon:
 
 1. Copy `odoo/addons/custom_base` to a new addon directory.

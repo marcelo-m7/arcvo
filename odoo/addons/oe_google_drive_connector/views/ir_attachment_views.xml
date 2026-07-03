@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Server action available from any ir.attachment list (Actions menu). -->
+    <record id="action_gdrive_push_attachments" model="ir.actions.server">
+        <field name="name">Push to Google Drive</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_model_id" ref="base.model_ir_attachment"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="group_ids" eval="[(4, ref('group_gdrive_user'))]"/>
+        <field name="code">action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Push to Google Drive',
+    'res_model': 'gdrive.push.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'active_model': 'ir.attachment', 'active_ids': records.ids},
+}</field>
+    </record>
+
+    <!-- Dedicated attachment management list with Drive columns/buttons. -->
+    <record id="gdrive_attachment_view_list" model="ir.ui.view">
+        <field name="name">gdrive.ir.attachment.list</field>
+        <field name="model">ir.attachment</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="name"/>
+                <field name="res_model"/>
+                <field name="mimetype" optional="hide"/>
+                <field name="gdrive_state" widget="badge"
+                       decoration-success="gdrive_state == 'linked'"
+                       decoration-danger="gdrive_state == 'error'"
+                       decoration-muted="gdrive_state == 'local'"/>
+                <field name="gdrive_offloaded" optional="hide"/>
+                <field name="gdrive_connection_id" optional="hide"/>
+                <field name="gdrive_url" column_invisible="1"/>
+                <button name="action_gdrive_open" type="object" icon="fa-external-link"
+                        string="Open" invisible="not gdrive_url"/>
+                <button name="action_gdrive_fetch_back" type="object"
+                        icon="fa-download" string="Fetch back"
+                        invisible="not gdrive_offloaded"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="gdrive_attachment_action" model="ir.actions.act_window">
+        <field name="name">Synced Files</field>
+        <field name="res_model">ir.attachment</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="gdrive_attachment_view_list"/>
+        <field name="domain">[('gdrive_file_id', '!=', False)]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <!-- Upload button on the standard attachment FORM -->
+    <record id="view_attachment_form_gdrive" model="ir.ui.view">
+        <field name="name">ir.attachment.form.gdrive</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <field name="gdrive_file_id" invisible="1"/>
+                    <field name="gdrive_url" invisible="1"/>
+                    <field name="gdrive_offloaded" invisible="1"/>
+                    <button name="action_gdrive_push" type="object"
+                            string="Upload to Google Drive" icon="fa-cloud-upload"
+                            class="btn-primary" groups="oe_google_drive_connector.group_gdrive_user"
+                            invisible="gdrive_file_id != False"/>
+                    <button name="action_gdrive_open" type="object"
+                            string="Open in Drive" icon="fa-external-link"
+                            invisible="not gdrive_url"/>
+                    <button name="action_gdrive_fetch_back" type="object"
+                            string="Fetch Back" icon="fa-download"
+                            invisible="not gdrive_offloaded"/>
+                    <field name="gdrive_state" widget="badge"
+                           decoration-success="gdrive_state == 'linked'"
+                           decoration-danger="gdrive_state == 'error'"
+                           decoration-muted="gdrive_state == 'local'"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Upload button on the standard attachment KANBAN card -->
+    <record id="view_document_file_kanban_gdrive" model="ir.ui.view">
+        <field name="name">ir.attachment.kanban.gdrive</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="mail.view_document_file_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="gdrive_file_id"/>
+                <field name="gdrive_url"/>
+                <field name="gdrive_state"/>
+            </xpath>
+            <xpath expr="//t[@t-name='card']//main//field[@name='name']" position="after">
+                <div class="d-flex align-items-center gap-2 mt-1">
+                    <button t-if="!record.gdrive_file_id.raw_value" type="object"
+                            name="action_gdrive_push" class="btn btn-sm btn-link p-0"
+                            title="Upload to Google Drive">
+                        <i class="fa fa-cloud-upload"/> Upload to Drive
+                    </button>
+                    <a t-if="record.gdrive_url.raw_value" t-att-href="record.gdrive_url.raw_value"
+                       target="_blank" class="text-success" title="On Google Drive">
+                        <i class="fa fa-google"/> On Drive
+                    </a>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

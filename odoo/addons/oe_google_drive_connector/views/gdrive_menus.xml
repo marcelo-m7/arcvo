@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_gdrive_root" name="Google Drive" sequence="95"
+              web_icon="oe_google_drive_connector,static/description/icon.png"
+              groups="group_gdrive_user"/>
+
+    <menuitem id="menu_gdrive_files" name="Synced Files"
+              parent="menu_gdrive_root" action="gdrive_attachment_action"
+              sequence="10" groups="group_gdrive_user"/>
+
+    <menuitem id="menu_gdrive_config" name="Configuration"
+              parent="menu_gdrive_root" sequence="90"
+              groups="group_gdrive_manager"/>
+
+    <menuitem id="menu_gdrive_connections" name="Connections"
+              parent="menu_gdrive_config" action="gdrive_connection_action"
+              sequence="10" groups="group_gdrive_manager"/>
+
+    <menuitem id="menu_gdrive_mappings" name="Auto-Push Rules"
+              parent="menu_gdrive_config" action="gdrive_mapping_action"
+              sequence="20" groups="group_gdrive_manager"/>
+
+    <menuitem id="menu_gdrive_logs" name="Activity Logs"
+              parent="menu_gdrive_config" action="gdrive_log_action"
+              sequence="30" groups="group_gdrive_manager"/>
+
+    <menuitem id="menu_gdrive_folders" name="Drive Folders"
+              parent="menu_gdrive_config" action="gdrive_folder_action"
+              sequence="40" groups="base.group_no_one"/>
+
+</odoo>
