@@ -6,6 +6,7 @@ backend. Keep it generic and reusable.
 ## Contracts
 
 - Odoo addons live in `odoo/addons`.
+- External addon sources live in `odoo/external-addons`.
 - The Odoo image is built from `odoo/Dockerfile` and must remain based on
   `odoo:19`.
 - Addons must be copied to `/mnt/extra-addons`.

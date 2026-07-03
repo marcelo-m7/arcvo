@@ -3,10 +3,13 @@ PATH := $(HOME)/.local/bin:$(PATH)
 export UV_PROJECT_ENVIRONMENT := .venv-linux
 export UV_LINK_MODE := copy
 
-.PHONY: install backend lint format test odoo-health validate-addons all tools-check install-system-tools
+.PHONY: install backend lint format test odoo-health validate-addons submodules all tools-check install-system-tools
 
 install: tools-check
 	cd backend && uv sync
+
+submodules:
+	@bash scripts/init-submodules.sh
 
 backend:
 	cd backend && uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

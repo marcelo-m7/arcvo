@@ -5,6 +5,9 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
 ADDONS_DIR = ROOT / "odoo" / "addons"
+EXTERNAL_ADDONS = [
+    ROOT / "odoo" / "external-addons" / "famebuilders" / "addons" / "custom_theme"
+]
 ODOO_DOCKERFILE = ROOT / "odoo" / "Dockerfile"
 
 
@@ -26,22 +29,33 @@ def _validate_xml(path: Path) -> None:
         raise SystemExit(f"Invalid XML in {path}: {exc}") from exc
 
 
-def _validate_addon(addon_dir: Path) -> None:
+def _validate_addon(
+    addon_dir: Path,
+    require_base: bool = False,
+    require_installable_key: bool = False,
+) -> None:
     manifest_path = addon_dir / "__manifest__.py"
     init_path = addon_dir / "__init__.py"
     if not manifest_path.exists():
-        raise SystemExit(f"Missing manifest: {manifest_path}")
+        raise SystemExit(
+            f"Missing manifest: {manifest_path}. "
+            "If this is an external addon, run: make submodules"
+        )
     if not init_path.exists():
         raise SystemExit(f"Missing init file: {init_path}")
 
     manifest = _load_manifest(manifest_path)
-    for key in ("name", "summary", "depends", "license", "installable"):
+    required_keys = ["name", "summary", "depends", "license"]
+    if require_installable_key:
+        required_keys.append("installable")
+
+    for key in required_keys:
         if key not in manifest:
             raise SystemExit(f"Manifest {manifest_path} is missing {key!r}")
 
     if manifest["license"] != "LGPL-3":
         raise SystemExit(f"Manifest {manifest_path} must use LGPL-3")
-    if "base" not in manifest["depends"]:
+    if require_base and "base" not in manifest["depends"]:
         raise SystemExit(f"Manifest {manifest_path} must depend on base")
 
     for xml_path in addon_dir.rglob("*.xml"):
@@ -54,6 +68,8 @@ def _validate_dockerfile() -> None:
         raise SystemExit("Odoo Dockerfile must remain based on odoo:19")
     if "/mnt/extra-addons" not in text:
         raise SystemExit("Odoo Dockerfile must copy addons to /mnt/extra-addons")
+    if "odoo/external-addons/famebuilders/addons/custom_theme" not in text:
+        raise SystemExit("Odoo Dockerfile must copy the external custom_theme addon")
 
 
 def main() -> None:
@@ -65,10 +81,15 @@ def main() -> None:
         raise SystemExit("No Odoo addons found")
 
     for addon_dir in addon_dirs:
+        _validate_addon(addon_dir, require_base=True, require_installable_key=True)
+    for addon_dir in EXTERNAL_ADDONS:
         _validate_addon(addon_dir)
     _validate_dockerfile()
 
-    print(f"Validated {len(addon_dirs)} Odoo addon(s).")
+    print(
+        f"Validated {len(addon_dirs)} local addon(s) "
+        f"and {len(EXTERNAL_ADDONS)} external addon(s)."
+    )
 
 
 if __name__ == "__main__":
