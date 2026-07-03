@@ -9,16 +9,10 @@ fi
 
 "${sudo_cmd[@]}" apt update
 "${sudo_cmd[@]}" apt install -y \
-  ripgrep fd-find fzf bat jq tree htop curl wget git make build-essential \
+  ripgrep curl wget git make build-essential \
   ca-certificates gnupg lsb-release unzip zip
 
 mkdir -p "$HOME/.local/bin"
-if command -v fdfind >/dev/null 2>&1 && ! command -v fd >/dev/null 2>&1; then
-  ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
-fi
-if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
-  ln -sf "$(command -v batcat)" "$HOME/.local/bin/bat"
-fi
 
 if ! command -v docker >/dev/null 2>&1; then
   "${sudo_cmd[@]}" install -m 0755 -d /etc/apt/keyrings
@@ -35,12 +29,6 @@ fi
 
 if ! command -v uv >/dev/null 2>&1; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
-fi
-
-if ! command -v pnpm >/dev/null 2>&1; then
-  npm install --prefix "$HOME/.local" pnpm@10
-  ln -sf "$HOME/.local/node_modules/pnpm/bin/pnpm.cjs" "$HOME/.local/bin/pnpm"
-  ln -sf "$HOME/.local/node_modules/pnpm/bin/pnpx.cjs" "$HOME/.local/bin/pnpx"
 fi
 
 printf 'Install complete. Ensure ~/.local/bin is in PATH.\n'

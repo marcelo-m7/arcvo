@@ -172,19 +172,10 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
-# JavaScript / frontend
-node_modules/
-dist/
-.pnpm-store/
-
 # Local app caches
 .pytest_cache/
 .logs/
 .data/
-
-# Keep frontend source aliases named lib tracked despite Python packaging ignore rules.
-!frontend/src/lib/
-!frontend/src/lib/**
 
 # PyPI configuration file
 .pypirc

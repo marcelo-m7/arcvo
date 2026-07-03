@@ -1,13 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import (
-    archive,
-    auth,
-    deploy,
-    health,
-    odoo,
-)
+from app.api.routes import health, odoo
 from app.core.config import settings
 
 
@@ -23,15 +17,12 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+        allow_methods=["GET", "OPTIONS"],
         allow_headers=["Authorization", "Content-Type"],
     )
 
     app.include_router(health.router)
-    app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
-    app.include_router(archive.router, prefix="/api/v1/archive", tags=["archive"])
     app.include_router(odoo.router, prefix="/api/v1/odoo", tags=["odoo"])
-    app.include_router(deploy.router, prefix="/api/v1/deploy", tags=["deploy"])
     return app
 
 

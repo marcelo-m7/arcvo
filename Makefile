@@ -3,7 +3,7 @@ PATH := $(HOME)/.local/bin:$(PATH)
 export UV_PROJECT_ENVIRONMENT := .venv-linux
 export UV_LINK_MODE := copy
 
-.PHONY: install backend lint format test odoo-health ollama-health import-supabase-youtube dry-run-supabase-youtube validate-arcvo-agents tools-check install-system-tools
+.PHONY: install backend lint format test odoo-health validate-addons all tools-check install-system-tools
 
 install: tools-check
 	cd backend && uv sync
@@ -23,20 +23,10 @@ test:
 odoo-health:
 	cd backend && uv run python -m scripts.odoo_health
 
-ollama-health:
-	cd backend && uv run --no-sync python -m scripts.test_ollama_api
+validate-addons:
+	cd backend && uv run --no-sync python -m scripts.validate_addons
 
-import-supabase-youtube:
-	cd backend && uv run python -m scripts.import_supabase_youtube --fetch-supabase --export ../.data/supabase_youtube.json --execute
-
-dry-run-supabase-youtube:
-	cd backend && uv run python -m scripts.import_supabase_youtube --fetch-supabase --export ../.data/supabase_youtube.json
-
-validate-arcvo-agents:
-	cd backend && uv run --no-sync python -m scripts.validate_arcvo_agents
-
-.PHONY: all
-all: lint test validate-arcvo-agents  # Full CI-like validation
+all: lint test validate-addons
 
 tools-check:
 	@bash scripts/check-tools.sh
