@@ -4,8 +4,6 @@ import xmlrpc.client
 from dataclasses import dataclass
 from typing import Any
 
-import httpx
-
 _RETRY_ERRORS = (ConnectionResetError, BrokenPipeError, TimeoutError)
 _TRANSIENT_SUBSTRINGS = ("EOF occurred", "Connection refused", "timed out", "reset by peer")
 
@@ -62,39 +60,6 @@ class OdooClient:
         self._uid = int(uid)
         return self._uid
 
-    def search_read(
-        self,
-        model: str,
-        domain: list[Any] | None = None,
-        fields: list[str] | None = None,
-        limit: int = 20,
-        offset: int = 0,
-    ) -> list[dict[str, Any]]:
-        kwargs: dict[str, Any] = {"limit": limit, "offset": offset}
-        if fields:
-            kwargs["fields"] = fields
-        return self.execute_kw(model, "search_read", [domain or []], kwargs)
-
-    def search(
-        self,
-        model: str,
-        domain: list[Any] | None = None,
-        limit: int | None = None,
-    ) -> list[int]:
-        kwargs: dict[str, Any] = {}
-        if limit is not None:
-            kwargs["limit"] = limit
-        return self.execute_kw(model, "search", [domain or []], kwargs)
-
-    def search_count(self, model: str, domain: list[Any] | None = None) -> int:
-        return int(self.execute_kw(model, "search_count", [domain or []], {}))
-
-    def create(self, model: str, values: dict[str, Any]) -> int:
-        return int(self.execute_kw(model, "create", [values], {}))
-
-    def write(self, model: str, record_id: int, values: dict[str, Any]) -> bool:
-        return bool(self.execute_kw(model, "write", [[record_id], values], {}))
-
     def execute_kw(
         self,
         model: str,
@@ -126,22 +91,6 @@ class OdooClient:
         raise OdooClientError(
             f"Odoo RPC call failed for {model}.{method}: {last_exc}"
         ) from last_exc
-
-    async def jsonrpc_version(self) -> dict[str, Any]:
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "call",
-            "params": {"service": "common", "method": "version", "args": []},
-            "id": 1,
-        }
-        verify = not self.credentials.allow_self_signed_ssl
-        async with httpx.AsyncClient(verify=verify, timeout=20) as client:
-            response = await client.post(f"{self.credentials.url}/jsonrpc", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            if "error" in data:
-                raise OdooClientError(str(data["error"]))
-            return data["result"]
 
     def _common_proxy(self) -> xmlrpc.client.ServerProxy:
         return self._proxy("/xmlrpc/2/common")

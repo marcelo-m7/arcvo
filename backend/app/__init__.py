@@ -1,1 +1,1 @@
-"""Arcvo backend application."""
+"""Backend application package."""

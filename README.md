@@ -1,93 +1,123 @@
-# Arcvo
+# Odoo FastAPI Template
 
-Arcvo é uma operação Odoo-first para acervo YouTube/eLearning e funcionários digitais rastreáveis.
+Reusable development template for projects that combine:
 
-O alvo oficial é o Odoo remoto `https://marcelo-m7.com`, banco `odoo19`.
+- Odoo 19 Community with custom addons
+- Python backend with FastAPI
+- PostgreSQL for Odoo
+- Docker Compose deploys compatible with Coolify
 
-## Stack
+The repository is intentionally small. It contains no product-specific rules,
+sample production data, third-party import flows, or project-specific workflows.
 
-- **Odoo 19 Community**: SSOT para projetos, tarefas, agentes (hr.employee), Discuss, chatter e auditoria.
-- **Backend FastAPI**: Serviço de suporte (health, archive, deploy), sem lógica de agentes.
-- **Ollama**: Motor de raciocínio LLM para agentes (`gemma3:4b` recomendado).
-- **Arcvo Addon** (`arcvo_agents`): Orquestração de agentes, logs estruturados, integração Discuss.
-- **Coolify**: Deploy automático por push na `main` e webhook manual quando necessário.
-- **Acervo**: Supabase Open2, YouTube/oEmbed e Odoo eLearning (`slide.channel`, `slide.slide`).
+## Structure
 
-## Linha De Produção
-
-### Acervo (YouTube → Odoo eLearning)
 ```text
-Supabase / YouTube
-  → backend FastAPI (import/enrich)
-  → Odoo eLearning (slide.channel, slide.slide)
+backend/
+  app/
+    api/routes/       FastAPI route modules
+    core/             settings and application configuration
+    integrations/     external clients
+    schemas/          Pydantic response models
+    services/         application services
+  scripts/            small local validation helpers
+  tests/              pytest suite
+odoo/
+  Dockerfile          Odoo image based on odoo:19
+  addons/custom_base  minimal addon template
+docs/                 development notes
+docker-compose.yaml   Coolify-compatible Odoo + PostgreSQL stack
 ```
 
-### Agentes (Odoo Native Orchestration)
-```text
-Odoo hr.employee (is_agent=True)
-  ↓ Cron (5 min) ou Ação Manual
-  ↓ OllamaClient (Python addon)
-  ↓ Ollama API
-  ↓ arcvo.agent.message (auditoria) + Discuss
-```
-
-## Comandos
+## Local Commands
 
 ```bash
-make install           # Instala dependências (uv sync)
-make lint              # Validação ruff
-make format            # Auto-format código
-make test              # Executa pytest
-make backend           # Inicia FastAPI local (porta 8000)
-make odoo-health       # Verifica conectividade Odoo
-make ollama-health     # Verifica conectividade Ollama
-make validate-arcvo-agents  # Valida addon Python/XML
-make import-supabase-youtube  # Importa acervo de Supabase
+make install          # install backend dependencies with uv
+make backend          # run FastAPI on http://localhost:8000
+make lint             # run ruff
+make format           # format backend Python files
+make test             # run pytest
+make odoo-health      # check configured Odoo connectivity
+make validate-addons  # validate addon manifests and XML
+make all              # lint, tests, and addon validation
 ```
 
-**Backend Local:** `http://localhost:8000` (API docs: `/docs`)
+FastAPI exposes:
 
-**Agentes:** Executados via Odoo cron (5 min) + ações manuais (botão Test Agent)
+- `GET /health`
+- `GET /api/v1/odoo/health`
 
-## Variaveis
+## Environment
 
-Copie `.env.example` para `.env` e preencha segredos reais localmente. Nao commite `.env`.
+Copy `.env.example` to `.env` for local development and fill in real values
+there. Do not commit `.env`.
 
-Obrigatorias:
+Important variables:
 
-- `APP_SECRET_KEY`
-- `APP_ADMIN_PASSWORD`
+- `APP_ENV`
+- `APP_NAME`
+- `CORS_ORIGINS`
 - `ODOO_URL`
 - `ODOO_DB`
 - `ODOO_USER`
 - `ODOO_API_KEY`
-- `SUPABASE_URL`
-- `SUPABASE_PUBLISHABLE_KEY`
-- `OLLAMA_URI`
-- `OLLAMA_MODEL`
+- `ODOO_ALLOW_SELF_SIGNED_SSL`
+- `SERVICE_FQDN_ODOO_8069`
+- `SERVICE_URL_ODOO_8069`
+- `SERVICE_USER_POSTGRES`
+- `SERVICE_PASSWORD_POSTGRES`
 
-O endpoint Ollama validado e `https://api.ollama.monynha.me`.
-Modelo recomendado para runtime mais rapido: `gemma3:4b`.
+`GET /api/v1/odoo/health` returns `not_configured` until the Odoo variables are
+set.
 
-## Odoo
+## Odoo Addons
 
-Addons ativos ficam em `odoo/addons`.
+Custom addons live under `odoo/addons`. The Dockerfile copies local addons to
+`/mnt/extra-addons`, which keeps the image compatible with Odoo's standard
+addon loading pattern.
 
-- `arcvo_agents`: addon canonico para agentes, atribuicoes, Discuss e auditoria em `project.task`.
+The `custom_theme` addon is now versioned directly in this repository at
+`odoo/addons/custom_theme`.
 
-O arquivo `docker-compose.yaml` permanece na raiz porque a instancia Coolify usa Docker Compose buildpack. O servico Odoo e construido por `odoo/Dockerfile`, que copia `./odoo/addons` para `/mnt/extra-addons` dentro da imagem.
+To create a new addon:
 
-## APIs Principais (Backend)
+1. Copy `odoo/addons/custom_base` to a new addon directory.
+2. Update `__manifest__.py` with the addon name, summary, and dependencies.
+3. Replace the demo model, access rules, and views with your project model.
+4. Run `make validate-addons`.
+5. Install or upgrade the addon in the Odoo UI.
 
-- `GET /health` — health check geral
-- `POST /api/v1/auth/login` — autenticação
-- `GET /api/v1/odoo/health` — status Odoo
-- `GET|POST|PATCH /api/v1/archive/*` — gerenciamento acervo
-- `GET /api/v1/deploy/coolify/status` — status deploy
-- `POST /api/v1/deploy/coolify` — trigger deploy
+## Coolify Deploy
 
-**Nota:** Lógica de agentes foi movida para Odoo addon. Veja [docs/odoo-agent-orchestration.md](docs/odoo-agent-orchestration.md) para orquestração de agentes.
+The root `docker-compose.yaml` is the deploy entrypoint. It keeps:
 
-## Documentacao
+- `odoo` service built from `odoo/Dockerfile`
+- `postgresql` service based on `postgres:16-alpine`
+- persistent volumes for Odoo and PostgreSQL
+- Odoo healthcheck
+- Coolify-compatible environment variables for the Odoo public FQDN and
+  PostgreSQL credentials
 
-Veja [docs/technical-setup.md](docs/technical-setup.md) para detalhes de ambiente, estrutura e validacao.
+The Odoo image remains based on `odoo:19` and copies addons to
+`/mnt/extra-addons`.
+
+On a new PostgreSQL volume, Odoo opens the database manager first. Create the
+initial database there, then install `custom_base` from the Apps menu.
+
+## Validation
+
+Before handing off changes, run:
+
+```bash
+make install
+make lint
+make test
+make all
+docker compose config
+```
+
+When Docker is available, also run:
+
+```bash
+docker compose build
+```

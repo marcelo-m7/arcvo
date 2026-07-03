@@ -1,0 +1,42 @@
+<odoo>
+    <record id="view_custom_template_item_list" model="ir.ui.view">
+        <field name="name">custom.template.item.list</field>
+        <field name="model">custom.template.item</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_custom_template_item_form" model="ir.ui.view">
+        <field name="name">custom.template.item.form</field>
+        <field name="model">custom.template.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_custom_template_item" model="ir.actions.act_window">
+        <field name="name">Template Items</field>
+        <field name="res_model">custom.template.item</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_custom_template_root" name="Template"/>
+    <menuitem
+        id="menu_custom_template_items"
+        name="Items"
+        parent="menu_custom_template_root"
+        action="action_custom_template_item"
+    />
+</odoo>

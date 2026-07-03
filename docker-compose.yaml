@@ -10,6 +10,7 @@ services:
 #    ports:
 #      - "8069:8069"
     environment:
+      - SERVICE_FQDN_ODOO_8069
       - SERVICE_URL_ODOO_8069
       - HOST=postgresql
       - USER=$SERVICE_USER_POSTGRES

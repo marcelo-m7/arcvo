@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-tools=(rg fd fzf bat jq tree htop curl wget git pnpm uv uvx make python3)
+tools=(rg curl git uv make python3)
 missing=()
 
 for tool in "${tools[@]}"; do

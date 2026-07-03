@@ -1,0 +1,42 @@
+// Components — FAME Builders: Brutalist Luxury Engineering
+// All borders: 2px (border-thick), 0 radius, 0 shadow
+// Border color: obsidian black for light contexts
+
+$border-color:                #131313 !default;
+$border-radius-sm:            0 !default;
+$border-radius:               0 !default;
+$border-radius-lg:            0 !default;
+$border-radius-xl:            0 !default;
+$border-radius-xxl:           0 !default;
+$border-radius-pill:          0 !default;
+
+$box-shadow-sm:               none !default;
+$box-shadow:                  none !default;
+$box-shadow-lg:               none !default;
+$box-shadow-inset:            none !default;
+
+$card-border-width:           2px !default;
+$card-border-color:           #131313 !default;
+$card-border-radius:          0 !default;
+$card-inner-border-radius:    0 !default;
+$card-box-shadow:             none !default;
+
+$accordion-border-width:      2px !default;
+$accordion-border-color:      #131313 !default;
+$accordion-border-radius:     0 !default;
+$accordion-inner-border-radius: 0 !default;
+$accordion-button-focus-box-shadow: none !default;
+
+$dropdown-border-radius:      0 !default;
+$dropdown-inner-border-radius: 0 !default;
+$dropdown-box-shadow:         none !default;
+
+$popover-border-radius:       0 !default;
+$popover-box-shadow:          none !default;
+
+$modal-content-border-radius: 0 !default;
+$modal-content-box-shadow-xs: none !default;
+$modal-content-box-shadow-sm-up: none !default;
+
+$input-focus-box-shadow:      none !default;
+$btn-focus-box-shadow:        none !default;

@@ -1,23 +1,18 @@
 [project]
-name = "arcvo-backend"
+name = "odoo-fastapi-template-backend"
 version = "0.1.0"
-description = "FastAPI backend for Arcvo digital archive and Odoo integration."
+description = "Minimal FastAPI backend for an Odoo development template."
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.125.0",
-    "hermes-ai>=0.3.20",
-    "httpx>=0.28.0",
-    "passlib[bcrypt]>=1.7.4",
     "pydantic-settings>=2.12.0",
-    "pyjwt>=2.10.0",
-    "python-dotenv>=1.2.0",
     "uvicorn[standard]>=0.38.0",
 ]
 
 [dependency-groups]
 dev = [
+    "httpx>=0.28.0",
     "pytest>=9.0.0",
-    "pytest-asyncio>=1.3.0",
     "ruff>=0.14.0",
 ]
 
