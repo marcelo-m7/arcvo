@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mcp_model_batch_wizard_view_form" model="ir.ui.view">
+        <field name="name">mcp.model.batch.wizard.form</field>
+        <field name="model">mcp.model.batch.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Batch Update MCP Permissions">
+                <sheet>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="not change_unlink or not allow_unlink">
+                         <strong>Warning:</strong> You are enabling <strong>Delete</strong> permissions in batch.
+                         Please confirm this is intended.
+                    </div>
+                    <group>
+                        <field name="mcp_model_ids" widget="many2many_tags" readonly="1" />
+                    </group>
+                    <group>
+                        <group string="Read Selection">
+                            <field name="change_read" />
+                            <field name="allow_read" invisible="not change_read" />
+                        </group>
+                        <group string="Create Selection">
+                            <field name="change_create" />
+                            <field name="allow_create" invisible="not change_create" />
+                        </group>
+                        <group string="Update Selection">
+                            <field name="change_write" />
+                            <field name="allow_write" invisible="not change_write" />
+                        </group>
+                        <group string="Delete Selection">
+                            <field name="change_unlink" />
+                            <field name="allow_unlink" invisible="not change_unlink" />
+                        </group>
+                        <group string="Status">
+                            <field name="change_active" />
+                            <field name="active" invisible="not change_active" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_apply" string="Apply Changes"
+                        type="object" class="btn-primary" data-hotkey="q" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_mcp_model_batch_wizard" model="ir.actions.act_window">
+        <field name="name">Batch Update Permissions</field>
+        <field name="res_model">mcp.model.batch.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="mcp_server.model_mcp_enabled_model" />
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

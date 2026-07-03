@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mcp_agent_view_list" model="ir.ui.view">
+        <field name="name">mcp.agent.list</field>
+        <field name="model">mcp.agent</field>
+        <field name="arch" type="xml">
+            <list string="MCP Agents">
+                <field name="name" />
+                <field name="user_id" widget="many2one_avatar_user" />
+                <field name="api_key_id" />
+                <field name="active" widget="boolean_toggle" />
+            </list>
+        </field>
+    </record>
+
+    <record id="mcp_agent_view_form" model="ir.ui.view">
+        <field name="name">mcp.agent.form</field>
+        <field name="model">mcp.agent</field>
+        <field name="arch" type="xml">
+            <form string="MCP Agent">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_permissions" type="object"
+                                class="oe_stat_button" icon="fa-lock" string="Permissions">
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" placeholder="e.g. Claude Odoo Bot" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Identity">
+                            <field name="active" invisible="1" />
+                            <field name="user_id" widget="many2one_avatar_user" />
+                            <field name="api_key_id" options="{'no_create': True}" />
+                        </group>
+                        <group string="Status">
+                            <field name="create_date" readonly="1" />
+                            <field name="write_date" readonly="1" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="notes" placeholder="Detailed purpose of this agent..." />
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="mcp_agent_view_search" model="ir.ui.view">
+        <field name="name">mcp.agent.search</field>
+        <field name="model">mcp.agent</field>
+        <field name="arch" type="xml">
+            <search string="Search MCP Agents">
+                <field name="name" />
+                <field name="user_id" />
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Responsible" name="group_by_user" context="{'group_by': 'user_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mcp_agent" model="ir.actions.act_window">
+        <field name="name">MCP Agents</field>
+        <field name="res_model">mcp.agent</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="mcp_agent_view_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first MCP Agent
+            </p>
+            <p>
+                Configure how external AI tools connect to Odoo.
+            </p>
+        </field>
+    </record>
+</odoo>
