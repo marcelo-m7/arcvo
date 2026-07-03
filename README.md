@@ -62,6 +62,7 @@ Important variables:
 - `ODOO_USER`
 - `ODOO_API_KEY`
 - `ODOO_ALLOW_SELF_SIGNED_SSL`
+- `SERVICE_FQDN_ODOO_8069`
 - `SERVICE_USER_POSTGRES`
 - `SERVICE_PASSWORD_POSTGRES`
 
@@ -90,10 +91,14 @@ The root `docker-compose.yaml` is the deploy entrypoint. It keeps:
 - `postgresql` service based on `postgres:16-alpine`
 - persistent volumes for Odoo and PostgreSQL
 - Odoo healthcheck
-- Coolify-compatible environment variables for PostgreSQL credentials
+- Coolify-compatible environment variables for the Odoo public FQDN and
+  PostgreSQL credentials
 
 The Odoo image remains based on `odoo:19` and copies addons to
 `/mnt/extra-addons`.
+
+On a new PostgreSQL volume, Odoo opens the database manager first. Create the
+initial database there, then install `custom_base` from the Apps menu.
 
 ## Validation
 
