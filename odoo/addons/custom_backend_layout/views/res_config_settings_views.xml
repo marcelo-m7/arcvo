@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.custom.backend.layout</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='invite_users']" position="before">
+                <block title="Backend Layout" name="custom_backend_layout_settings">
+                    <setting
+                        id="custom_backend_layout_enabled"
+                        string="Custom Backend Layout"
+                        help="Apply configurable layout improvements to the Odoo backend app switcher."
+                    >
+                        <field name="custom_backend_layout_enabled"/>
+                        <div class="content-group mt16" invisible="not custom_backend_layout_enabled">
+                            <div class="text-muted">
+                                Reload the backend after saving to apply layout changes to the current session.
+                            </div>
+                        </div>
+                    </setting>
+                    <setting
+                        id="custom_backend_layout_sidebar_width"
+                        string="Sidebar Width"
+                        help="Controls the app switcher drawer width. Values are clamped between 280 and 520 pixels."
+                        invisible="not custom_backend_layout_enabled"
+                    >
+                        <field name="custom_backend_layout_sidebar_width" class="w-25"/>
+                        <span class="ms-2">px</span>
+                    </setting>
+                    <setting
+                        id="custom_backend_layout_navigation"
+                        string="Navigation"
+                        help="Controls app icons and quick access links generated from the current Odoo menu."
+                        invisible="not custom_backend_layout_enabled"
+                    >
+                        <div class="content-group">
+                            <div class="mt8">
+                                <field name="custom_backend_layout_show_quick_access"/>
+                                <label for="custom_backend_layout_show_quick_access" class="ms-2"/>
+                            </div>
+                            <div class="mt8" invisible="not custom_backend_layout_show_quick_access">
+                                <label for="custom_backend_layout_quick_access_limit" class="me-2"/>
+                                <field name="custom_backend_layout_quick_access_limit" class="w-25"/>
+                            </div>
+                            <div class="mt8">
+                                <field name="custom_backend_layout_show_app_icons"/>
+                                <label for="custom_backend_layout_show_app_icons" class="ms-2"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting
+                        id="custom_backend_layout_visual"
+                        string="Visual Style"
+                        help="Defines compact spacing and the main colors used by the backend sidebar."
+                        invisible="not custom_backend_layout_enabled"
+                    >
+                        <div class="content-group">
+                            <div class="mt8">
+                                <field name="custom_backend_layout_compact_mode"/>
+                                <label for="custom_backend_layout_compact_mode" class="ms-2"/>
+                            </div>
+                            <div class="mt8">
+                                <label for="custom_backend_layout_accent_color" class="me-2"/>
+                                <field name="custom_backend_layout_accent_color" placeholder="#7c3aed"/>
+                            </div>
+                            <div class="mt8">
+                                <label for="custom_backend_layout_background_color" class="me-2"/>
+                                <field name="custom_backend_layout_background_color" placeholder="#111827"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting
+                        id="custom_backend_layout_brand"
+                        string="Brand"
+                        help="Optional logo URL displayed in the sidebar header. Use a local /web/image URL or HTTPS URL."
+                        invisible="not custom_backend_layout_enabled"
+                    >
+                        <field name="custom_backend_layout_logo_url" placeholder="/web/image/res.company/1/logo"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

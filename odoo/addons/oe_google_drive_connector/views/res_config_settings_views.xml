@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_gdrive" model="ir.ui.view">
+        <field name="name">res.config.settings.form.gdrive</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Google Drive" string="Google Drive"
+                     name="oe_google_drive_connector"
+                     groups="oe_google_drive_connector.group_gdrive_manager">
+                    <block title="Google Drive Connector" name="gdrive_block">
+                        <setting string="Default connection"
+                                 help="Connection used by the manual 'Push to Google Drive' action.">
+                            <field name="gdrive_default_connection_id"/>
+                        </setting>
+                        <setting string="Offload binaries to Drive"
+                                 help="Pushed attachments become Drive links and the binary is removed from Odoo.
+                                 [!] Enable this to significantly reduce database/filestore size, while allowing files to be fetched or restored back to Odoo later when needed.">
+                            <field name="gdrive_offload"/>
+                        </setting>
+                        <setting string="Log retention"
+                                 help="Days to keep Drive activity logs before the daily clean-up removes them.">
+                            <field name="gdrive_log_retention_days"/> days
+                        </setting>
+                    </block>
+                    <block title="Connections" name="gdrive_links_block">
+                        <button name="%(gdrive_connection_action)d" type="action"
+                                string="Manage Connections" class="btn-link"
+                                icon="fa-arrow-right"/>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

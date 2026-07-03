@@ -6,6 +6,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 ADDONS_DIR = ROOT / "odoo" / "addons"
 ODOO_DOCKERFILE = ROOT / "odoo" / "Dockerfile"
+TEMPLATE_OWNED_ADDONS = {"custom_base", "custom_backend_layout", "custom_theme"}
 
 
 def _load_manifest(path: Path) -> dict[str, Any]:
@@ -30,6 +31,7 @@ def _validate_addon(
     addon_dir: Path,
     require_base: bool = False,
     require_installable_key: bool = False,
+    require_lgpl3: bool = False,
 ) -> None:
     manifest_path = addon_dir / "__manifest__.py"
     init_path = addon_dir / "__init__.py"
@@ -47,7 +49,7 @@ def _validate_addon(
         if key not in manifest:
             raise SystemExit(f"Manifest {manifest_path} is missing {key!r}")
 
-    if manifest["license"] != "LGPL-3":
+    if require_lgpl3 and manifest["license"] != "LGPL-3":
         raise SystemExit(f"Manifest {manifest_path} must use LGPL-3")
     if require_base and "base" not in manifest["depends"]:
         raise SystemExit(f"Manifest {manifest_path} must depend on base")
@@ -73,12 +75,14 @@ def main() -> None:
         raise SystemExit("No Odoo addons found")
 
     for addon_dir in addon_dirs:
-        # Keep strict starter-addon checks for template-owned examples.
+        # Keep strict checks for template-owned addons only.
+        is_template_owned = addon_dir.name in TEMPLATE_OWNED_ADDONS
         is_template_starter = addon_dir.name == "custom_base"
         _validate_addon(
             addon_dir,
             require_base=is_template_starter,
             require_installable_key=is_template_starter,
+            require_lgpl3=is_template_owned,
         )
     _validate_dockerfile()
 

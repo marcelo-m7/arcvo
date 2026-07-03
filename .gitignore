@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# External addon package drop files (extract and version folders instead)
+odoo/addons/*.zip
 .env.local
 .env.coolify
 # C extensions

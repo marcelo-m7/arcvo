@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="custom_backend_layout.NavBarAppsMenuSidebar" t-inherit="web.NavBar.AppsMenu.Sidebar" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_app_menu_sidebar')]" position="attributes">
+            <attribute name="class" add="o_custom_backend_layout_sidebar" separator=" "/>
+        </xpath>
+
+        <xpath expr="//div[hasclass('o_sidebar_topbar')]" position="inside">
+            <div t-if="this.customBackendLayout.enabled" class="o_custom_backend_layout_brand ms-3 me-auto">
+                <img
+                    t-if="this.customBackendLayout.logoUrl"
+                    class="o_custom_backend_layout_logo"
+                    t-att-src="this.customBackendLayout.logoUrl"
+                    alt="Logo"
+                />
+                <div class="o_custom_backend_layout_title">
+                    <span class="o_custom_backend_layout_kicker">Workspace</span>
+                    <strong t-if="currentApp" t-esc="currentApp.name"/>
+                    <strong t-else="">Odoo</strong>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//nav[hasclass('o_burger_menu_content')]/ul" position="before">
+            <section
+                t-if="this.customBackendLayout.enabled and customBackendLayoutQuickSections.length and !state.isAllAppsMenuOpened"
+                class="o_custom_backend_layout_quick_access"
+            >
+                <div class="o_custom_backend_layout_section_label">Quick Access</div>
+                <ul class="list-unstyled m-0 p-0">
+                    <t t-foreach="customBackendLayoutQuickSections" t-as="section" t-key="section.id">
+                        <li
+                            class="o_custom_backend_layout_quick_item"
+                            t-att-data-menu-xmlid="section.xmlid"
+                            t-on-click="() => this._onMenuClicked(section)"
+                        >
+                            <i class="fa fa-angle-right" aria-hidden="true"/>
+                            <span t-esc="section.name"/>
+                        </li>
+                    </t>
+                </ul>
+            </section>
+        </xpath>
+    </t>
+</templates>

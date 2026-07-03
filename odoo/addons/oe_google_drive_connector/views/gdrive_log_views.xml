@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="gdrive_log_view_list" model="ir.ui.view">
+        <field name="name">gdrive.log.list</field>
+        <field name="model">gdrive.log</field>
+        <field name="arch" type="xml">
+            <list create="0" default_order="create_date desc">
+                <field name="create_date" string="When"/>
+                <field name="connection_id"/>
+                <field name="level" widget="badge"
+                       decoration-info="level == 'info'"
+                       decoration-warning="level == 'warning'"
+                       decoration-danger="level == 'error'"/>
+                <field name="message"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="gdrive_log_view_search" model="ir.ui.view">
+        <field name="name">gdrive.log.search</field>
+        <field name="model">gdrive.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="message"/>
+                <field name="connection_id"/>
+                <filter name="errors" string="Errors" domain="[('level','=','error')]"/>
+                <filter name="warnings" string="Warnings"
+                        domain="[('level','=','warning')]"/>
+                <separator/>
+                <filter name="group_connection" string="Connection"
+                        context="{'group_by': 'connection_id'}"/>
+                <filter name="group_level" string="Level"
+                        context="{'group_by': 'level'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="gdrive_log_action" model="ir.actions.act_window">
+        <field name="name">Activity Logs</field>
+        <field name="res_model">gdrive.log</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Folders (technical / debug oriented) -->
+    <record id="gdrive_folder_view_list" model="ir.ui.view">
+        <field name="name">gdrive.folder.list</field>
+        <field name="model">gdrive.folder</field>
+        <field name="arch" type="xml">
+            <list create="0">
+                <field name="record_name"/>
+                <field name="res_model"/>
+                <field name="res_id"/>
+                <field name="connection_id"/>
+                <field name="drive_folder_id" optional="hide"/>
+                <field name="drive_url" column_invisible="1"/>
+                <button name="action_open_drive" type="object" icon="fa-external-link"
+                        string="Open" invisible="not drive_url"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="gdrive_folder_action" model="ir.actions.act_window">
+        <field name="name">Drive Folders</field>
+        <field name="res_model">gdrive.folder</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

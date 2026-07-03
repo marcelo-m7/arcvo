@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="gdrive_connection_view_list" model="ir.ui.view">
+        <field name="name">gdrive.connection.list</field>
+        <field name="model">gdrive.connection</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="auth_method"/>
+                <field name="root_folder_name"/>
+                <field name="use_shared_drive"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="last_connected"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="gdrive_connection_view_form" model="ir.ui.view">
+        <field name="name">gdrive.connection.form</field>
+        <field name="model">gdrive.connection</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_connect" type="object" string="Connect"
+                            class="btn-primary"
+                            invisible="state == 'connected'"/>
+                    <button name="action_test_connection" type="object"
+                            string="Test Connection"
+                            invisible="state == 'draft'"/>
+                    <button name="action_reset" type="object" string="Reset"
+                            confirm="This clears the stored tokens. Continue?"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,connected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_folders" type="object"
+                                class="oe_stat_button" icon="fa-folder-open"
+                                invisible="state != 'connected'">
+                            <field name="folder_count" widget="statinfo"
+                                   string="Folders"/>
+                        </button>
+                        <button name="action_open_root_folder" type="object"
+                                class="oe_stat_button" icon="fa-google"
+                                string="Open in Drive"
+                                invisible="not root_folder_url"/>
+                    </div>
+                    <field name="root_folder_url" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Company Drive"/></h1>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                         invisible="state != 'error'">
+                        <field name="status_message" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="alert alert-success" role="alert"
+                         invisible="state != 'connected'">
+                        <field name="status_message" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group string="Authentication">
+                            <field name="auth_method"
+                                   readonly="state == 'connected'"/>
+                            <field name="impersonate_email"
+                                   invisible="auth_method != 'service_account'"/>
+                        </group>
+                        <group string="Company" groups="base.group_multi_company">
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+                    <group string="OAuth Credentials"
+                           invisible="auth_method != 'oauth'">
+                        <field name="client_id" readonly="state == 'connected'"/>
+                        <field name="client_secret" password="True"
+                               readonly="state == 'connected'"/>
+                        <field name="redirect_uri" widget="CopyClipboardChar"/>
+                    </group>
+                    <group string="Service Account"
+                           invisible="auth_method != 'service_account'">
+                        <field name="service_account_key" widget="text"
+                               placeholder="Paste the JSON key file content here"
+                               readonly="state == 'connected'"/>
+                    </group>
+                    <group string="Target Location">
+                        <field name="root_folder_name"/>
+                        <field name="root_folder_id" readonly="1"
+                               groups="base.group_no_one"/>
+                        <field name="use_shared_drive"/>
+                        <field name="shared_drive_id"
+                               invisible="not use_shared_drive"
+                               required="use_shared_drive"/>
+                        <field name="shared_drive_name"
+                               invisible="not use_shared_drive"/>
+                    </group>
+                    <div class="text-muted">
+                        <p>Setup help: in Google Cloud console enable the Drive API,
+                        create an OAuth client (type "Web application") and register
+                        the redirect URI shown above, or create a Service Account and
+                        share the target folder/Shared Drive with it.</p>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="gdrive_connection_action" model="ir.actions.act_window">
+        <field name="name">Connections</field>
+        <field name="res_model">gdrive.connection</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a Google Drive connection</p>
+            <p>Connect via OAuth or a Service Account, then push Odoo attachments
+               into per-record Drive folders.</p>
+        </field>
+    </record>
+
+</odoo>
