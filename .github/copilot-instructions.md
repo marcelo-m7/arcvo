@@ -29,3 +29,11 @@ make test
 make validate-addons
 docker compose config
 ```
+
+## Supabase
+
+- For tube-o2 Supabase work, use `docs/supabase-tube-o2-migration.md` as the
+	source of truth.
+- Apply schema convergence with `mcp_supabase_apply_migration`.
+- Validate public tables, RLS, key RPCs, and advisor findings after migration.
+- Deploy edge functions from `frontend/tube-o2/supabase/functions`.

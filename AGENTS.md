@@ -12,6 +12,7 @@ backend. Keep it generic and reusable.
 - The root `docker-compose.yaml` is the Coolify deploy entrypoint.
 - The backend app is created in `backend/app/main.py`.
 - Backend settings live in `backend/app/core/config.py`.
+- Supabase tube-o2 baseline is documented in `docs/supabase-tube-o2-migration.md`.
 
 ## Working Rules
 
@@ -28,6 +29,9 @@ make test
 make validate-addons
 docker compose config
 ```
+
+- For Supabase migrations, follow `docs/supabase-tube-o2-migration.md` and
+  validate schema, functions, and advisors before handoff.
 
 ## Backend Shape
 

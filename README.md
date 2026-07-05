@@ -10,6 +10,15 @@ Reusable development template for projects that combine:
 The repository is intentionally small. It contains no product-specific rules,
 sample production data, third-party import flows, or project-specific workflows.
 
+## Supabase Baseline (tube-o2)
+
+The stable Supabase baseline used by this repository is documented in:
+
+- docs/supabase-tube-o2-migration.md
+
+Use that playbook whenever you need to converge a remote Supabase project to
+the stable tube-o2 schema and edge functions.
+
 ## Structure
 
 ```text
@@ -146,3 +155,6 @@ When Docker is available, also run:
 ```bash
 docker compose build
 ```
+
+For Supabase-focused work, also run advisor and schema/function checks described
+in docs/supabase-tube-o2-migration.md.

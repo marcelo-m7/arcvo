@@ -46,3 +46,14 @@ make validate-addons
 The root compose file is the deployment entrypoint for Coolify-compatible
 builds. It builds Odoo from `odoo/Dockerfile`, starts PostgreSQL, and preserves
 Odoo and database data in named volumes.
+
+## Supabase (tube-o2)
+
+Use docs/supabase-tube-o2-migration.md as the standard runbook for:
+
+- schema convergence with `mcp_supabase_apply_migration`
+- edge function deployment
+- post-migration validation and advisors
+
+Do not replay all historical SQL files blindly. Prefer a convergence migration
+that matches the stable baseline defined in the playbook.
